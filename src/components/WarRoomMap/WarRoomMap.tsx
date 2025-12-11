@@ -2,11 +2,12 @@ import { useState, useMemo } from "react";
 import { missions, Mission } from "@/data/missions";
 import { Realm } from "@/data/realms";
 import { getMissionImage } from "@/data/missionImages";
-import { statePaths, majorCities, rivers } from "./StatePaths";
-import MapFilters from "./MapFilters";
-import MissionPin from "./MissionPin";
-import MapHUD from "./MapHUD";
-import MissionDetail from "../MissionDeck/MissionDetail";
+import { fantasyStatePaths, fantasyRivers, fantasyCities } from "./FantasyStatePaths";
+import FantasyMapFilters from "./FantasyMapFilters";
+import FantasyTerrainElements from "./FantasyTerrainElements";
+import FantasyMissionMarker from "./FantasyMissionMarker";
+import FantasyMapHUD from "./FantasyMapHUD";
+import MissionDetailModal from "../MissionDeck/MissionDetailModal";
 
 interface WarRoomMapProps {
   selectedRealm: Realm | null;
@@ -46,11 +47,7 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
   );
 
   const handleMissionClick = (mission: Mission) => {
-    if (onMissionSelect) {
-      onMissionSelect(mission);
-    } else {
-      setSelectedMission(mission);
-    }
+    setSelectedMission(mission);
   };
 
   const isInItinerary = (missionId: string) => 
@@ -71,24 +68,25 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
 
   return (
     <div className="relative w-full">
-      {/* Map Container */}
-      <div className="relative w-full h-[55vh] min-h-[500px] overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-tactical-dark via-tactical-black to-tactical-darker shadow-2xl">
+      {/* Map Container - Fantasy Parchment Style */}
+      <div className="relative w-full h-[60vh] min-h-[550px] overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-[hsl(35,25%,8%)] via-[hsl(30,20%,6%)] to-[hsl(25,15%,5%)] shadow-[0_0_60px_hsl(var(--tactical-amber)/0.15),inset_0_0_100px_hsl(0,0%,0%,0.5)]">
+        
+        {/* Decorative corner elements */}
+        <div className="absolute top-0 left-0 w-16 h-16 border-l-2 border-t-2 border-primary/40 rounded-tl-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-16 h-16 border-r-2 border-t-2 border-primary/40 rounded-tr-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-16 h-16 border-l-2 border-b-2 border-primary/40 rounded-bl-2xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-16 h-16 border-r-2 border-b-2 border-primary/40 rounded-br-2xl pointer-events-none" />
         
         {/* Atmospheric Background Effects */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_30%,_hsl(38_92%_50%_/_0.06)_0%,_transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_70%,_hsl(38_92%_50%_/_0.04)_0%,_transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_hsl(38_70%_50%_/_0.08)_0%,_transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,_hsl(38_60%_40%_/_0.05)_0%,_transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,_hsl(30_50%_30%_/_0.03)_0%,_transparent_70%)]" />
         
-        {/* Scanlines overlay - very subtle */}
+        {/* Subtle paper texture overlay */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-[0.02]"
+          className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay"
           style={{
-            backgroundImage: `repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent 2px,
-              hsl(0, 0%, 100%) 2px,
-              hsl(0, 0%, 100%) 3px
-            )`
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           }}
         />
         
@@ -99,296 +97,327 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setHoveredCoords(null)}
         >
-          <MapFilters />
+          <FantasyMapFilters />
           
-          {/* Background grid */}
-          <rect width="100%" height="100%" fill="url(#tacticalGrid)" />
+          {/* Parchment background */}
+          <rect width="100%" height="100%" fill="url(#parchmentGradient)" />
           
           {/* Vignette effect */}
           <rect width="100%" height="100%" fill="url(#vignette)" />
           
-          {/* State backgrounds with premium styling */}
+          {/* State backgrounds with fantasy styling */}
           <g id="states">
             {/* Colorado */}
             <path
-              d={statePaths.colorado.path}
+              d={fantasyStatePaths.colorado.path}
               fill="url(#stateGradient)"
-              stroke="hsl(0, 0%, 25%)"
+              stroke="hsl(38, 40%, 25%)"
               strokeWidth="1"
-              opacity="0.6"
+              opacity="0.5"
             />
             
             {/* New Mexico */}
             <path
-              d={statePaths.newMexico.path}
+              d={fantasyStatePaths.newMexico.path}
               fill="url(#stateGradient)"
-              stroke="hsl(0, 0%, 25%)"
+              stroke="hsl(38, 40%, 25%)"
               strokeWidth="1"
-              opacity="0.6"
+              opacity="0.5"
             />
             
             {/* Kansas */}
             <path
-              d={statePaths.kansas.path}
+              d={fantasyStatePaths.kansas.path}
               fill="url(#stateGradient)"
-              stroke="hsl(0, 0%, 30%)"
+              stroke="hsl(38, 50%, 30%)"
               strokeWidth="1.5"
-              opacity="0.7"
+              opacity="0.6"
             />
             
             {/* Missouri */}
             <path
-              d={statePaths.missouri.path}
+              d={fantasyStatePaths.missouri.path}
               fill="url(#stateGradient)"
-              stroke="hsl(0, 0%, 25%)"
+              stroke="hsl(38, 40%, 25%)"
               strokeWidth="1"
-              opacity="0.6"
+              opacity="0.5"
             />
             
             {/* Arkansas */}
             <path
-              d={statePaths.arkansas.path}
+              d={fantasyStatePaths.arkansas.path}
               fill="url(#stateGradient)"
-              stroke="hsl(0, 0%, 30%)"
+              stroke="hsl(38, 50%, 30%)"
               strokeWidth="1.5"
-              opacity="0.7"
+              opacity="0.6"
             />
             
             {/* Texas */}
             <path
-              d={statePaths.texas.path}
+              d={fantasyStatePaths.texas.path}
               fill="url(#stateGradient)"
-              stroke="hsl(0, 0%, 35%)"
+              stroke="hsl(38, 60%, 35%)"
               strokeWidth="2"
-              opacity="0.8"
+              opacity="0.7"
             />
             
-            {/* Oklahoma - Primary focus with highlight */}
+            {/* Oklahoma - Primary focus with golden highlight */}
             <path
-              d={statePaths.oklahoma.path}
+              d={fantasyStatePaths.oklahoma.path}
               fill="url(#oklahomaGradient)"
               stroke="hsl(38, 92%, 50%)"
-              strokeWidth="2"
-              filter="url(#innerShadow)"
+              strokeWidth="2.5"
+              filter="url(#territoryGlow)"
             />
             
-            {/* Oklahoma inner glow line */}
+            {/* Oklahoma decorative inner border */}
             <path
-              d={statePaths.oklahoma.path}
+              d={fantasyStatePaths.oklahoma.path}
               fill="none"
-              stroke="hsl(38, 92%, 50%)"
+              stroke="hsl(38, 80%, 55%)"
               strokeWidth="0.5"
-              strokeDasharray="4,8"
-              opacity="0.5"
-              transform="translate(2, 2)"
+              strokeDasharray="6,4"
+              opacity="0.4"
+              transform="translate(3, 3)"
             />
           </g>
           
-          {/* Rivers for terrain detail */}
-          <g id="rivers" opacity="0.15">
-            {rivers.map((river, i) => (
-              <path
-                key={i}
-                d={river.path}
-                fill="none"
-                stroke="hsl(200, 60%, 40%)"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
+          {/* Rivers - hand-drawn style */}
+          <g id="rivers">
+            {fantasyRivers.map((river, i) => (
+              <g key={i}>
+                {/* River glow */}
+                <path
+                  d={river.path}
+                  fill="none"
+                  stroke="hsl(200, 60%, 40%)"
+                  strokeWidth={river.width + 2}
+                  strokeLinecap="round"
+                  opacity="0.1"
+                />
+                {/* Main river */}
+                <path
+                  d={river.path}
+                  fill="none"
+                  stroke="url(#riverGradient)"
+                  strokeWidth={river.width}
+                  strokeLinecap="round"
+                  opacity="0.5"
+                />
+              </g>
             ))}
           </g>
           
-          {/* State labels with premium typography */}
+          {/* Terrain elements - mountains, forests */}
+          <FantasyTerrainElements animate={true} />
+          
+          {/* State labels with fantasy typography */}
           <g id="state-labels">
+            <g filter="url(#textGlow)">
+              <text 
+                x={fantasyStatePaths.oklahoma.label.x} 
+                y={fantasyStatePaths.oklahoma.label.y} 
+                fill="hsl(38, 92%, 55%)" 
+                fontSize="18" 
+                fontFamily="'Orbitron', serif" 
+                textAnchor="middle" 
+                fontWeight="700"
+                opacity="0.8"
+                letterSpacing="6"
+              >
+                {fantasyStatePaths.oklahoma.fantasyName}
+              </text>
+              <text 
+                x={fantasyStatePaths.oklahoma.label.x} 
+                y={fantasyStatePaths.oklahoma.label.y + 14} 
+                fill="hsl(38, 70%, 45%)" 
+                fontSize="8" 
+                fontFamily="'Inter', serif" 
+                textAnchor="middle" 
+                fontStyle="italic"
+                opacity="0.6"
+                letterSpacing="2"
+              >
+                {fantasyStatePaths.oklahoma.fantasySubtitle}
+              </text>
+            </g>
+            
             <text 
-              x={statePaths.oklahoma.label.x} 
-              y={statePaths.oklahoma.label.y} 
-              fill="hsl(38, 92%, 50%)" 
+              x={fantasyStatePaths.texas.label.x} 
+              y={fantasyStatePaths.texas.label.y} 
+              fill="hsl(38, 50%, 35%)" 
               fontSize="20" 
-              fontFamily="'Orbitron', sans-serif" 
+              fontFamily="'Orbitron', serif" 
               textAnchor="middle" 
-              fontWeight="800"
-              opacity="0.6"
+              fontWeight="600"
               letterSpacing="8"
+              opacity="0.6"
             >
-              OKLAHOMA
+              {fantasyStatePaths.texas.fantasyName}
             </text>
             
             <text 
-              x={statePaths.texas.label.x} 
-              y={statePaths.texas.label.y} 
-              fill="hsl(0, 0%, 35%)" 
-              fontSize="22" 
-              fontFamily="'Orbitron', sans-serif" 
-              textAnchor="middle" 
-              fontWeight="700"
-              letterSpacing="10"
-            >
-              TEXAS
-            </text>
-            
-            <text 
-              x={statePaths.kansas.label.x} 
-              y={statePaths.kansas.label.y} 
-              fill="hsl(0, 0%, 30%)" 
-              fontSize="14" 
-              fontFamily="'Orbitron', sans-serif" 
-              textAnchor="middle" 
-              fontWeight="600"
-              letterSpacing="6"
-            >
-              KANSAS
-            </text>
-            
-            <text 
-              x={statePaths.arkansas.label.x} 
-              y={statePaths.arkansas.label.y} 
-              fill="hsl(0, 0%, 28%)" 
+              x={fantasyStatePaths.kansas.label.x} 
+              y={fantasyStatePaths.kansas.label.y} 
+              fill="hsl(38, 40%, 30%)" 
               fontSize="12" 
-              fontFamily="'Orbitron', sans-serif" 
+              fontFamily="'Orbitron', serif" 
               textAnchor="middle" 
-              fontWeight="600"
+              fontWeight="500"
               letterSpacing="4"
+              opacity="0.5"
             >
-              ARKANSAS
+              {fantasyStatePaths.kansas.fantasyName}
             </text>
             
             <text 
-              x={statePaths.missouri.label.x} 
-              y={statePaths.missouri.label.y} 
-              fill="hsl(0, 0%, 25%)" 
+              x={fantasyStatePaths.arkansas.label.x} 
+              y={fantasyStatePaths.arkansas.label.y} 
+              fill="hsl(38, 35%, 28%)" 
               fontSize="10" 
-              fontFamily="'Orbitron', sans-serif" 
+              fontFamily="'Orbitron', serif" 
               textAnchor="middle" 
-              fontWeight="600"
+              fontWeight="500"
               letterSpacing="3"
+              opacity="0.45"
             >
-              MISSOURI
+              {fantasyStatePaths.arkansas.fantasyName}
             </text>
             
             <text 
-              x={statePaths.colorado.label.x} 
-              y={statePaths.colorado.label.y} 
-              fill="hsl(0, 0%, 22%)" 
+              x={fantasyStatePaths.missouri.label.x} 
+              y={fantasyStatePaths.missouri.label.y} 
+              fill="hsl(38, 30%, 25%)" 
               fontSize="9" 
-              fontFamily="'Orbitron', sans-serif" 
+              fontFamily="'Orbitron', serif" 
               textAnchor="middle" 
-              fontWeight="600"
+              fontWeight="500"
               letterSpacing="2"
+              opacity="0.4"
             >
-              CO
-            </text>
-            
-            <text 
-              x={statePaths.newMexico.label.x} 
-              y={statePaths.newMexico.label.y} 
-              fill="hsl(0, 0%, 22%)" 
-              fontSize="9" 
-              fontFamily="'Orbitron', sans-serif" 
-              textAnchor="middle" 
-              fontWeight="600"
-              letterSpacing="2"
-            >
-              NM
+              {fantasyStatePaths.missouri.fantasyName}
             </text>
           </g>
           
-          {/* Distance rings from OKC */}
+          {/* Distance rings from HQ - journey markers */}
           <g id="distance-rings">
             {/* 1 hour ring */}
             <circle 
               cx={OKC.x} 
               cy={OKC.y} 
-              r="30" 
+              r="35" 
               fill="none" 
-              stroke="hsl(38, 92%, 50%)" 
+              stroke="hsl(38, 70%, 45%)" 
               strokeWidth="1" 
-              strokeDasharray="3,6"
-              opacity="0.3"
+              strokeDasharray="4,6"
+              opacity="0.25"
             />
             <text 
-              x={OKC.x + 33} 
-              y={OKC.y - 3} 
-              fill="hsl(38, 92%, 50%)" 
+              x={OKC.x + 38} 
+              y={OKC.y - 5} 
+              fill="hsl(38, 60%, 45%)" 
               fontSize="7" 
-              fontFamily="'Orbitron', sans-serif"
+              fontFamily="'Inter', sans-serif"
               opacity="0.5"
+              fontStyle="italic"
             >
-              1H
+              1 day
             </text>
             
             {/* 3 hour ring */}
             <circle 
               cx={OKC.x} 
               cy={OKC.y} 
-              r="80" 
+              r="90" 
               fill="url(#distanceRing)" 
-              stroke="hsl(38, 92%, 50%)" 
+              stroke="hsl(38, 60%, 40%)" 
               strokeWidth="1" 
-              strokeDasharray="5,8"
-              opacity="0.25"
+              strokeDasharray="6,8"
+              opacity="0.2"
             />
             <text 
-              x={OKC.x + 83} 
-              y={OKC.y - 3} 
-              fill="hsl(38, 92%, 50%)" 
+              x={OKC.x + 93} 
+              y={OKC.y - 5} 
+              fill="hsl(38, 50%, 40%)" 
               fontSize="7" 
-              fontFamily="'Orbitron', sans-serif"
+              fontFamily="'Inter', sans-serif"
               opacity="0.4"
+              fontStyle="italic"
             >
-              3H
+              3 days
             </text>
             
             {/* 6 hour ring */}
             <circle 
               cx={OKC.x} 
               cy={OKC.y} 
-              r="140" 
+              r="150" 
               fill="none" 
-              stroke="hsl(38, 92%, 50%)" 
+              stroke="hsl(38, 50%, 35%)" 
               strokeWidth="1" 
               strokeDasharray="8,10"
-              opacity="0.15"
+              opacity="0.12"
             />
             <text 
-              x={OKC.x + 143} 
-              y={OKC.y - 3} 
-              fill="hsl(38, 92%, 50%)" 
+              x={OKC.x + 153} 
+              y={OKC.y - 5} 
+              fill="hsl(38, 40%, 35%)" 
               fontSize="7" 
-              fontFamily="'Orbitron', sans-serif"
+              fontFamily="'Inter', sans-serif"
               opacity="0.3"
+              fontStyle="italic"
             >
-              6H
+              6 days
             </text>
           </g>
           
           {/* Major cities */}
           <g id="cities">
-            {majorCities.map(city => {
+            {fantasyCities.map(city => {
               const pos = projectCoordinates(city.lat, city.lng);
-              const size = city.importance === "major" ? 4 : city.importance === "secondary" ? 3 : 2;
-              const opacity = city.importance === "major" ? 0.6 : city.importance === "secondary" ? 0.4 : 0.3;
+              const size = city.importance === "major" ? 5 : city.importance === "secondary" ? 4 : 3;
+              const opacity = city.importance === "major" ? 0.7 : city.importance === "secondary" ? 0.5 : 0.4;
               
               return (
                 <g key={city.name} opacity={opacity}>
+                  {/* City glow */}
+                  <circle 
+                    cx={pos.x} 
+                    cy={pos.y} 
+                    r={size + 2} 
+                    fill="hsl(38, 50%, 40%)"
+                    opacity="0.15"
+                  />
+                  {/* City marker */}
                   <circle 
                     cx={pos.x} 
                     cy={pos.y} 
                     r={size} 
-                    fill="hsl(0, 0%, 50%)"
-                    stroke="hsl(0, 0%, 30%)"
+                    fill="hsl(35, 30%, 20%)"
+                    stroke="hsl(38, 60%, 45%)"
                     strokeWidth="1"
                   />
+                  {/* City symbol */}
                   <text 
                     x={pos.x} 
-                    y={pos.y - size - 4} 
-                    fill="hsl(0, 0%, 55%)" 
+                    y={pos.y + 3} 
+                    fontSize="6" 
+                    textAnchor="middle"
+                  >
+                    {city.symbol}
+                  </text>
+                  {/* City name */}
+                  <text 
+                    x={pos.x} 
+                    y={pos.y - size - 5} 
+                    fill="hsl(38, 50%, 50%)" 
                     fontSize={city.importance === "major" ? "9" : "7"} 
-                    fontFamily="'Inter', sans-serif" 
+                    fontFamily="'Inter', serif" 
                     textAnchor="middle"
                     fontWeight={city.importance === "major" ? "500" : "400"}
+                    fontStyle="italic"
                   >
-                    {city.name}
+                    {city.fantasyName}
                   </text>
                 </g>
               );
@@ -396,7 +425,7 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           </g>
           
           {/* Connection lines to missions */}
-          <g id="connections" opacity="0.15">
+          <g id="connections" opacity="0.1">
             {displayedMissions.map((mission) => {
               const pos = projectCoordinates(mission.coordinates.lat, mission.coordinates.lng);
               const isHovered = hoveredMission === mission.id;
@@ -408,96 +437,95 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
                   y1={OKC.y}
                   x2={pos.x}
                   y2={pos.y}
-                  stroke={isHovered ? "hsl(38, 92%, 50%)" : "url(#connectionLine)"}
+                  stroke={isHovered ? "hsl(38, 92%, 50%)" : "hsl(38, 50%, 35%)"}
                   strokeWidth={isHovered ? 2 : 1}
                   strokeDasharray={isHovered ? "none" : "4,8"}
-                  opacity={isHovered ? 0.8 : 0.4}
+                  opacity={isHovered ? 0.6 : 0.3}
                   style={{ transition: "all 0.3s ease" }}
                 />
               );
             })}
           </g>
           
-          {/* OKC Headquarters - Premium design */}
+          {/* OKC Headquarters - Fortress design */}
           <g id="hq" transform={`translate(${OKC.x}, ${OKC.y})`}>
             {/* Outer pulse rings */}
             <circle 
-              r="25" 
+              r="30" 
               fill="none" 
               stroke="hsl(38, 92%, 50%)" 
               strokeWidth="1" 
               className="animate-ping" 
-              opacity="0.2" 
+              opacity="0.15" 
             />
             <circle 
-              r="18" 
+              r="22" 
               fill="none" 
-              stroke="hsl(38, 92%, 50%)" 
+              stroke="hsl(38, 80%, 50%)" 
               strokeWidth="0.5" 
-              opacity="0.4" 
+              opacity="0.3" 
             />
             
-            {/* HQ marker with glow */}
+            {/* HQ marker with premium glow */}
             <g filter="url(#hqGlow)">
-              {/* Hexagon background */}
-              <polygon
-                points="0,-14 12.1,-7 12.1,7 0,14 -12.1,7 -12.1,-7"
+              {/* Fortress/castle shape */}
+              <path
+                d="M 0 -16 L 12 -8 L 12 8 L 0 16 L -12 8 L -12 -8 Z"
                 fill="hsl(38, 92%, 50%)"
                 stroke="hsl(38, 100%, 65%)"
                 strokeWidth="2"
               />
               
-              {/* Inner hexagon */}
-              <polygon
-                points="0,-9 7.8,-4.5 7.8,4.5 0,9 -7.8,4.5 -7.8,-4.5"
-                fill="hsl(0, 0%, 5%)"
+              {/* Inner keep */}
+              <path
+                d="M 0 -10 L 7 -5 L 7 5 L 0 10 L -7 5 L -7 -5 Z"
+                fill="hsl(25, 80%, 15%)"
                 stroke="hsl(38, 92%, 50%)"
                 strokeWidth="1"
               />
               
-              {/* HQ text */}
+              {/* Fortress symbol */}
               <text 
-                y="3" 
-                fill="hsl(38, 92%, 50%)" 
-                fontSize="8" 
-                fontFamily="'Orbitron', sans-serif" 
-                textAnchor="middle" 
-                fontWeight="900"
+                y="4" 
+                fill="hsl(38, 100%, 60%)" 
+                fontSize="10" 
+                textAnchor="middle"
               >
-                HQ
+                🏰
               </text>
             </g>
             
-            {/* City label */}
+            {/* HQ Label */}
             <text 
-              y="32" 
-              fill="hsl(38, 92%, 50%)" 
-              fontSize="10" 
-              fontFamily="'Orbitron', sans-serif" 
+              y="36" 
+              fill="hsl(38, 92%, 55%)" 
+              fontSize="11" 
+              fontFamily="'Orbitron', serif" 
               textAnchor="middle" 
-              fontWeight="700"
-              letterSpacing="1"
+              fontWeight="800"
+              letterSpacing="2"
             >
-              OKLAHOMA CITY
+              WAR ROOM HQ
             </text>
             <text 
-              y="44" 
-              fill="hsl(0, 0%, 50%)" 
+              y="48" 
+              fill="hsl(38, 60%, 40%)" 
               fontSize="7" 
-              fontFamily="'Orbitron', sans-serif" 
+              fontFamily="'Inter', serif" 
               textAnchor="middle"
-              letterSpacing="3"
+              fontStyle="italic"
+              letterSpacing="1"
             >
-              COMMAND CENTER
+              Command Citadel
             </text>
           </g>
           
-          {/* Mission pins */}
+          {/* Mission markers */}
           <g id="missions">
             {displayedMissions.map((mission) => {
               const pos = projectCoordinates(mission.coordinates.lat, mission.coordinates.lng);
               return (
-                <MissionPin
+                <FantasyMissionMarker
                   key={mission.id}
                   mission={mission}
                   x={pos.x}
@@ -512,17 +540,17 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
             })}
           </g>
           
-          {/* Radar sweep animation */}
+          {/* Subtle radar sweep */}
           <g id="radar" transform={`translate(${OKC.x}, ${OKC.y})`}>
             <path
-              d="M 0 0 L 0 -160 A 160 160 0 0 1 80 -138.6 Z"
+              d="M 0 0 L 0 -180 A 180 180 0 0 1 90 -156 Z"
               fill="url(#radarSweep)"
               className="origin-center animate-radar-sweep"
-              opacity="0.12"
+              opacity="0.08"
             />
           </g>
           
-          {/* Atmosphere glow overlay */}
+          {/* Atmosphere overlay */}
           <rect 
             width="100%" 
             height="100%" 
@@ -532,38 +560,47 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
         </svg>
         
         {/* HUD Elements */}
-        <MapHUD 
+        <FantasyMapHUD 
           missionCount={displayedMissions.length}
           hoveredCoords={hoveredCoords}
           selectedRealm={selectedRealm?.name}
         />
       </div>
       
-      {/* Hover preview panel */}
+      {/* Hover preview panel - parchment style */}
       {hoveredMission && (
-        <div className="absolute top-20 right-4 z-10 w-72 bg-card/98 backdrop-blur-lg border border-primary/30 rounded-xl shadow-2xl overflow-hidden animate-scale-in">
+        <div className="absolute top-24 right-6 z-10 w-80 bg-gradient-to-br from-[hsl(30,20%,10%)] to-[hsl(25,15%,8%)] backdrop-blur-lg border-2 border-primary/40 rounded-xl shadow-[0_0_40px_hsl(var(--tactical-amber)/0.3)] overflow-hidden animate-scale-in">
+          {/* Decorative top border */}
+          <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+          
           {(() => {
             const mission = displayedMissions.find(m => m.id === hoveredMission);
             if (!mission) return null;
             return (
               <>
                 <div 
-                  className="h-32 bg-cover bg-center relative"
+                  className="h-36 bg-cover bg-center relative"
                   style={{ backgroundImage: `url(${getMissionImage(mission.id)})` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <h4 className="font-orbitron text-base font-bold text-foreground drop-shadow-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[hsl(30,20%,10%)] via-[hsl(30,20%,10%)/60%] to-transparent" />
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <div className="text-[10px] text-primary/80 font-medium tracking-wider mb-1">
+                      "{mission.codename}"
+                    </div>
+                    <h4 className="font-orbitron text-lg font-bold text-foreground drop-shadow-lg">
                       {mission.name}
                     </h4>
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {mission.city}, {mission.state} • {mission.distanceFromOKC}h drive
-                  </p>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                    <span>📍</span>
+                    <span>{mission.city}, {mission.state}</span>
+                    <span className="text-primary/60">•</span>
+                    <span>{mission.distanceFromOKC}h journey</span>
+                  </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-orbitron text-sm text-primary font-semibold">
+                    <span className="font-orbitron text-base text-primary font-bold">
                       {mission.priceEstimate}
                     </span>
                     <div className="flex items-center gap-1">
@@ -571,6 +608,9 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
                         <span key={i} className="text-sm">🔥</span>
                       ))}
                     </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-border/30 text-xs text-muted-foreground text-center">
+                    Click to view quest details
                   </div>
                 </div>
               </>
@@ -580,10 +620,12 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
       )}
       
       {/* Mission Detail Modal */}
-      {selectedMission && !onMissionSelect && (
-        <MissionDetail
+      {selectedMission && (
+        <MissionDetailModal
           mission={selectedMission}
           onClose={() => setSelectedMission(null)}
+          onAddToItinerary={onAddToItinerary ? () => onAddToItinerary(selectedMission) : undefined}
+          isInItinerary={isInItinerary(selectedMission.id)}
         />
       )}
     </div>

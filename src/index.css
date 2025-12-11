@@ -6,62 +6,64 @@
 
 @layer base {
   :root {
-    /* WAR ROOM Premium Dark Theme */
-    --background: 0 0% 5%;
-    --foreground: 0 0% 90%;
+    /* WAR ROOM Premium Fantasy Dark Theme */
+    --background: 25 15% 5%;
+    --foreground: 38 20% 90%;
     
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 90%;
+    --card: 28 18% 8%;
+    --card-foreground: 38 20% 90%;
     
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 90%;
+    --popover: 28 18% 8%;
+    --popover-foreground: 38 20% 90%;
     
-    /* Amber/Gold Primary */
+    /* Amber/Gold Primary - Fantasy warmth */
     --primary: 38 92% 50%;
-    --primary-foreground: 0 0% 5%;
+    --primary-foreground: 25 30% 8%;
     
-    /* Steel Blue Secondary */
-    --secondary: 215 20% 25%;
-    --secondary-foreground: 0 0% 90%;
+    /* Deep Bronze Secondary */
+    --secondary: 30 40% 20%;
+    --secondary-foreground: 38 20% 90%;
     
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 25 15% 12%;
+    --muted-foreground: 38 20% 55%;
     
     --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 5%;
+    --accent-foreground: 25 30% 8%;
     
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
+    --border: 38 30% 18%;
+    --input: 25 15% 12%;
     --ring: 38 92% 50%;
     
-    --radius: 0.5rem;
+    --radius: 0.75rem;
     
-    /* Tactical Colors */
+    /* Tactical Colors - Fantasy Edition */
     --tactical-amber: 38 92% 50%;
-    --tactical-amber-dim: 38 80% 35%;
+    --tactical-amber-dim: 38 70% 35%;
+    --tactical-amber-glow: 38 100% 60%;
     --tactical-crimson: 0 72% 51%;
     --tactical-olive: 83 35% 25%;
     --tactical-steel: 215 20% 40%;
-    --tactical-black: 0 0% 5%;
-    --tactical-dark: 0 0% 10%;
-    --tactical-darker: 0 0% 7%;
+    --tactical-black: 25 15% 5%;
+    --tactical-dark: 28 18% 8%;
+    --tactical-darker: 25 15% 6%;
+    --tactical-parchment: 35 30% 12%;
 
-    /* Danger level colors */
-    --danger-low: 142 70% 45%;
-    --danger-medium: 48 96% 53%;
-    --danger-high: 25 95% 53%;
-    --danger-extreme: 0 72% 51%;
+    /* Danger level colors - more vibrant */
+    --danger-low: 142 76% 42%;
+    --danger-medium: 48 100% 50%;
+    --danger-high: 25 100% 50%;
+    --danger-extreme: 0 80% 50%;
 
-    --sidebar-background: 0 0% 7%;
-    --sidebar-foreground: 0 0% 90%;
+    --sidebar-background: 28 18% 7%;
+    --sidebar-foreground: 38 20% 90%;
     --sidebar-primary: 38 92% 50%;
-    --sidebar-primary-foreground: 0 0% 5%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 20%;
+    --sidebar-primary-foreground: 25 30% 8%;
+    --sidebar-accent: 25 15% 12%;
+    --sidebar-accent-foreground: 38 20% 90%;
+    --sidebar-border: 38 30% 18%;
     --sidebar-ring: 38 92% 50%;
   }
 }
@@ -76,31 +78,33 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Custom Scrollbar */
+  /* Custom Scrollbar - Fantasy style */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
   
   ::-webkit-scrollbar-track {
     background: hsl(var(--tactical-black));
+    border-radius: 4px;
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--tactical-amber-dim));
-    border-radius: 3px;
+    background: linear-gradient(180deg, hsl(var(--tactical-amber-dim)), hsl(var(--tactical-amber) / 0.6));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--tactical-amber) / 0.3);
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--tactical-amber));
+    background: linear-gradient(180deg, hsl(var(--tactical-amber)), hsl(var(--tactical-amber-glow)));
   }
 }
 
 @layer components {
-  /* Premium Card Hover */
+  /* Premium Card Hover - Fantasy Edition */
   .premium-card {
     @apply relative overflow-hidden transition-all duration-500;
-    @apply hover:shadow-[0_20px_60px_-15px_hsl(var(--tactical-amber)/0.3)];
+    @apply hover:shadow-[0_25px_80px_-20px_hsl(var(--tactical-amber)/0.35)];
   }
   
   .premium-card::before {
@@ -108,8 +112,9 @@
     @apply absolute inset-0 opacity-0 transition-opacity duration-500;
     background: linear-gradient(
       135deg,
-      hsl(var(--tactical-amber) / 0.1) 0%,
-      transparent 50%
+      hsl(var(--tactical-amber) / 0.15) 0%,
+      transparent 50%,
+      hsl(var(--tactical-amber) / 0.05) 100%
     );
   }
   
@@ -117,21 +122,31 @@
     @apply opacity-100;
   }
   
-  /* Image Overlay Gradient */
+  /* Image Overlay Gradient - Deeper */
   .image-overlay {
     background: linear-gradient(
       to top,
       hsl(var(--tactical-black)) 0%,
-      hsl(var(--tactical-black) / 0.8) 30%,
-      hsl(var(--tactical-black) / 0.4) 60%,
+      hsl(var(--tactical-black) / 0.85) 25%,
+      hsl(var(--tactical-black) / 0.5) 50%,
       transparent 100%
     );
   }
   
-  /* Amber Glow */
+  /* Amber Glow - Enhanced */
   .amber-glow {
-    text-shadow: 0 0 20px hsl(var(--tactical-amber) / 0.5),
-                 0 0 40px hsl(var(--tactical-amber) / 0.3);
+    text-shadow: 
+      0 0 20px hsl(var(--tactical-amber) / 0.6),
+      0 0 40px hsl(var(--tactical-amber) / 0.4),
+      0 0 60px hsl(var(--tactical-amber) / 0.2);
+  }
+  
+  /* Fantasy border glow */
+  .fantasy-border {
+    box-shadow: 
+      0 0 0 1px hsl(var(--tactical-amber) / 0.3),
+      0 0 20px hsl(var(--tactical-amber) / 0.1),
+      inset 0 0 20px hsl(var(--tactical-black) / 0.5);
   }
   
   /* Danger Indicators */
@@ -162,6 +177,13 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 @layer components {
@@ -175,13 +197,13 @@
       box-shadow: 0 0 20px hsl(38 92% 50% / 0.4);
     }
     50% {
-      box-shadow: 0 0 30px hsl(38 92% 50% / 0.6);
+      box-shadow: 0 0 40px hsl(38 92% 50% / 0.7);
     }
   }
   
   /* Radar sweep animation */
   .animate-radar-sweep {
-    animation: radar-sweep 8s linear infinite;
+    animation: radar-sweep 12s linear infinite;
     transform-origin: center;
   }
   
@@ -196,13 +218,13 @@
   
   /* Fade in up animation */
   .animate-fade-in-up {
-    animation: fade-in-up 0.5s ease-out;
+    animation: fade-in-up 0.6s ease-out;
   }
   
   @keyframes fade-in-up {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(25px);
     }
     to {
       opacity: 1;
@@ -214,23 +236,76 @@
   @keyframes marker-pulse {
     0% {
       transform: scale(1);
-      opacity: 0.6;
+      opacity: 0.5;
     }
     100% {
-      transform: scale(2.5);
+      transform: scale(2.8);
       opacity: 0;
     }
   }
   
+  .animate-marker-pulse {
+    animation: marker-pulse 2.5s ease-out infinite;
+  }
+  
+  /* Float animation for decorative elements */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  /* Shimmer effect for premium elements */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--tactical-amber) / 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
   /* Premium map effects */
   .map-glow {
-    filter: drop-shadow(0 0 10px hsl(38 92% 50% / 0.3));
+    filter: drop-shadow(0 0 15px hsl(38 92% 50% / 0.35));
   }
   
   .tactical-border {
-    border: 1px solid hsl(38 92% 50% / 0.3);
+    border: 2px solid hsl(38 92% 50% / 0.3);
     box-shadow: 
-      inset 0 1px 0 hsl(38 92% 50% / 0.1),
-      0 4px 20px -5px hsl(0 0% 0% / 0.5);
+      inset 0 2px 0 hsl(38 92% 50% / 0.15),
+      0 8px 30px -8px hsl(0 0% 0% / 0.6);
   }
+  
+  /* Glow text for headers */
+  .glow-text {
+    text-shadow: 
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 30px currentColor;
+  }
+}
+
+/* Selection styling */
+::selection {
+  background: hsl(var(--tactical-amber) / 0.3);
+  color: hsl(var(--foreground));
 }
