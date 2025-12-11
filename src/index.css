@@ -2,81 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* Tactical Dark Theme */
-    --background: 0 0% 4%;
-    --foreground: 120 100% 50%;
+    /* WAR ROOM Premium Dark Theme */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 90%;
     
-    --card: 0 0% 6%;
-    --card-foreground: 120 100% 50%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 90%;
     
-    --popover: 0 0% 6%;
-    --popover-foreground: 120 100% 50%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 90%;
     
-    --primary: 120 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    /* Amber/Gold Primary */
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 5%;
     
-    --secondary: 25 100% 50%;
-    --secondary-foreground: 0 0% 0%;
+    /* Steel Blue Secondary */
+    --secondary: 215 20% 25%;
+    --secondary-foreground: 0 0% 90%;
     
-    --muted: 0 0% 12%;
-    --muted-foreground: 120 40% 60%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
     
-    --accent: 25 100% 50%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 5%;
     
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 120 100% 50%;
+    --border: 0 0% 20%;
     --input: 0 0% 15%;
-    --ring: 120 100% 50%;
+    --ring: 38 92% 50%;
     
-    --radius: 0.25rem;
+    --radius: 0.5rem;
     
-    /* Custom Tactical Colors */
-    --tactical-green: 120 100% 50%;
-    --tactical-green-dim: 120 100% 30%;
-    --tactical-orange: 25 100% 50%;
-    --tactical-red: 0 100% 50%;
-    --tactical-blue: 200 100% 50%;
-    --tactical-black: 0 0% 4%;
-    --tactical-dark: 0 0% 8%;
-    --tactical-darker: 0 0% 6%;
+    /* Tactical Colors */
+    --tactical-amber: 38 92% 50%;
+    --tactical-amber-dim: 38 80% 35%;
+    --tactical-crimson: 0 72% 51%;
+    --tactical-olive: 83 35% 25%;
+    --tactical-steel: 215 20% 40%;
+    --tactical-black: 0 0% 5%;
+    --tactical-dark: 0 0% 10%;
+    --tactical-darker: 0 0% 7%;
 
-    --sidebar-background: 0 0% 6%;
-    --sidebar-foreground: 120 100% 50%;
-    --sidebar-primary: 120 100% 50%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 120 100% 50%;
-    --sidebar-border: 120 100% 50%;
-    --sidebar-ring: 120 100% 50%;
-  }
+    /* Danger level colors */
+    --danger-low: 142 70% 45%;
+    --danger-medium: 48 96% 53%;
+    --danger-high: 25 95% 53%;
+    --danger-extreme: 0 72% 51%;
 
-  .dark {
-    --background: 0 0% 4%;
-    --foreground: 120 100% 50%;
-    --card: 0 0% 6%;
-    --card-foreground: 120 100% 50%;
-    --popover: 0 0% 6%;
-    --popover-foreground: 120 100% 50%;
-    --primary: 120 100% 50%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 25 100% 50%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 120 40% 60%;
-    --accent: 25 100% 50%;
-    --accent-foreground: 0 0% 0%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 120 100% 50%;
-    --input: 0 0% 15%;
-    --ring: 120 100% 50%;
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 38 92% 50%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 38 92% 50%;
   }
 }
 
@@ -86,14 +72,14 @@
   }
   
   body {
-    @apply bg-background text-foreground font-rajdhani;
+    @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
@@ -101,164 +87,63 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--tactical-green-dim));
-    border-radius: 2px;
+    background: hsl(var(--tactical-amber-dim));
+    border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--tactical-green));
+    background: hsl(var(--tactical-amber));
   }
 }
 
 @layer components {
-  /* Scanline Effect */
-  .scanlines {
-    position: relative;
-    overflow: hidden;
+  /* Premium Card Hover */
+  .premium-card {
+    @apply relative overflow-hidden transition-all duration-500;
+    @apply hover:shadow-[0_20px_60px_-15px_hsl(var(--tactical-amber)/0.3)];
   }
   
-  .scanlines::before {
+  .premium-card::before {
     content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsl(0 0% 0% / 0.03) 2px,
-      hsl(0 0% 0% / 0.03) 4px
-    );
-    pointer-events: none;
-    z-index: 100;
-  }
-  
-  /* Glitch Effect */
-  .glitch {
-    animation: glitch 2s infinite;
-  }
-  
-  @keyframes glitch {
-    0%, 90%, 100% {
-      transform: translate(0);
-      filter: none;
-    }
-    92% {
-      transform: translate(-2px, 1px);
-      filter: hue-rotate(90deg);
-    }
-    94% {
-      transform: translate(2px, -1px);
-      filter: hue-rotate(-90deg);
-    }
-    96% {
-      transform: translate(-1px, -1px);
-    }
-    98% {
-      transform: translate(1px, 1px);
-    }
-  }
-  
-  /* Tactical Border */
-  .tactical-border {
-    position: relative;
-    border: 1px solid hsl(var(--tactical-green) / 0.3);
+    @apply absolute inset-0 opacity-0 transition-opacity duration-500;
     background: linear-gradient(
       135deg,
-      hsl(var(--tactical-dark)) 0%,
-      hsl(var(--tactical-black)) 100%
+      hsl(var(--tactical-amber) / 0.1) 0%,
+      transparent 50%
     );
   }
   
-  .tactical-border::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 10%;
-    right: 10%;
-    height: 1px;
+  .premium-card:hover::before {
+    @apply opacity-100;
+  }
+  
+  /* Image Overlay Gradient */
+  .image-overlay {
     background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(var(--tactical-green)),
-      transparent
+      to top,
+      hsl(var(--tactical-black)) 0%,
+      hsl(var(--tactical-black) / 0.8) 30%,
+      hsl(var(--tactical-black) / 0.4) 60%,
+      transparent 100%
     );
   }
   
-  .tactical-border::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 10%;
-    right: 10%;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(var(--tactical-green)),
-      transparent
-    );
+  /* Amber Glow */
+  .amber-glow {
+    text-shadow: 0 0 20px hsl(var(--tactical-amber) / 0.5),
+                 0 0 40px hsl(var(--tactical-amber) / 0.3);
   }
   
-  /* Corner Brackets */
-  .corner-brackets {
-    position: relative;
-  }
+  /* Danger Indicators */
+  .danger-low { color: hsl(var(--danger-low)); }
+  .danger-medium { color: hsl(var(--danger-medium)); }
+  .danger-high { color: hsl(var(--danger-high)); }
+  .danger-extreme { color: hsl(var(--danger-extreme)); }
   
-  .corner-brackets::before,
-  .corner-brackets::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-color: hsl(var(--tactical-green));
-    border-style: solid;
-  }
-  
-  .corner-brackets::before {
-    top: 0;
-    left: 0;
-    border-width: 2px 0 0 2px;
-  }
-  
-  .corner-brackets::after {
-    bottom: 0;
-    right: 0;
-    border-width: 0 2px 2px 0;
-  }
-  
-  /* Pulse Marker */
-  .pulse-marker {
-    animation: pulse-ring 2s ease-out infinite;
-  }
-  
-  @keyframes pulse-ring {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
-  
-  /* HUD Text */
-  .hud-text {
-    font-family: 'Share Tech Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-  
-  /* Tactical Glow */
-  .tactical-glow {
-    text-shadow: 0 0 10px hsl(var(--tactical-green) / 0.8),
-                 0 0 20px hsl(var(--tactical-green) / 0.4);
-  }
-  
-  .tactical-glow-orange {
-    text-shadow: 0 0 10px hsl(var(--tactical-orange) / 0.8),
-                 0 0 20px hsl(var(--tactical-orange) / 0.4);
-  }
+  .danger-bg-low { background-color: hsl(var(--danger-low)); }
+  .danger-bg-medium { background-color: hsl(var(--danger-medium)); }
+  .danger-bg-high { background-color: hsl(var(--danger-high)); }
+  .danger-bg-extreme { background-color: hsl(var(--danger-extreme)); }
 }
 
 @layer utilities {
@@ -266,11 +151,7 @@
     font-family: 'Orbitron', sans-serif;
   }
   
-  .font-rajdhani {
-    font-family: 'Rajdhani', sans-serif;
-  }
-  
-  .font-mono-tactical {
-    font-family: 'Share Tech Mono', monospace;
+  .font-sans {
+    font-family: 'Inter', system-ui, sans-serif;
   }
 }

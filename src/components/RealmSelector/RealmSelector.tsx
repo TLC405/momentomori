@@ -1,5 +1,5 @@
-import { realms, Realm } from "@/data/realms";
-import RealmCard from "./RealmCard";
+import { Realm, realms } from "@/data/realms";
+import { cn } from "@/lib/utils";
 
 interface RealmSelectorProps {
   selectedRealm: Realm | null;
@@ -8,59 +8,38 @@ interface RealmSelectorProps {
 
 const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => {
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col">
-            <span className="font-mono-tactical text-xs text-muted-foreground tracking-widest">
-              SELECT OPERATIONAL REALM
-            </span>
-            <h2 className="font-orbitron text-2xl font-bold text-primary tactical-glow">
-              LOADOUT
-            </h2>
-          </div>
-        </div>
-        
-        {selectedRealm && (
-          <button
-            onClick={() => onSelectRealm(null)}
-            className="font-mono-tactical text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
-          >
-            <span className="w-4 h-px bg-current" />
-            CLEAR SELECTION
-          </button>
+    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+      {/* All button */}
+      <button
+        onClick={() => onSelectRealm(null)}
+        className={cn(
+          "flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
+          "border",
+          !selectedRealm
+            ? "border-primary bg-primary/10 text-primary"
+            : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground"
         )}
-      </div>
+      >
+        All Missions
+      </button>
       
-      {/* Realm Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {realms.map((realm, index) => (
-          <RealmCard
-            key={realm.id}
-            realm={realm}
-            isSelected={selectedRealm?.id === realm.id}
-            onClick={() => onSelectRealm(selectedRealm?.id === realm.id ? null : realm)}
-            index={index}
-          />
-        ))}
-      </div>
-      
-      {/* Selected realm indicator */}
-      {selectedRealm && (
-        <div className="flex items-center justify-center gap-3 py-4 border-t border-primary/20 animate-fade-in">
-          <div className="w-2 h-2 bg-primary animate-pulse" />
-          <span className="font-mono-tactical text-sm text-muted-foreground">
-            REALM ACTIVE:
-          </span>
-          <span className="font-orbitron text-sm text-primary">
-            {selectedRealm.name.toUpperCase()}
-          </span>
-          <span className="font-mono-tactical text-sm text-muted-foreground">
-            [{selectedRealm.missionCount} MISSIONS AVAILABLE]
-          </span>
-        </div>
-      )}
+      {/* Realm buttons */}
+      {realms.map((realm) => (
+        <button
+          key={realm.id}
+          onClick={() => onSelectRealm(realm)}
+          className={cn(
+            "flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
+            "border flex items-center gap-2",
+            selectedRealm?.id === realm.id
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground"
+          )}
+        >
+          <span className="text-base">{realm.icon}</span>
+          <span className="hidden sm:inline">{realm.name}</span>
+        </button>
+      ))}
     </div>
   );
 };

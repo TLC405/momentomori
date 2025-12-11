@@ -6,12 +6,12 @@ interface MissionDetailProps {
   onClose: () => void;
 }
 
-const getDangerColor = (level: Mission["dangerLevel"]) => {
+const getDangerClass = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return "text-tactical-green bg-tactical-green/10";
-    case "MEDIUM": return "text-yellow-500 bg-yellow-500/10";
-    case "HIGH": return "text-tactical-orange bg-tactical-orange/10";
-    case "EXTREME": return "text-tactical-red bg-tactical-red/10";
+    case "LOW": return "danger-bg-low";
+    case "MEDIUM": return "danger-bg-medium";
+    case "HIGH": return "danger-bg-high";
+    case "EXTREME": return "danger-bg-extreme";
   }
 };
 
@@ -20,134 +20,96 @@ const MissionDetail = ({ mission, onClose }: MissionDetailProps) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-background/95 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-primary/30 bg-gradient-to-br from-card to-background animate-scale-in">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center border border-primary/30 hover:border-primary hover:bg-primary/10 transition-all"
-        >
-          <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
-        </button>
-        
-        {/* Header */}
-        <div className="p-6 border-b border-primary/20">
-          <div className="flex items-start gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="font-mono-tactical text-xs text-muted-foreground tracking-widest">
-                  MISSION BRIEFING
-                </span>
-                <div className={cn(
-                  "px-2 py-0.5 font-mono-tactical text-[10px] tracking-wider",
-                  getDangerColor(mission.dangerLevel)
-                )}>
-                  {mission.dangerLevel} THREAT
-                </div>
-              </div>
-              <span className="font-mono-tactical text-sm text-primary tracking-wider">
-                [ {mission.codename} ]
-              </span>
-              <h2 className="font-orbitron text-2xl font-bold text-foreground mt-1">
-                {mission.name}
-              </h2>
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-card border border-border rounded-lg animate-scale-in">
+        {/* Header Image */}
+        <div className="relative h-48 md:h-64">
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ 
+              backgroundImage: `url(${mission.imageUrl})`,
+              backgroundColor: 'hsl(var(--muted))'
+            }}
+          />
+          <div className="absolute inset-0 image-overlay" />
+          
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-sm border border-border text-foreground hover:bg-background transition-colors"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          
+          {/* Danger badge */}
+          <div className="absolute top-4 left-4">
+            <div className={cn(
+              "px-3 py-1.5 rounded text-xs font-bold tracking-wider text-black",
+              getDangerClass(mission.dangerLevel)
+            )}>
+              {mission.dangerLevel} RISK
             </div>
+          </div>
+          
+          {/* Title overlay */}
+          <div className="absolute bottom-4 left-4 right-4">
+            <h2 className="font-orbitron text-2xl md:text-3xl font-bold text-foreground mb-1">
+              {mission.name}
+            </h2>
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
+              <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              {mission.location} • {mission.city}, {mission.state}
+            </p>
           </div>
         </div>
         
         {/* Content */}
         <div className="p-6 space-y-6">
-          {/* Quick stats */}
+          {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-3 border border-primary/20 bg-primary/5">
-              <span className="font-mono-tactical text-[10px] text-muted-foreground">LOCATION</span>
-              <p className="font-rajdhani text-sm text-foreground mt-1">{mission.city}, {mission.state}</p>
+            <div className="bg-muted/50 rounded-lg p-3 text-center">
+              <div className="text-xs text-muted-foreground mb-1">Price</div>
+              <div className="font-orbitron text-lg text-primary font-bold">{mission.priceEstimate}</div>
             </div>
-            <div className="p-3 border border-primary/20 bg-primary/5">
-              <span className="font-mono-tactical text-[10px] text-muted-foreground">DISTANCE</span>
-              <p className="font-rajdhani text-sm text-foreground mt-1">{mission.distanceFromOKC}h from OKC</p>
+            <div className="bg-muted/50 rounded-lg p-3 text-center">
+              <div className="text-xs text-muted-foreground mb-1">Duration</div>
+              <div className="text-sm font-medium text-foreground">{mission.duration}</div>
             </div>
-            <div className="p-3 border border-primary/20 bg-primary/5">
-              <span className="font-mono-tactical text-[10px] text-muted-foreground">DURATION</span>
-              <p className="font-rajdhani text-sm text-foreground mt-1">{mission.duration}</p>
+            <div className="bg-muted/50 rounded-lg p-3 text-center">
+              <div className="text-xs text-muted-foreground mb-1">Group Size</div>
+              <div className="text-sm font-medium text-foreground">{mission.groupSize}</div>
             </div>
-            <div className="p-3 border border-primary/20 bg-primary/5">
-              <span className="font-mono-tactical text-[10px] text-muted-foreground">SQUAD SIZE</span>
-              <p className="font-rajdhani text-sm text-foreground mt-1">{mission.groupSize} bros</p>
+            <div className="bg-muted/50 rounded-lg p-3 text-center">
+              <div className="text-xs text-muted-foreground mb-1">Distance</div>
+              <div className="text-sm font-medium text-foreground">{mission.distanceFromOKC}h from OKC</div>
             </div>
           </div>
           
           {/* Description */}
           <div>
-            <h3 className="font-orbitron text-sm font-bold text-primary mb-2 flex items-center gap-2">
-              <span className="w-4 h-px bg-primary" />
-              MISSION INTEL
-            </h3>
-            <p className="font-rajdhani text-sm text-muted-foreground leading-relaxed">
+            <h3 className="text-sm font-semibold text-foreground mb-2">Mission Brief</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {mission.description}
             </p>
           </div>
           
-          {/* Bro Code Analysis */}
-          <div className="p-4 border border-tactical-orange/30 bg-tactical-orange/5">
-            <h3 className="font-orbitron text-sm font-bold text-tactical-orange mb-2 flex items-center gap-2">
-              <span>🔥</span>
-              BRO CODE ANALYSIS
-            </h3>
-            <p className="font-rajdhani text-sm text-foreground/80 leading-relaxed italic">
+          {/* Bro Analysis */}
+          <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">🔥</span>
+              <h3 className="text-sm font-semibold text-primary">Bro Rating: {mission.broRating}/5</h3>
+            </div>
+            <p className="text-sm text-muted-foreground italic">
               "{mission.broCodeAnalysis}"
             </p>
-          </div>
-          
-          {/* Rating bars */}
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-mono-tactical text-xs text-muted-foreground">COST FACTOR</span>
-                <span className="font-orbitron text-sm text-primary">{mission.priceEstimate}</span>
-              </div>
-              <div className="h-2 bg-primary/10 flex gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "flex-1 h-full transition-all",
-                      i < mission.priceRange ? "bg-primary" : "bg-transparent"
-                    )}
-                  />
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-mono-tactical text-xs text-muted-foreground">BRO RATING</span>
-                <div className="flex gap-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className={cn("text-sm", i < mission.broRating ? "opacity-100" : "opacity-30")}>
-                      🔥
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="h-2 bg-tactical-orange/10 flex gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "flex-1 h-full transition-all",
-                      i < mission.broRating ? "bg-tactical-orange" : "bg-transparent"
-                    )}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
           
           {/* Tags */}
@@ -155,29 +117,23 @@ const MissionDetail = ({ mission, onClose }: MissionDetailProps) => {
             {mission.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-1 font-mono-tactical text-[10px] text-muted-foreground border border-primary/20 hover:border-primary/50 transition-colors"
+                className="px-2 py-1 text-xs bg-muted text-muted-foreground rounded"
               >
-                #{tag.toUpperCase()}
+                {tag}
               </span>
             ))}
           </div>
           
-          {/* Action button */}
+          {/* CTA */}
           <a
             href={mission.bookingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="block w-full py-4 bg-primary text-primary-foreground font-orbitron text-center text-sm tracking-wider hover:bg-primary/90 transition-colors"
+            className="block w-full py-3 bg-primary text-primary-foreground font-orbitron font-bold text-center rounded-lg hover:bg-primary/90 transition-colors"
           >
-            INITIATE BOOKING SEQUENCE →
+            Book Mission
           </a>
         </div>
-        
-        {/* Corner decorations */}
-        <div className="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 border-primary" />
-        <div className="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 border-primary" />
-        <div className="absolute bottom-0 left-0 w-6 h-6 border-l-2 border-b-2 border-primary" />
-        <div className="absolute bottom-0 right-0 w-6 h-6 border-r-2 border-b-2 border-primary" />
       </div>
     </div>
   );
