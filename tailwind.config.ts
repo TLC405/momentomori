@@ -118,8 +118,16 @@ export default {
           "100%": { transform: "rotate(360deg)" },
         },
         "marker-pulse": {
-          "0%": { transform: "scale(1)", opacity: "0.8" },
-          "100%": { transform: "scale(2)", opacity: "0" },
+          "0%": { transform: "scale(1)", opacity: "0.6" },
+          "100%": { transform: "scale(2.5)", opacity: "0" },
+        },
+        "connection-draw": {
+          "0%": { strokeDashoffset: "100%" },
+          "100%": { strokeDashoffset: "0%" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { filter: "drop-shadow(0 0 5px currentColor)" },
+          "50%": { filter: "drop-shadow(0 0 15px currentColor)" },
         },
       },
       animation: {
@@ -129,8 +137,10 @@ export default {
         "fade-in-up": "fade-in-up 0.5s ease-out forwards",
         "scale-in": "scale-in 0.3s ease-out forwards",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
-        "radar-sweep": "radar-sweep 6s linear infinite",
+        "radar-sweep": "radar-sweep 8s linear infinite",
         "marker-pulse": "marker-pulse 2s ease-out infinite",
+        "connection-draw": "connection-draw 1s ease-out forwards",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
       },
     },
   },
