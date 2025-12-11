@@ -20,8 +20,7 @@ export default {
     extend: {
       fontFamily: {
         orbitron: ['Orbitron', 'sans-serif'],
-        rajdhani: ['Rajdhani', 'sans-serif'],
-        'mono-tactical': ['Share Tech Mono', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -68,14 +67,20 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         tactical: {
-          green: "hsl(var(--tactical-green))",
-          "green-dim": "hsl(var(--tactical-green-dim))",
-          orange: "hsl(var(--tactical-orange))",
-          red: "hsl(var(--tactical-red))",
-          blue: "hsl(var(--tactical-blue))",
+          amber: "hsl(var(--tactical-amber))",
+          "amber-dim": "hsl(var(--tactical-amber-dim))",
+          crimson: "hsl(var(--tactical-crimson))",
+          olive: "hsl(var(--tactical-olive))",
+          steel: "hsl(var(--tactical-steel))",
           black: "hsl(var(--tactical-black))",
           dark: "hsl(var(--tactical-dark))",
           darker: "hsl(var(--tactical-darker))",
+        },
+        danger: {
+          low: "hsl(var(--danger-low))",
+          medium: "hsl(var(--danger-medium))",
+          high: "hsl(var(--danger-high))",
+          extreme: "hsl(var(--danger-extreme))",
         },
       },
       borderRadius: {
@@ -96,7 +101,7 @@ export default {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        "slide-up": {
+        "fade-in-up": {
           "0%": { opacity: "0", transform: "translateY(20px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
@@ -104,44 +109,28 @@ export default {
           "0%": { opacity: "0", transform: "scale(0.95)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
-        "glow-pulse": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "1", boxShadow: "0 0 20px hsl(var(--tactical-amber) / 0.5)" },
+          "50%": { opacity: "0.8", boxShadow: "0 0 40px hsl(var(--tactical-amber) / 0.8)" },
         },
         "radar-sweep": {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
         "marker-pulse": {
-          "0%": { transform: "scale(1)", opacity: "1" },
-          "100%": { transform: "scale(2.5)", opacity: "0" },
-        },
-        "flicker": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.8" },
-          "52%": { opacity: "1" },
-          "54%": { opacity: "0.9" },
+          "0%": { transform: "scale(1)", opacity: "0.8" },
+          "100%": { transform: "scale(2)", opacity: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.5s ease-out forwards",
-        "slide-up": "slide-up 0.6s ease-out forwards",
+        "fade-in": "fade-in 0.4s ease-out forwards",
+        "fade-in-up": "fade-in-up 0.5s ease-out forwards",
         "scale-in": "scale-in 0.3s ease-out forwards",
-        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
-        "radar-sweep": "radar-sweep 4s linear infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "radar-sweep": "radar-sweep 6s linear infinite",
         "marker-pulse": "marker-pulse 2s ease-out infinite",
-        "flicker": "flicker 3s ease-in-out infinite",
-      },
-      backgroundImage: {
-        "grid-tactical": `
-          linear-gradient(hsl(var(--tactical-green) / 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, hsl(var(--tactical-green) / 0.03) 1px, transparent 1px)
-        `,
-      },
-      backgroundSize: {
-        "grid-tactical": "50px 50px",
       },
     },
   },

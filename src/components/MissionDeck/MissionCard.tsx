@@ -7,12 +7,12 @@ interface MissionCardProps {
   index: number;
 }
 
-const getDangerColor = (level: Mission["dangerLevel"]) => {
+const getDangerClass = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return "text-tactical-green";
-    case "MEDIUM": return "text-yellow-500";
-    case "HIGH": return "text-tactical-orange";
-    case "EXTREME": return "text-tactical-red";
+    case "LOW": return "danger-bg-low";
+    case "MEDIUM": return "danger-bg-medium";
+    case "HIGH": return "danger-bg-high";
+    case "EXTREME": return "danger-bg-extreme";
   }
 };
 
@@ -21,125 +21,82 @@ const MissionCard = ({ mission, onClick, index }: MissionCardProps) => {
     <button
       onClick={onClick}
       className={cn(
-        "group relative w-full text-left overflow-hidden transition-all duration-300",
-        "border border-primary/20 hover:border-primary/60",
-        "bg-gradient-to-br from-card to-background",
-        "hover:translate-y-[-2px] hover:shadow-[0_0_30px_hsl(var(--tactical-green)/0.2)]",
-        "animate-slide-up"
+        "group relative w-full aspect-[4/5] overflow-hidden rounded-lg",
+        "bg-card border border-border/50",
+        "transition-all duration-500 ease-out",
+        "hover:border-primary/50 hover:scale-[1.02]",
+        "hover:shadow-[0_20px_60px_-15px_hsl(var(--tactical-amber)/0.4)]",
+        "animate-fade-in-up"
       )}
-      style={{ animationDelay: `${index * 50}ms` }}
+      style={{ animationDelay: `${index * 80}ms`, animationFillMode: 'both' }}
     >
-      {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+        style={{ 
+          backgroundImage: `url(${mission.imageUrl})`,
+          backgroundColor: 'hsl(var(--muted))'
+        }}
+      />
       
-      {/* Content */}
-      <div className="p-4">
-        {/* Header row */}
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <span className="font-mono-tactical text-[10px] text-muted-foreground tracking-wider">
-              [ {mission.codename} ]
-            </span>
-            <h3 className="font-orbitron text-sm font-bold text-foreground group-hover:text-primary transition-colors">
-              {mission.name}
-            </h3>
-          </div>
-          
-          {/* Danger indicator */}
-          <div className={cn("flex items-center gap-1", getDangerColor(mission.dangerLevel))}>
-            <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-            <span className="font-mono-tactical text-[10px]">
-              {mission.dangerLevel}
-            </span>
-          </div>
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 image-overlay" />
+      
+      {/* Top Badge - Danger Level */}
+      <div className="absolute top-3 right-3 z-10">
+        <div className={cn(
+          "px-2 py-1 rounded text-[10px] font-bold tracking-wider text-black",
+          getDangerClass(mission.dangerLevel)
+        )}>
+          {mission.dangerLevel}
         </div>
-        
+      </div>
+      
+      {/* Content Overlay */}
+      <div className="absolute inset-x-0 bottom-0 p-4 z-10">
         {/* Location */}
-        <div className="flex items-center gap-2 mb-3">
-          <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-            <circle cx="12" cy="10" r="3" />
+        <div className="flex items-center gap-1.5 mb-2">
+          <svg className="w-3 h-3 text-primary" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>
-          <span className="font-rajdhani text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {mission.city}, {mission.state}
           </span>
-          <span className="font-mono-tactical text-[10px] text-primary">
+          <span className="text-xs text-primary font-medium ml-auto">
             {mission.distanceFromOKC}h
           </span>
         </div>
         
-        {/* Stats row */}
-        <div className="flex items-center gap-4 mb-3">
+        {/* Title */}
+        <h3 className="font-orbitron text-lg font-bold text-foreground leading-tight mb-2 group-hover:text-primary transition-colors">
+          {mission.name}
+        </h3>
+        
+        {/* Stats Row */}
+        <div className="flex items-center gap-3 text-xs">
           {/* Price */}
-          <div className="flex items-center gap-1">
-            <span className="font-mono-tactical text-[10px] text-muted-foreground">$</span>
-            <div className="flex gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "w-1 h-2",
-                    i < mission.priceRange ? "bg-primary" : "bg-primary/20"
-                  )}
-                />
-              ))}
-            </div>
+          <span className="text-primary font-semibold">{mission.priceEstimate}</span>
+          
+          {/* Group Size */}
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg>
+            <span>{mission.groupSize}</span>
           </div>
           
           {/* Bro Rating */}
-          <div className="flex items-center gap-1">
-            <span className="font-mono-tactical text-[10px] text-muted-foreground">BRO</span>
-            <div className="flex gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span
-                  key={i}
-                  className={cn(
-                    "text-[10px]",
-                    i < mission.broRating ? "opacity-100" : "opacity-30"
-                  )}
-                >
-                  🔥
-                </span>
-              ))}
-            </div>
+          <div className="flex items-center gap-0.5 ml-auto">
+            {Array.from({ length: mission.broRating }).map((_, i) => (
+              <span key={i} className="text-xs">🔥</span>
+            ))}
           </div>
-          
-          {/* Group size */}
-          <div className="flex items-center gap-1">
-            <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            <span className="font-mono-tactical text-[10px] text-muted-foreground">
-              {mission.groupSize}
-            </span>
-          </div>
-        </div>
-        
-        {/* Description preview */}
-        <p className="font-rajdhani text-xs text-muted-foreground line-clamp-2">
-          {mission.description}
-        </p>
-        
-        {/* Price estimate */}
-        <div className="mt-3 pt-3 border-t border-primary/10 flex items-center justify-between">
-          <span className="font-mono-tactical text-[10px] text-muted-foreground">
-            EST. COST
-          </span>
-          <span className="font-orbitron text-sm text-primary">
-            {mission.priceEstimate}
-          </span>
         </div>
       </div>
       
-      {/* Corner accents */}
-      <div className="absolute top-0 left-0 w-3 h-3 border-l border-t border-primary/30 group-hover:border-primary transition-colors" />
-      <div className="absolute bottom-0 right-0 w-3 h-3 border-r border-b border-primary/30 group-hover:border-primary transition-colors" />
-      
-      {/* Hover reveal line */}
-      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+      {/* Hover Border Effect */}
+      <div className="absolute inset-0 rounded-lg border-2 border-primary/0 group-hover:border-primary/30 transition-colors duration-300 pointer-events-none" />
     </button>
   );
 };

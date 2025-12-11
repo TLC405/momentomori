@@ -17,31 +17,8 @@ const MissionDeck = ({ selectedRealm }: MissionDeckProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col">
-            <span className="font-mono-tactical text-xs text-muted-foreground tracking-widest">
-              {selectedRealm ? `REALM: ${selectedRealm.codename}` : "ALL OPERATIONS"}
-            </span>
-            <h2 className="font-orbitron text-2xl font-bold text-primary tactical-glow">
-              MISSION DECK
-            </h2>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <span className="font-mono-tactical text-sm text-muted-foreground">
-            AVAILABLE:
-          </span>
-          <span className="font-orbitron text-xl text-primary">
-            {displayedMissions.length}
-          </span>
-        </div>
-      </div>
-      
       {/* Mission Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {displayedMissions.map((mission, index) => (
           <MissionCard
             key={mission.id}
@@ -54,12 +31,12 @@ const MissionDeck = ({ selectedRealm }: MissionDeckProps) => {
       
       {/* Empty state */}
       {displayedMissions.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 border border-primary/20">
-          <span className="font-mono-tactical text-sm text-muted-foreground mb-2">
-            NO MISSIONS FOUND
+        <div className="flex flex-col items-center justify-center py-20 border border-border rounded-lg bg-card/50">
+          <span className="text-sm text-muted-foreground mb-2">
+            No missions found
           </span>
-          <span className="font-rajdhani text-sm text-muted-foreground">
-            Select a different realm or clear filters
+          <span className="text-xs text-muted-foreground">
+            Select a different realm
           </span>
         </div>
       )}

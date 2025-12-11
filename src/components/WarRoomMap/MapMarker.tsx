@@ -13,10 +13,10 @@ interface MapMarkerProps {
 
 const getDangerColor = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return "#00ff00";
-    case "MEDIUM": return "#ffff00";
-    case "HIGH": return "#ff6b35";
-    case "EXTREME": return "#ff0000";
+    case "LOW": return "hsl(142, 70%, 45%)";
+    case "MEDIUM": return "hsl(48, 96%, 53%)";
+    case "HIGH": return "hsl(25, 95%, 53%)";
+    case "EXTREME": return "hsl(0, 72%, 51%)";
   }
 };
 
@@ -33,70 +33,61 @@ const MapMarker = ({ mission, x, y, isHovered, onHover, onLeave, onClick }: MapM
     >
       {/* Pulse ring */}
       <circle
-        r={isHovered ? 20 : 12}
+        r={isHovered ? 16 : 10}
         fill="none"
         stroke={color}
         strokeWidth="1"
-        opacity={0.3}
+        opacity={0.4}
         className="animate-marker-pulse"
       />
       
       {/* Outer ring */}
       <circle
-        r={isHovered ? 10 : 6}
+        r={isHovered ? 8 : 5}
         fill="none"
         stroke={color}
         strokeWidth="2"
-        opacity={0.8}
+        opacity={0.9}
       />
       
       {/* Inner dot */}
       <circle
-        r={isHovered ? 5 : 3}
+        r={isHovered ? 4 : 2.5}
         fill={color}
         className={cn(isHovered && "animate-pulse")}
       />
       
       {/* Hover tooltip */}
       {isHovered && (
-        <g transform="translate(15, -30)">
+        <g transform="translate(12, -25)">
           <rect
             x="0"
             y="0"
-            width="160"
-            height="50"
-            fill="hsl(0 0% 6%)"
+            width="140"
+            height="40"
+            fill="hsl(0 0% 8%)"
             stroke={color}
             strokeWidth="1"
-            rx="2"
+            rx="4"
           />
           <text
-            x="10"
-            y="18"
-            fill={color}
+            x="8"
+            y="16"
+            fill="hsl(38 92% 50%)"
             fontSize="10"
-            fontFamily="'Share Tech Mono', monospace"
-          >
-            [{mission.codename}]
-          </text>
-          <text
-            x="10"
-            y="32"
-            fill="hsl(120 100% 50%)"
-            fontSize="11"
             fontFamily="'Orbitron', sans-serif"
-            fontWeight="bold"
+            fontWeight="600"
           >
-            {mission.name}
+            {mission.name.length > 18 ? mission.name.slice(0, 16) + '...' : mission.name}
           </text>
           <text
-            x="10"
-            y="44"
-            fill="hsl(120 40% 60%)"
+            x="8"
+            y="30"
+            fill="hsl(0 0% 60%)"
             fontSize="9"
-            fontFamily="'Rajdhani', sans-serif"
+            fontFamily="'Inter', sans-serif"
           >
-            {mission.city}, {mission.state} • {mission.distanceFromOKC}h
+            {mission.city} • {mission.priceEstimate}
           </text>
         </g>
       )}
