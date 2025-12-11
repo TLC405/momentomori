@@ -1,6 +1,7 @@
 import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { cn } from "@/lib/utils";
+import { MapPin, Users, Clock } from "lucide-react";
 
 interface MissionCardProps {
   mission: Mission;
@@ -10,17 +11,18 @@ interface MissionCardProps {
   index: number;
 }
 
-const getDangerClass = (level: Mission["dangerLevel"]) => {
+const getDangerConfig = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return "danger-bg-low";
-    case "MEDIUM": return "danger-bg-medium";
-    case "HIGH": return "danger-bg-high";
-    case "EXTREME": return "danger-bg-extreme";
+    case "LOW": return { class: "danger-bg-low", icon: "🏕️" };
+    case "MEDIUM": return { class: "danger-bg-medium", icon: "⚔️" };
+    case "HIGH": return { class: "danger-bg-high", icon: "🔥" };
+    case "EXTREME": return { class: "danger-bg-extreme", icon: "💀" };
   }
 };
 
 const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index }: MissionCardProps) => {
   const imageUrl = getMissionImage(mission.id);
+  const dangerConfig = getDangerConfig(mission.dangerLevel);
 
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -30,17 +32,17 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
   return (
     <div
       className={cn(
-        "group relative w-full aspect-[4/5] overflow-hidden rounded-xl",
-        "bg-card border border-border/30",
-        "transition-all duration-500 ease-out",
-        "hover:border-primary/50 hover:scale-[1.02]",
-        "hover:shadow-[0_20px_60px_-15px_hsl(var(--tactical-amber)/0.4)]",
-        "animate-fade-in-up cursor-pointer"
+        "group relative w-full aspect-[4/5] overflow-hidden rounded-2xl",
+        "bg-gradient-to-br from-card via-card to-card/90 border-2 border-border/40",
+        "transition-all duration-500 ease-out cursor-pointer",
+        "hover:border-primary/60 hover:scale-[1.02]",
+        "hover:shadow-[0_30px_80px_-20px_hsl(var(--tactical-amber)/0.4)]",
+        "animate-fade-in-up"
       )}
-      style={{ animationDelay: `${index * 60}ms`, animationFillMode: 'both' }}
+      style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
       onClick={onClick}
     >
-      {/* Background Image */}
+      {/* Background Image with parallax effect */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
         style={{ 
@@ -49,16 +51,21 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
         }}
       />
       
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-70 transition-opacity" />
+      {/* Multi-layer Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-85 group-hover:opacity-75 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* Top decorative line */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       
       {/* Top Badges */}
       <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
-        {/* Danger Level */}
+        {/* Danger Level - with icon */}
         <div className={cn(
-          "px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider text-black uppercase",
-          getDangerClass(mission.dangerLevel)
+          "px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wider text-black uppercase flex items-center gap-1.5 shadow-lg",
+          dangerConfig.class
         )}>
+          <span className="text-sm">{dangerConfig.icon}</span>
           {mission.dangerLevel}
         </div>
         
@@ -67,10 +74,10 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
           <button
             onClick={handleAddClick}
             className={cn(
-              "w-8 h-8 flex items-center justify-center rounded-full transition-all",
+              "w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300 shadow-lg border backdrop-blur-sm",
               isInItinerary 
-                ? "bg-primary text-primary-foreground" 
-                : "bg-black/50 text-white/70 hover:bg-primary hover:text-primary-foreground"
+                ? "bg-primary text-primary-foreground border-primary shadow-[0_0_20px_hsl(var(--tactical-amber)/0.5)]" 
+                : "bg-black/60 text-white/80 border-white/10 hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_0_15px_hsl(var(--tactical-amber)/0.3)]"
             )}
           >
             {isInItinerary ? (
@@ -88,53 +95,58 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
       
       {/* Content Overlay */}
       <div className="absolute inset-x-0 bottom-0 p-4 z-10">
+        {/* Codename badge */}
+        <div className="inline-block px-2.5 py-1 mb-2 text-[9px] font-bold bg-primary/30 text-primary rounded-md border border-primary/40 tracking-wider">
+          {mission.codename}
+        </div>
+        
         {/* Location */}
         <div className="flex items-center gap-1.5 mb-2">
-          <svg className="w-3 h-3 text-primary" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-          </svg>
+          <MapPin className="w-3 h-3 text-primary" />
           <span className="text-xs text-white/70">
             {mission.city}, {mission.state}
           </span>
-          <span className="text-xs text-primary font-medium ml-auto">
+          <span className="text-xs text-primary/80 font-semibold ml-auto">
             {mission.distanceFromOKC}h
           </span>
         </div>
         
         {/* Title */}
-        <h3 className="font-orbitron text-base sm:text-lg font-bold text-white leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+        <h3 className="font-orbitron text-base sm:text-lg font-bold text-white leading-tight mb-3 group-hover:text-primary transition-colors duration-300 line-clamp-2">
           {mission.name}
         </h3>
         
-        {/* Stats Row */}
-        <div className="flex items-center gap-3 text-xs">
+        {/* Stats Row - Enhanced */}
+        <div className="flex items-center gap-3 text-xs pt-3 border-t border-white/10">
           {/* Price */}
-          <span className="text-primary font-semibold">{mission.priceEstimate}</span>
+          <span className="text-primary font-bold text-sm">{mission.priceEstimate}</span>
           
-          {/* Group Size */}
-          <div className="flex items-center gap-1 text-white/60">
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-            </svg>
-            <span>{mission.groupSize}</span>
+          {/* Duration */}
+          <div className="flex items-center gap-1 text-white/50">
+            <Clock className="w-3 h-3" />
+            <span>{mission.duration}</span>
           </div>
           
           {/* Bro Rating */}
           <div className="flex items-center gap-0.5 ml-auto">
             {Array.from({ length: mission.broRating }).map((_, i) => (
-              <span key={i} className="text-[10px]">🔥</span>
+              <span key={i} className="text-xs">🔥</span>
             ))}
           </div>
         </div>
       </div>
       
-      {/* Hover Border Effect */}
-      <div className="absolute inset-0 rounded-xl border-2 border-primary/0 group-hover:border-primary/40 transition-colors duration-300 pointer-events-none" />
+      {/* Hover Border Glow Effect */}
+      <div className="absolute inset-0 rounded-2xl border-2 border-primary/0 group-hover:border-primary/50 transition-all duration-500 pointer-events-none" />
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_30px_hsl(var(--tactical-amber)/0.1)]" />
       
-      {/* Itinerary Indicator */}
+      {/* Itinerary Indicator Flag */}
       {isInItinerary && (
-        <div className="absolute top-0 left-0 w-0 h-0 border-l-[40px] border-l-primary border-b-[40px] border-b-transparent" />
+        <div className="absolute top-0 left-0 w-0 h-0 border-l-[45px] border-l-primary border-b-[45px] border-b-transparent shadow-lg">
+          <span className="absolute -left-[38px] top-[10px] text-primary-foreground text-[10px] font-bold rotate-[-45deg]">
+            ✓
+          </span>
+        </div>
       )}
     </div>
   );
