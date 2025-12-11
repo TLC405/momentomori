@@ -6,9 +6,11 @@ interface MapMarkerProps {
   x: number;
   y: number;
   isHovered: boolean;
+  isInItinerary?: boolean;
   onHover: () => void;
   onLeave: () => void;
   onClick: () => void;
+  onAddToItinerary?: () => void;
 }
 
 const getDangerColor = (level: Mission["dangerLevel"]) => {
@@ -20,7 +22,7 @@ const getDangerColor = (level: Mission["dangerLevel"]) => {
   }
 };
 
-const MapMarker = ({ mission, x, y, isHovered, onHover, onLeave, onClick }: MapMarkerProps) => {
+const MapMarker = ({ mission, x, y, isHovered, isInItinerary, onHover, onLeave, onClick }: MapMarkerProps) => {
   const color = getDangerColor(mission.dangerLevel);
   
   return (
