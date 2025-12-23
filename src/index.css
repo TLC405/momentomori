@@ -302,6 +302,247 @@
       0 0 20px currentColor,
       0 0 30px currentColor;
   }
+  
+  /* ============================================
+     ULTRA-PREMIUM FANTASY ANIMATIONS
+     Major Payne Approved! 
+     "Pain is weakness leaving the body!"
+     ============================================ */
+  
+  /* Smoke rise - for volcanoes, fires, danger zones */
+  @keyframes smoke-rise {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-15px) scale(1.2);
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateY(-30px) scale(1.5);
+      opacity: 0;
+    }
+  }
+  
+  .animate-smoke-rise {
+    animation: smoke-rise 3s ease-out infinite;
+  }
+  
+  /* Flag wave - for itinerary markers, banners */
+  @keyframes flag-wave {
+    0%, 100% {
+      transform: skewX(0deg) scaleX(1);
+    }
+    25% {
+      transform: skewX(-3deg) scaleX(0.95);
+    }
+    75% {
+      transform: skewX(3deg) scaleX(1.05);
+    }
+  }
+  
+  .animate-flag-wave {
+    animation: flag-wave 1.5s ease-in-out infinite;
+    transform-origin: left center;
+  }
+  
+  /* Water ripple - for lakes, rivers */
+  @keyframes water-ripple {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  
+  .animate-water-ripple {
+    animation: water-ripple 3s ease-out infinite;
+  }
+  
+  /* Firefly float - ambient magical particles */
+  @keyframes firefly-float {
+    0%, 100% {
+      transform: translate(0, 0);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translate(5px, -8px);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translate(-3px, -12px);
+      opacity: 0.5;
+    }
+    75% {
+      transform: translate(-6px, -5px);
+      opacity: 0.9;
+    }
+  }
+  
+  .animate-firefly {
+    animation: firefly-float 4s ease-in-out infinite;
+  }
+  
+  /* Storm flash - lightning effects */
+  @keyframes storm-flash {
+    0%, 90%, 100% {
+      opacity: 0;
+    }
+    92%, 94% {
+      opacity: 1;
+    }
+    93%, 95% {
+      opacity: 0;
+    }
+    96% {
+      opacity: 0.8;
+    }
+  }
+  
+  .animate-storm-flash {
+    animation: storm-flash 5s ease-in-out infinite;
+  }
+  
+  /* Compass spin - for coordinate display */
+  @keyframes compass-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-compass-spin {
+    animation: compass-spin 20s linear infinite;
+  }
+  
+  /* Path draw - for journey lines */
+  @keyframes path-draw {
+    from {
+      stroke-dashoffset: 1000;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  
+  .animate-path-draw {
+    animation: path-draw 2s ease-out forwards;
+  }
+  
+  /* Scroll unroll - for tooltips */
+  @keyframes scroll-unroll {
+    0% {
+      transform: scaleY(0) translateY(-20px);
+      opacity: 0;
+    }
+    100% {
+      transform: scaleY(1) translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-scroll-unroll {
+    animation: scroll-unroll 0.3s ease-out forwards;
+    transform-origin: top center;
+  }
+  
+  /* Ember float - fire particles */
+  @keyframes ember-float {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-30px) rotate(180deg);
+      opacity: 0;
+    }
+  }
+  
+  .animate-ember {
+    animation: ember-float 1.5s ease-out infinite;
+  }
+  
+  /* Mist drift - fog/atmosphere */
+  @keyframes mist-drift {
+    0%, 100% {
+      transform: translateX(0);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translateX(20px);
+      opacity: 0.5;
+    }
+  }
+  
+  .animate-mist {
+    animation: mist-drift 8s ease-in-out infinite;
+  }
+  
+  /* Beacon pulse - for HQ and important markers */
+  @keyframes beacon-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--tactical-amber) / 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 15px hsl(var(--tactical-amber) / 0);
+    }
+  }
+  
+  .animate-beacon {
+    animation: beacon-pulse 2s ease-in-out infinite;
+  }
+  
+  /* Danger throb - for extreme danger markers */
+  @keyframes danger-throb {
+    0%, 100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(1.05);
+      filter: brightness(1.3);
+    }
+  }
+  
+  .animate-danger-throb {
+    animation: danger-throb 0.8s ease-in-out infinite;
+  }
+  
+  /* War drum - subtle background pulse */
+  @keyframes war-drum {
+    0%, 100% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
+  .animate-war-drum {
+    animation: war-drum 1s ease-in-out infinite;
+  }
+  
+  /* Radar ping - for location markers */
+  @keyframes radar-ping {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    75%, 100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+  
+  .animate-radar-ping {
+    animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
 }
 
 /* Selection styling */
