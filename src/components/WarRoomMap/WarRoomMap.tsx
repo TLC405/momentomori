@@ -371,54 +371,185 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
             </text>
           </g>
           
-          {/* Major cities */}
+          {/* ULTRA-PREMIUM City Markers - "A city ain't just a DOT, soldier!" */}
           <g id="cities">
-            {fantasyCities.map(city => {
+            {fantasyCities.map((city, index) => {
               const pos = projectCoordinates(city.lat, city.lng);
-              const size = city.importance === "major" ? 5 : city.importance === "secondary" ? 4 : 3;
-              const opacity = city.importance === "major" ? 0.7 : city.importance === "secondary" ? 0.5 : 0.4;
+              const isMajor = city.importance === "major";
+              const isSecondary = city.importance === "secondary";
+              const size = isMajor ? 8 : isSecondary ? 6 : 4;
+              const glowSize = isMajor ? 16 : isSecondary ? 12 : 8;
               
               return (
-                <g key={city.name} opacity={opacity}>
-                  {/* City glow */}
+                <g key={city.name} className="group" style={{ cursor: 'pointer' }}>
+                  {/* Animated outer glow pulse */}
                   <circle 
                     cx={pos.x} 
                     cy={pos.y} 
-                    r={size + 2} 
-                    fill="hsl(38, 50%, 40%)"
-                    opacity="0.15"
+                    r={glowSize}
+                    fill="none"
+                    stroke={isMajor ? "hsl(38, 80%, 50%)" : "hsl(38, 60%, 40%)"}
+                    strokeWidth="1"
+                    opacity="0.2"
+                    style={{ 
+                      animation: `marker-pulse ${2 + index * 0.3}s ease-out infinite`,
+                      animationDelay: `${index * 0.1}s`
+                    }}
                   />
-                  {/* City marker */}
+                  
+                  {/* Secondary glow ring for major cities */}
+                  {isMajor && (
+                    <circle 
+                      cx={pos.x} 
+                      cy={pos.y} 
+                      r={glowSize + 8}
+                      fill="none"
+                      stroke="hsl(38, 70%, 45%)"
+                      strokeWidth="0.5"
+                      opacity="0.1"
+                      style={{ animation: `marker-pulse 3s ease-out infinite 0.5s` }}
+                    />
+                  )}
+                  
+                  {/* City foundation glow */}
+                  <ellipse
+                    cx={pos.x}
+                    cy={pos.y + size * 0.8}
+                    rx={size * 1.5}
+                    ry={size * 0.4}
+                    fill={isMajor ? "hsl(38, 70%, 45%)" : "hsl(38, 50%, 35%)"}
+                    opacity="0.15"
+                    style={{ filter: "blur(2px)" }}
+                  />
+                  
+                  {/* Decorative octagon/shield background for major cities */}
+                  {isMajor && (
+                    <polygon
+                      points={`
+                        ${pos.x} ${pos.y - size * 1.8}
+                        ${pos.x + size * 1.3} ${pos.y - size * 0.9}
+                        ${pos.x + size * 1.3} ${pos.y + size * 0.9}
+                        ${pos.x} ${pos.y + size * 1.8}
+                        ${pos.x - size * 1.3} ${pos.y + size * 0.9}
+                        ${pos.x - size * 1.3} ${pos.y - size * 0.9}
+                      `}
+                      fill="hsl(30, 25%, 12%)"
+                      stroke="hsl(38, 60%, 40%)"
+                      strokeWidth="1.5"
+                      opacity="0.9"
+                    />
+                  )}
+                  
+                  {/* Diamond shape for secondary cities */}
+                  {isSecondary && (
+                    <polygon
+                      points={`${pos.x} ${pos.y - size * 1.5} ${pos.x + size} ${pos.y} ${pos.x} ${pos.y + size * 1.5} ${pos.x - size} ${pos.y}`}
+                      fill="hsl(30, 20%, 10%)"
+                      stroke="hsl(38, 50%, 35%)"
+                      strokeWidth="1"
+                      opacity="0.8"
+                    />
+                  )}
+                  
+                  {/* Inner city marker circle */}
                   <circle 
                     cx={pos.x} 
                     cy={pos.y} 
                     r={size} 
-                    fill="hsl(35, 30%, 20%)"
-                    stroke="hsl(38, 60%, 45%)"
-                    strokeWidth="1"
+                    fill={isMajor ? "hsl(30, 30%, 15%)" : "hsl(30, 25%, 12%)"}
+                    stroke={isMajor ? "hsl(38, 80%, 55%)" : isSecondary ? "hsl(38, 60%, 45%)" : "hsl(38, 50%, 38%)"}
+                    strokeWidth={isMajor ? 2 : 1.5}
                   />
+                  
+                  {/* City inner glow */}
+                  <circle 
+                    cx={pos.x} 
+                    cy={pos.y} 
+                    r={size * 0.6} 
+                    fill={isMajor ? "hsl(38, 70%, 25%)" : "hsl(38, 50%, 20%)"}
+                    opacity="0.8"
+                  />
+                  
                   {/* City symbol */}
                   <text 
                     x={pos.x} 
-                    y={pos.y + 3} 
-                    fontSize="6" 
+                    y={pos.y + (isMajor ? 4 : 3)} 
+                    fontSize={isMajor ? 10 : isSecondary ? 8 : 6}
                     textAnchor="middle"
+                    style={{ filter: isMajor ? "drop-shadow(0 0 3px hsl(38, 80%, 50%))" : "none" }}
                   >
                     {city.symbol}
                   </text>
-                  {/* City name */}
-                  <text 
-                    x={pos.x} 
-                    y={pos.y - size - 5} 
-                    fill="hsl(38, 50%, 50%)" 
-                    fontSize={city.importance === "major" ? "9" : "7"} 
-                    fontFamily="'Inter', serif" 
-                    textAnchor="middle"
-                    fontWeight={city.importance === "major" ? "500" : "400"}
-                    fontStyle="italic"
-                  >
-                    {city.fantasyName}
-                  </text>
+                  
+                  {/* City name banner - premium parchment style */}
+                  <g transform={`translate(${pos.x}, ${pos.y - size - 8})`}>
+                    {/* Banner background for major cities */}
+                    {isMajor && (
+                      <>
+                        <rect
+                          x={-35}
+                          y={-8}
+                          width={70}
+                          height={14}
+                          fill="hsl(30, 20%, 10%)"
+                          stroke="hsl(38, 50%, 35%)"
+                          strokeWidth="0.5"
+                          rx="2"
+                          opacity="0.9"
+                        />
+                        {/* Banner decorative ends */}
+                        <path d="M -35 -8 L -40 -1 L -35 6" fill="none" stroke="hsl(38, 50%, 35%)" strokeWidth="0.5" />
+                        <path d="M 35 -8 L 40 -1 L 35 6" fill="none" stroke="hsl(38, 50%, 35%)" strokeWidth="0.5" />
+                      </>
+                    )}
+                    
+                    {/* City name text */}
+                    <text 
+                      y={isMajor ? 2 : 0}
+                      fill={isMajor ? "hsl(38, 85%, 60%)" : isSecondary ? "hsl(38, 60%, 50%)" : "hsl(38, 45%, 45%)"} 
+                      fontSize={isMajor ? 10 : isSecondary ? 8 : 6} 
+                      fontFamily="'Orbitron', sans-serif"
+                      textAnchor="middle"
+                      fontWeight={isMajor ? "700" : isSecondary ? "600" : "400"}
+                      letterSpacing={isMajor ? "1" : "0.5"}
+                      style={{ 
+                        filter: isMajor ? "drop-shadow(0 1px 2px hsl(0, 0%, 0%))" : "none"
+                      }}
+                    >
+                      {city.fantasyName.toUpperCase()}
+                    </text>
+                    
+                    {/* City title for major cities */}
+                    {isMajor && (
+                      <text 
+                        y={12}
+                        fill="hsl(38, 50%, 40%)" 
+                        fontSize="5" 
+                        fontFamily="'Inter', serif"
+                        textAnchor="middle"
+                        fontStyle="italic"
+                        letterSpacing="0.5"
+                      >
+                        {city.fantasyTitle}
+                      </text>
+                    )}
+                  </g>
+                  
+                  {/* Population indicator dots for major cities */}
+                  {isMajor && city.population === "metropolis" && (
+                    <g transform={`translate(${pos.x}, ${pos.y})`}>
+                      {[0, 72, 144, 216, 288].map((angle, i) => (
+                        <circle
+                          key={i}
+                          cx={Math.cos((angle * Math.PI) / 180) * (size + 4)}
+                          cy={Math.sin((angle * Math.PI) / 180) * (size + 4)}
+                          r="1.5"
+                          fill="hsl(38, 70%, 50%)"
+                          opacity="0.6"
+                        />
+                      ))}
+                    </g>
+                  )}
                 </g>
               );
             })}
