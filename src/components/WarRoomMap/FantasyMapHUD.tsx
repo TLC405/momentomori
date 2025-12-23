@@ -50,10 +50,10 @@ const FantasyMapHUD = ({ missionCount, hoveredCoords, selectedRealm }: FantasyMa
           <div className="bg-gradient-to-br from-card/98 via-card/95 to-card/90 backdrop-blur-md border-2 border-primary/40 rounded-lg p-5 shadow-[0_0_40px_hsl(var(--tactical-amber)/0.25),inset_0_1px_0_hsl(var(--tactical-amber)/0.1)]">
             {/* Title section */}
             <div className="flex items-center gap-4">
-              {/* Decorative emblem */}
+              {/* Skull emblem - Memento Mori */}
               <div className="relative">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center border border-primary/40 shadow-[0_0_20px_hsl(var(--tactical-amber)/0.3)]">
-                  <span className="text-2xl">⚔️</span>
+                  <span className="text-2xl">💀</span>
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-danger-extreme flex items-center justify-center border border-danger-extreme shadow-[0_0_10px_hsl(var(--danger-extreme)/0.5)]">
                   <span className="text-[10px] font-bold text-foreground">{missionCount}</span>
@@ -61,17 +61,19 @@ const FantasyMapHUD = ({ missionCount, hoveredCoords, selectedRealm }: FantasyMa
               </div>
               
               <div>
-                {/* Main title with shimmer */}
+                {/* Main title with shimmer - REMEMBER YOU MUST DIE */}
                 <div className="relative">
-                  <h2 className="font-orbitron text-xl font-black text-primary tracking-wider">
-                    WAR ROOM
+                  <h2 className="font-orbitron text-lg font-black text-primary tracking-wider leading-tight">
+                    REMEMBER YOU
+                    <br />
+                    <span className="text-danger-extreme">MUST DIE</span>
                   </h2>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-shimmer" />
                 </div>
                 
-                {/* Subtitle */}
-                <p className="text-xs text-primary/80 font-orbitron tracking-[0.2em] mt-0.5">
-                  TACTICAL COMMAND CENTER
+                {/* Subtitle - Latin */}
+                <p className="text-[10px] text-primary/70 font-orbitron tracking-[0.15em] mt-1 italic">
+                  MEMENTO MORI
                 </p>
                 
                 {/* Realm indicator */}
