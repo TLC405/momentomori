@@ -8,14 +8,16 @@ interface MissionDeckProps {
   selectedRealm: Realm | null;
   itineraryMissions?: Mission[];
   onAddToItinerary?: (mission: Mission) => void;
+  filteredMissions?: Mission[];
 }
 
-const MissionDeck = ({ selectedRealm, itineraryMissions = [], onAddToItinerary }: MissionDeckProps) => {
+const MissionDeck = ({ selectedRealm, itineraryMissions = [], onAddToItinerary, filteredMissions }: MissionDeckProps) => {
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   
-  const displayedMissions = selectedRealm 
+  // Use filtered missions if provided, otherwise fall back to realm filter
+  const displayedMissions = filteredMissions ?? (selectedRealm 
     ? getMissionsByRealm(selectedRealm.id)
-    : missions;
+    : missions);
 
   const isInItinerary = (missionId: string) => 
     itineraryMissions.some(m => m.id === missionId);
@@ -59,10 +61,10 @@ const MissionDeck = ({ selectedRealm, itineraryMissions = [], onAddToItinerary }
             <circle cx="12" cy="10" r="3" />
           </svg>
           <span className="text-sm text-muted-foreground mb-2">
-            No missions found
+            No quests match your filters
           </span>
           <span className="text-xs text-muted-foreground">
-            Select a different realm
+            Try adjusting your search or filters
           </span>
         </div>
       )}

@@ -6,6 +6,7 @@ export interface Realm {
   icon: string;
   color: string;
   missionCount: number;
+  isNew?: boolean;
 }
 
 export const realms: Realm[] = [
@@ -16,7 +17,7 @@ export const realms: Realm[] = [
     description: "Tanks, exotic cars, rally driving, heavy equipment mayhem",
     icon: "⚙️",
     color: "tactical-orange",
-    missionCount: 8,
+    missionCount: 5,
   },
   {
     id: "red-dirt-air-force",
@@ -25,7 +26,7 @@ export const realms: Realm[] = [
     description: "Helicopter hunts, skydiving, flight experiences",
     icon: "✈️",
     color: "tactical-blue",
-    missionCount: 6,
+    missionCount: 5,
   },
   {
     id: "armory",
@@ -34,7 +35,7 @@ export const realms: Realm[] = [
     description: "Full auto ranges, tactical shooting, explosive ordnance",
     icon: "💣",
     color: "tactical-red",
-    missionCount: 7,
+    missionCount: 8,
   },
   {
     id: "jurassic",
@@ -43,7 +44,7 @@ export const realms: Realm[] = [
     description: "Exotic animals, tiger safari, dangerous wildlife",
     icon: "🦖",
     color: "tactical-green",
-    missionCount: 4,
+    missionCount: 2,
   },
   {
     id: "storm-lords",
@@ -52,33 +53,53 @@ export const realms: Realm[] = [
     description: "Storm chasing tours, tornado alley adventures",
     icon: "⛈️",
     color: "tactical-blue",
-    missionCount: 3,
+    missionCount: 2,
   },
   {
     id: "nuclear-option",
     name: "Nuclear Option",
     codename: "FALLOUT",
-    description: "Missile silo diving, underground exploration",
+    description: "Missile silo diving, cave exploration, underground",
     icon: "☢️",
     color: "tactical-orange",
-    missionCount: 2,
+    missionCount: 3,
   },
   {
     id: "aquatic-assault",
     name: "Aquatic Assault",
     codename: "DEPTH",
-    description: "Noodling, whitewater rafting, water combat",
+    description: "Noodling, whitewater rafting, ziplines, water combat",
     icon: "🌊",
     color: "tactical-blue",
-    missionCount: 5,
+    missionCount: 6,
   },
   {
     id: "velocity",
     name: "Velocity",
     codename: "REDLINE",
-    description: "Supercar racing, track experiences, speed demons",
+    description: "Supercar racing, drifting, track experiences",
     icon: "🏎️",
     color: "tactical-red",
-    missionCount: 6,
+    missionCount: 4,
+  },
+  {
+    id: "wasteland-warriors",
+    name: "Wasteland Warriors",
+    codename: "SURVIVOR",
+    description: "Zombie LARP, survival games, apocalypse simulations",
+    icon: "🧟",
+    color: "tactical-green",
+    missionCount: 2,
+    isNew: true,
+  },
+  {
+    id: "rodeo-legends",
+    name: "Rodeo Legends",
+    codename: "BRONCO",
+    description: "Bull riding schools, rodeo training, cowboy experiences",
+    icon: "🤠",
+    color: "tactical-orange",
+    missionCount: 3,
+    isNew: true,
   },
 ];
