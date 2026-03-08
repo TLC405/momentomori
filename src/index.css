@@ -6,40 +6,27 @@
 
 @layer base {
   :root {
-    /* Adventure/Outdoors Professional Palette */
     --background: 30 10% 6%;
     --foreground: 35 15% 88%;
-    
     --card: 30 12% 9%;
     --card-foreground: 35 15% 88%;
-    
     --popover: 30 12% 9%;
     --popover-foreground: 35 15% 88%;
-    
-    /* Warm Earth Primary — burnt sienna/copper */
     --primary: 24 80% 52%;
     --primary-foreground: 30 10% 6%;
-    
-    /* Forest secondary */
     --secondary: 150 20% 18%;
     --secondary-foreground: 35 15% 88%;
-    
     --muted: 30 10% 13%;
     --muted-foreground: 35 10% 50%;
-    
     --accent: 40 60% 50%;
     --accent-foreground: 30 10% 6%;
-    
     --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
-    
     --border: 30 12% 18%;
     --input: 30 10% 13%;
     --ring: 24 80% 52%;
-    
     --radius: 0.75rem;
-    
-    /* Adventure accent colors */
+
     --tactical-amber: 40 70% 48%;
     --tactical-amber-dim: 35 50% 30%;
     --tactical-amber-glow: 40 80% 58%;
@@ -51,7 +38,6 @@
     --tactical-darker: 30 10% 7%;
     --tactical-parchment: 35 25% 14%;
 
-    /* Adventure palette extras */
     --earth-copper: 24 80% 52%;
     --earth-forest: 150 30% 28%;
     --earth-stone: 30 8% 40%;
@@ -60,7 +46,6 @@
     --earth-sky: 200 40% 55%;
     --earth-cream: 38 25% 90%;
 
-    /* Danger level colors */
     --danger-low: 150 50% 42%;
     --danger-medium: 40 90% 50%;
     --danger-high: 24 95% 50%;
@@ -81,78 +66,46 @@
   * {
     @apply border-border;
   }
-  
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Source Sans 3', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-  
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
-  }
-  
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
   ::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, hsl(var(--primary) / 0.4), hsl(var(--earth-stone) / 0.5));
     border-radius: 3px;
   }
-  
   ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, hsl(var(--primary) / 0.7), hsl(var(--primary) / 0.5));
   }
 }
 
 @layer components {
-  /* Premium Card */
   .premium-card {
     @apply relative overflow-hidden transition-all duration-500;
     @apply hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.25)];
   }
-  
   .premium-card::before {
     content: '';
     @apply absolute inset-0 opacity-0 transition-opacity duration-500;
-    background: linear-gradient(
-      135deg,
-      hsl(var(--primary) / 0.08) 0%,
-      transparent 50%,
-      hsl(var(--primary) / 0.03) 100%
-    );
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.08) 0%, transparent 50%, hsl(var(--primary) / 0.03) 100%);
   }
-  
-  .premium-card:hover::before {
-    @apply opacity-100;
-  }
-  
-  /* Image Overlay Gradient */
+  .premium-card:hover::before { @apply opacity-100; }
+
   .image-overlay {
-    background: linear-gradient(
-      to top,
-      hsl(var(--tactical-black)) 0%,
-      hsl(var(--tactical-black) / 0.7) 30%,
-      transparent 100%
-    );
+    background: linear-gradient(to top, hsl(var(--tactical-black)) 0%, hsl(var(--tactical-black) / 0.7) 30%, transparent 100%);
   }
-  
-  /* Warm glow text */
+
   .amber-glow {
-    text-shadow: 
-      0 0 20px hsl(var(--primary) / 0.4),
-      0 0 40px hsl(var(--primary) / 0.2);
+    text-shadow: 0 0 20px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.2);
   }
-  
-  /* Danger Indicators */
+
   .danger-low { color: hsl(var(--danger-low)); }
   .danger-medium { color: hsl(var(--danger-medium)); }
   .danger-high { color: hsl(var(--danger-high)); }
   .danger-extreme { color: hsl(var(--danger-extreme)); }
-  
   .danger-bg-low { background-color: hsl(var(--danger-low)); }
   .danger-bg-medium { background-color: hsl(var(--danger-medium)); }
   .danger-bg-high { background-color: hsl(var(--danger-high)); }
@@ -160,36 +113,13 @@
 }
 
 @layer utilities {
-  .font-display {
-    font-family: 'Playfair Display', Georgia, serif;
-  }
-  
-  .font-orbitron {
-    font-family: 'Orbitron', sans-serif;
-  }
-  
-  .font-sans {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
-  }
-  
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  .font-display { font-family: 'Playfair Display', Georgia, serif; }
+  .font-orbitron { font-family: 'Orbitron', sans-serif; }
+  .font-sans { font-family: 'Source Sans 3', system-ui, sans-serif; }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-  /* Premium utility classes */
-  .warm-glow-border {
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
+  .warm-glow-border { transition: border-color 0.3s ease, box-shadow 0.3s ease; }
   .warm-glow-border:hover {
     border-color: hsl(var(--primary) / 0.5);
     box-shadow: 0 0 20px -4px hsl(var(--primary) / 0.2), inset 0 0 12px -6px hsl(var(--primary) / 0.08);
@@ -205,20 +135,6 @@
     box-shadow: inset 0 0 20px -8px hsl(var(--primary) / 0.15), 0 0 0 1px hsl(var(--primary) / 0.3);
   }
 
-  .danger-accent-left {
-    position: relative;
-  }
-  .danger-accent-left::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 8px;
-    bottom: 8px;
-    width: 3px;
-    border-radius: 3px;
-    background: hsl(var(--primary));
-  }
-
   .parchment-bg {
     background: linear-gradient(135deg, hsl(var(--tactical-parchment) / 0.5) 0%, hsl(var(--card) / 0.8) 50%, hsl(var(--tactical-parchment) / 0.3) 100%);
   }
@@ -230,283 +146,104 @@
 }
 
 @layer components {
-  /* Typewriter animation */
-  @keyframes typewriter {
-    from { width: 0; }
-    to { width: 100%; }
-  }
-  @keyframes blink-caret {
-    0%, 100% { border-color: transparent; }
-    50% { border-color: hsl(var(--primary) / 0.6); }
-  }
+  /* Typewriter */
+  @keyframes typewriter { from { width: 0; } to { width: 100%; } }
+  @keyframes blink-caret { 0%, 100% { border-color: transparent; } 50% { border-color: hsl(var(--primary) / 0.6); } }
   .animate-typewriter {
-    overflow: hidden;
-    white-space: nowrap;
+    overflow: hidden; white-space: nowrap;
     border-right: 2px solid hsl(var(--primary) / 0.6);
     animation: typewriter 2s steps(30) 0.5s forwards, blink-caret 0.8s step-end infinite;
     width: 0;
   }
 
-  /* Star pop animation */
-  @keyframes star-pop {
-    0% { transform: scale(0); opacity: 0; }
-    60% { transform: scale(1.3); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  .animate-star-pop {
-    animation: star-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    opacity: 0;
-  }
+  /* Star pop */
+  @keyframes star-pop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.3); } 100% { transform: scale(1); opacity: 1; } }
+  .animate-star-pop { animation: star-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; opacity: 0; }
 
-  /* Ripple effect for CTA */
-  .ripple-btn {
-    position: relative;
-    overflow: hidden;
-  }
+  /* Ripple CTA */
+  .ripple-btn { position: relative; overflow: hidden; }
   .ripple-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), hsl(0 0% 100% / 0.2) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    opacity: 0; transition: opacity 0.3s ease;
   }
-  .ripple-btn:hover::after {
-    opacity: 1;
-  }
+  .ripple-btn:hover::after { opacity: 1; }
 
-  /* Bounce appear for FAB */
-  @keyframes bounce-appear {
-    0% { transform: scale(0) translateY(20px); opacity: 0; }
-    60% { transform: scale(1.1) translateY(-4px); }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
-  }
-  .animate-bounce-appear {
-    animation: bounce-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
+  /* Bounce appear */
+  @keyframes bounce-appear { 0% { transform: scale(0) translateY(20px); opacity: 0; } 60% { transform: scale(1.1) translateY(-4px); } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+  .animate-bounce-appear { animation: bounce-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
-  /* Compass rotate subtle */
-  @keyframes compass-wobble {
-    0%, 100% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
-  }
-  .animate-compass-wobble {
-    animation: compass-wobble 3s ease-in-out infinite;
-  }
+  /* Compass wobble */
+  @keyframes compass-wobble { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+  .animate-compass-wobble { animation: compass-wobble 3s ease-in-out infinite; }
 
   /* Gradient pulse line */
-  @keyframes gradient-pulse-line {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+  @keyframes gradient-pulse-line { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
   .animate-gradient-pulse-line {
     background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), hsl(var(--earth-sand) / 0.4), hsl(var(--primary) / 0.6), transparent);
-    background-size: 200% 100%;
-    animation: gradient-pulse-line 3s ease-in-out infinite;
-  }
-}
-
-@layer components {
-  .animate-pulse-glow {
-    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  
-  @keyframes pulse-glow {
-    0%, 100% {
-      box-shadow: 0 0 15px hsl(var(--primary) / 0.3);
-    }
-    50% {
-      box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
-    }
-  }
-  
-  .animate-fade-in-up {
-    animation: fade-in-up 0.6s ease-out;
-  }
-  
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes marker-pulse {
-    0% { transform: scale(1); opacity: 0.5; }
-    100% { transform: scale(2.5); opacity: 0; }
-  }
-  
-  .animate-marker-pulse {
-    animation: marker-pulse 2.5s ease-out infinite;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-  
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-  
-  .animate-shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      hsl(var(--primary) / 0.08) 50%,
-      transparent 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 3s ease-in-out infinite;
-  }
-  
-  .map-glow {
-    filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.25));
-  }
-  
-  .glow-text {
-    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+    background-size: 200% 100%; animation: gradient-pulse-line 3s ease-in-out infinite;
   }
 
-  /* Fantasy map animations */
-  @keyframes smoke-rise {
-    0% { transform: translateY(0) scale(1); opacity: 0.6; }
-    50% { transform: translateY(-15px) scale(1.2); opacity: 0.3; }
-    100% { transform: translateY(-30px) scale(1.5); opacity: 0; }
+  /* Ember particles */
+  @keyframes ember-rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    10% { opacity: 0.8; }
+    100% { transform: translateY(-100vh) scale(0.3) rotate(720deg); opacity: 0; }
   }
-  .animate-smoke-rise { animation: smoke-rise 3s ease-out infinite; }
-
-  @keyframes flag-wave {
-    0%, 100% { transform: skewX(0deg) scaleX(1); }
-    25% { transform: skewX(-3deg) scaleX(0.95); }
-    75% { transform: skewX(3deg) scaleX(1.05); }
-  }
-  .animate-flag-wave { animation: flag-wave 1.5s ease-in-out infinite; transform-origin: left center; }
-
-  @keyframes water-ripple {
-    0% { transform: scale(0.8); opacity: 0.8; }
-    100% { transform: scale(2); opacity: 0; }
-  }
-  .animate-water-ripple { animation: water-ripple 3s ease-out infinite; }
-
-  @keyframes firefly-float {
-    0%, 100% { transform: translate(0, 0); opacity: 0.3; }
-    25% { transform: translate(5px, -8px); opacity: 0.8; }
-    50% { transform: translate(-3px, -12px); opacity: 0.5; }
-    75% { transform: translate(-6px, -5px); opacity: 0.9; }
-  }
-  .animate-firefly { animation: firefly-float 4s ease-in-out infinite; }
-
-  @keyframes storm-flash {
-    0%, 90%, 100% { opacity: 0; }
-    92%, 94% { opacity: 1; }
-    93%, 95% { opacity: 0; }
-    96% { opacity: 0.8; }
-  }
-  .animate-storm-flash { animation: storm-flash 5s ease-in-out infinite; }
-
-  @keyframes compass-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .animate-compass-spin { animation: compass-spin 20s linear infinite; }
-
-  @keyframes path-draw {
-    from { stroke-dashoffset: 1000; }
-    to { stroke-dashoffset: 0; }
-  }
-  .animate-path-draw { animation: path-draw 2s ease-out forwards; }
-
-  @keyframes scroll-unroll {
-    0% { transform: scaleY(0) translateY(-20px); opacity: 0; }
-    100% { transform: scaleY(1) translateY(0); opacity: 1; }
-  }
-  .animate-scroll-unroll { animation: scroll-unroll 0.3s ease-out forwards; transform-origin: top center; }
-
-  @keyframes ember-float {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(-30px) rotate(180deg); opacity: 0; }
-  }
-  .animate-ember { animation: ember-float 1.5s ease-out infinite; }
-
-  @keyframes mist-drift {
-    0%, 100% { transform: translateX(0); opacity: 0.3; }
-    50% { transform: translateX(20px); opacity: 0.5; }
-  }
-  .animate-mist { animation: mist-drift 8s ease-in-out infinite; }
-
-  @keyframes beacon-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5); }
-    50% { box-shadow: 0 0 0 12px hsl(var(--primary) / 0); }
-  }
-  .animate-beacon { animation: beacon-pulse 2s ease-in-out infinite; }
-
-  @keyframes danger-throb {
-    0%, 100% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.05); filter: brightness(1.2); }
-  }
-  .animate-danger-throb { animation: danger-throb 0.8s ease-in-out infinite; }
-
-  @keyframes radar-ping {
-    0% { transform: scale(1); opacity: 1; }
-    75%, 100% { transform: scale(3); opacity: 0; }
-  }
-  .animate-radar-ping { animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
-
-  @keyframes radar-sweep {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .animate-radar-sweep { animation: radar-sweep 12s linear infinite; transform-origin: center; }
-
-  @keyframes war-drum {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
-  }
-  .animate-war-drum { animation: war-drum 1s ease-in-out infinite; }
-}
-
-@layer components {
-  /* 3D Card System */
-  .card-3d {
-    perspective: 1000px;
-    transform-style: preserve-3d;
-  }
-
-  .card-3d-inner {
-    transform-style: preserve-3d;
-    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
-    will-change: transform;
-  }
-
-  .holographic-shine {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 30%,
-      hsl(var(--primary) / 0.08) 45%,
-      hsl(var(--primary) / 0.16) 50%,
-      hsl(var(--primary) / 0.08) 55%,
-      transparent 70%
-    );
-    background-size: 300% 300%;
+  .ember-particle {
+    position: absolute; bottom: 0;
+    width: 3px; height: 3px; border-radius: 50%;
+    background: hsl(var(--primary)); 
+    box-shadow: 0 0 6px hsl(var(--primary) / 0.6);
+    animation: ember-rise 6s ease-out infinite;
     pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    z-index: 15;
-    border-radius: inherit;
   }
+}
+
+@layer components {
+  .animate-pulse-glow { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px hsl(var(--primary) / 0.3); } 50% { box-shadow: 0 0 30px hsl(var(--primary) / 0.5); } }
+
+  .animate-fade-in-up { animation: fade-in-up 0.6s ease-out; }
+  @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  @keyframes marker-pulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(2.5); opacity: 0; } }
+  .animate-marker-pulse { animation: marker-pulse 2.5s ease-out infinite; }
+
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .animate-float { animation: float 6s ease-in-out infinite; }
+
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.08) 50%, transparent 100%);
+    background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite;
+  }
+
+  .map-glow { filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.25)); }
+  .glow-text { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+
+  @keyframes ken-burns { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.12) translate(-2%, -1%); } 100% { transform: scale(1.05) translate(1%, 0.5%); } }
+  .animate-ken-burns { animation: ken-burns 20s ease-in-out infinite alternate; }
+
+  @keyframes shimmer-text { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+  .shimmer-text {
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--earth-sand)) 25%, hsl(var(--primary)) 50%, hsl(var(--earth-sand)) 75%, hsl(var(--primary)) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: shimmer-text 4s linear infinite;
+  }
+
+  @keyframes count-pop { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  .animate-count-pop { animation: count-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+  @keyframes unfold-3d { 0% { transform: perspective(800px) rotateX(-10deg); opacity: 0; } 100% { transform: perspective(800px) rotateX(0deg); opacity: 1; } }
+  .animate-unfold { animation: unfold-3d 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+  .cascade-item { opacity: 0; transform: translateX(-15px); animation: cascade-in 0.4s ease-out forwards; }
+  @keyframes cascade-in { to { opacity: 1; transform: translateX(0); } }
+
+  .btn-3d { transform: translateZ(0); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  .btn-3d:active { transform: translateY(2px) scale(0.97); }
 
   .glass-premium {
     background: hsl(var(--card) / 0.7);
@@ -515,83 +252,7 @@
     box-shadow: 0 8px 32px hsl(0 0% 0% / 0.3);
   }
 
-  @keyframes ken-burns {
-    0% { transform: scale(1) translate(0, 0); }
-    50% { transform: scale(1.12) translate(-2%, -1%); }
-    100% { transform: scale(1.05) translate(1%, 0.5%); }
-  }
-  .animate-ken-burns { animation: ken-burns 20s ease-in-out infinite alternate; }
-
-  @keyframes float-gentle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-  }
-  .animate-float-gentle { animation: float-gentle 5s ease-in-out infinite; }
-
-  @keyframes shimmer-text {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-  .shimmer-text {
-    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--earth-sand)) 25%, hsl(var(--primary)) 50%, hsl(var(--earth-sand)) 75%, hsl(var(--primary)) 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer-text 4s linear infinite;
-  }
-
-  @keyframes gradient-sweep {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
-  }
-  .animate-gradient-sweep {
-    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), hsl(var(--earth-sand) / 0.4), hsl(var(--primary) / 0.6), transparent);
-    background-size: 200% 100%;
-    animation: gradient-sweep 4s linear infinite;
-  }
-
-  @keyframes count-pop {
-    0% { transform: scale(0.5); opacity: 0; }
-    60% { transform: scale(1.15); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  .animate-count-pop { animation: count-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-
-  @keyframes unfold-3d {
-    0% { transform: perspective(800px) rotateX(-10deg); opacity: 0; transform-origin: top center; }
-    100% { transform: perspective(800px) rotateX(0deg); opacity: 1; transform-origin: top center; }
-  }
-  .animate-unfold { animation: unfold-3d 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-
-  .cascade-item {
-    opacity: 0;
-    transform: translateX(-15px);
-    animation: cascade-in 0.4s ease-out forwards;
-  }
-  @keyframes cascade-in {
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  .btn-3d {
-    transform: translateZ(0);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .btn-3d:active {
-    transform: translateY(2px) scale(0.97);
-  }
-
-  @keyframes orbital-glow {
-    0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5); }
-    50% { box-shadow: 0 0 0 6px hsl(var(--primary) / 0), 0 0 15px 3px hsl(var(--primary) / 0.15); }
-    100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5); }
-  }
-  .animate-orbital-glow { animation: orbital-glow 2s ease-in-out infinite; }
-
-  @keyframes slide-in-3d {
-    0% { transform: translateX(100%); opacity: 0; }
-    100% { transform: translateX(0); opacity: 1; }
-  }
+  @keyframes slide-in-3d { 0% { transform: translateX(100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
   .animate-slide-in-3d { animation: slide-in-3d 0.4s ease-out forwards; }
 }
 
@@ -601,60 +262,28 @@
 }
 
 /* ========== Leaflet Map Overrides ========== */
-.leaflet-terrain-map {
-  font-family: 'Source Sans 3', sans-serif;
-}
-
+.leaflet-terrain-map { font-family: 'Source Sans 3', sans-serif; }
 .leaflet-terrain-map .leaflet-control-attribution {
-  background: hsl(40, 30%, 96%, 0.85) !important;
-  font-size: 9px !important;
-  color: hsl(33, 15%, 50%) !important;
+  background: hsl(30, 10%, 10%, 0.85) !important;
+  font-size: 9px !important; color: hsl(35, 10%, 50%) !important;
   border-radius: 4px 0 0 0 !important;
 }
-
 .leaflet-terrain-map .leaflet-popup-content-wrapper {
-  background: hsl(40, 30%, 98%) !important;
-  border-radius: 12px !important;
+  background: hsl(40, 30%, 98%) !important; border-radius: 12px !important;
   box-shadow: 0 4px 20px hsl(33, 20%, 30%, 0.15) !important;
-  border: 1px solid hsl(33, 25%, 82%) !important;
-  padding: 0 !important;
-  overflow: hidden;
+  border: 1px solid hsl(33, 25%, 82%) !important; padding: 0 !important; overflow: hidden;
 }
-
-.leaflet-terrain-map .leaflet-popup-content {
-  margin: 0 !important;
-  line-height: 1.4 !important;
-}
-
+.leaflet-terrain-map .leaflet-popup-content { margin: 0 !important; line-height: 1.4 !important; }
 .leaflet-terrain-map .leaflet-popup-tip {
   background: hsl(40, 30%, 98%) !important;
-  border: 1px solid hsl(33, 25%, 82%) !important;
-  box-shadow: none !important;
+  border: 1px solid hsl(33, 25%, 82%) !important; box-shadow: none !important;
 }
-
 .leaflet-terrain-map .leaflet-popup-close-button {
-  color: hsl(33, 15%, 50%) !important;
-  font-size: 18px !important;
-  width: 24px !important;
-  height: 24px !important;
-  padding: 4px !important;
-  z-index: 10;
+  color: hsl(33, 15%, 50%) !important; font-size: 18px !important;
+  width: 24px !important; height: 24px !important; padding: 4px !important; z-index: 10;
 }
 
-/* Mission marker animations */
-.mission-marker-icon {
-  background: none !important;
-  border: none !important;
-}
+.mission-marker-icon { background: none !important; border: none !important; }
+.hq-marker-icon { background: none !important; border: none !important; }
 
-.hq-marker-icon {
-  background: none !important;
-  border: none !important;
-}
-
-@keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
+@keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }

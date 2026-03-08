@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { Search, SlidersHorizontal, X, MapPin, Clock, DollarSign, AlertTriangle } from "lucide-react";
+import { Search, X, MapPin, Clock, DollarSign, AlertTriangle } from "lucide-react";
+import { missions } from "@/data/missions";
 
 export interface FilterState {
   search: string;
@@ -32,11 +33,11 @@ const DURATION_OPTIONS = [
 ];
 
 const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
-  
-  const hasActiveFilters = filters.search !== "" || filters.maxDistance < 10 || filters.priceRange[0] > 1 || filters.priceRange[1] < 5 || filters.dangerLevels.length > 0 || filters.maxDuration !== "";
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<typeof missions>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  const hasActiveFilters = filters.search !== "" || filters.maxDistance < 10 || filters.priceRange[0] > 1 || filters.priceRange[1] < 5 || filters.dangerLevels.length > 0 || filters.maxDuration !== "";
   const clearFilters = () => onFiltersChange({ search: "", maxDistance: 10, priceRange: [1, 5], dangerLevels: [], maxDuration: "" });
 
   const toggleDangerLevel = (level: string) => {
@@ -46,125 +47,173 @@ const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterPr
     onFiltersChange({ ...filters, dangerLevels: newLevels });
   };
 
+  // Keyboard shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "/" && !isOpen && document.activeElement?.tagName !== "INPUT") {
+        e.preventDefault();
+        setIsOpen(true);
+      }
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [isOpen]);
+
+  // Popular tags
+  const popularTags = ["bucket-list", "extreme", "hunting", "aviation", "tanks", "racing"];
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className={cn("relative flex-1 rounded-xl transition-all warm-inner-glow", searchFocused && "ring-1 ring-primary/30")}>
-          <Search className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-300", searchFocused ? "text-primary" : "text-muted-foreground")} />
-          <input
-            type="text"
-            value={filters.search}
-            onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-            placeholder="Search adventures, locations..."
-            className="w-full pl-12 pr-4 py-3 bg-card border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-all"
-          />
-          {filters.search && (
-            <button onClick={() => onFiltersChange({ ...filters, search: "" })} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
+    <>
+      {/* Search trigger */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="w-full flex items-center gap-3 px-5 py-3.5 bg-card/50 border border-border/30 rounded-xl text-muted-foreground hover:border-primary/40 transition-all group"
+      >
+        <Search className="w-5 h-5 group-hover:text-primary transition-colors" />
+        <span className="flex-1 text-left text-sm">Search adventures, locations, tags...</span>
+        <kbd className="hidden sm:inline-flex px-2 py-0.5 text-[10px] font-mono bg-muted/30 border border-border/30 rounded text-muted-foreground">/</kbd>
+        {hasActiveFilters && <span className="w-2 h-2 bg-primary rounded-full" />}
+        <span className="text-xs text-muted-foreground"><span className="stat-value text-xs">{totalResults}</span> results</span>
+      </button>
 
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={cn(
-            "flex items-center gap-2 px-4 py-3 rounded-xl border font-medium transition-all btn-3d",
-            isExpanded || hasActiveFilters
-              ? "bg-primary/10 border-primary/40 text-primary"
-              : "bg-card border-border/50 text-muted-foreground hover:border-primary/40"
-          )}
-        >
-          <SlidersHorizontal className="w-5 h-5" />
-          <span className="hidden sm:inline">Filters</span>
-          {hasActiveFilters && <span className="w-2 h-2 bg-primary rounded-full" />}
-        </button>
+      {/* Command palette overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={() => setIsOpen(false)} />
 
-        <div className="hidden md:flex items-center px-4 py-3 bg-card rounded-xl border border-border/50">
-          <span className="text-sm text-muted-foreground"><span className="stat-value text-sm">{totalResults}</span> adventures</span>
-        </div>
-      </div>
-
-      {isExpanded && (
-        <div className="p-5 glass-premium rounded-xl space-y-5 animate-unfold">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-display font-bold text-foreground">Refine Results</h4>
-            {hasActiveFilters && <button onClick={clearFilters} className="text-xs text-destructive hover:underline">Clear all</button>}
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
-                <MapPin className="w-3.5 h-3.5" /> Max Distance
-              </label>
-              <input type="range" min="1" max="10" value={filters.maxDistance} onChange={(e) => onFiltersChange({ ...filters, maxDistance: parseInt(e.target.value) })} className="w-full accent-primary" />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>1h</span><span className="text-primary font-medium">{filters.maxDistance}h</span><span>10h+</span>
-              </div>
+          <div className="relative w-full max-w-2xl mx-4 bg-card border border-border/50 rounded-2xl shadow-[0_20px_60px_hsl(0_0%_0%/0.5)] overflow-hidden animate-scale-in">
+            {/* Search input */}
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
+              <Search className="w-5 h-5 text-primary" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={filters.search}
+                onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
+                placeholder="Search adventures..."
+                className="flex-1 bg-transparent text-foreground text-lg placeholder:text-muted-foreground focus:outline-none"
+              />
+              {filters.search && (
+                <button onClick={() => onFiltersChange({ ...filters, search: "" })} className="text-muted-foreground hover:text-foreground">
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              <button onClick={() => setIsOpen(false)} className="px-2 py-1 text-xs text-muted-foreground border border-border/30 rounded hover:bg-muted/20">
+                ESC
+              </button>
             </div>
 
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
-                <DollarSign className="w-3.5 h-3.5" /> Price
-              </label>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((price) => {
-                  const isActive = price >= filters.priceRange[0] && price <= filters.priceRange[1];
-                  return (
-                    <button key={price} onClick={() => {
-                      const [min, max] = filters.priceRange;
-                      if (price < min) onFiltersChange({ ...filters, priceRange: [price, max] });
-                      else if (price > max) onFiltersChange({ ...filters, priceRange: [min, price] });
-                      else if (price === min && min < max) onFiltersChange({ ...filters, priceRange: [price + 1, max] });
-                      else if (price === max && max > min) onFiltersChange({ ...filters, priceRange: [min, price - 1] });
-                    }}
-                    className={cn("flex-1 py-2 rounded-lg text-xs font-bold transition-all border",
-                      isActive 
-                        ? "bg-primary/15 border-primary/40 text-primary shadow-[inset_0_2px_4px_hsl(var(--primary)/0.1)]" 
-                        : "bg-muted/20 border-border/50 text-muted-foreground hover:border-primary/40 shadow-[0_2px_4px_hsl(0_0%_0%/0.15)] active:shadow-[inset_0_2px_4px_hsl(0_0%_0%/0.2)]"
-                    )}>{"$".repeat(price)}</button>
-                  );
-                })}
+            {/* Filter grid */}
+            <div className="p-5 space-y-5 max-h-[50vh] overflow-y-auto">
+              {/* Popular tags */}
+              <div className="space-y-2">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Popular</span>
+                <div className="flex flex-wrap gap-2">
+                  {popularTags.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => onFiltersChange({ ...filters, search: tag })}
+                      className="px-3 py-1.5 text-xs bg-muted/20 text-muted-foreground rounded-lg border border-border/30 hover:border-primary/40 hover:text-primary transition-all"
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
-                <Clock className="w-3.5 h-3.5" /> Duration
-              </label>
-              <select value={filters.maxDuration} onChange={(e) => onFiltersChange({ ...filters, maxDuration: e.target.value })} className="w-full px-3 py-2 bg-muted/20 border border-border/50 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/50">
-                {DURATION_OPTIONS.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
-              </select>
-            </div>
+              <div className="gradient-divider" />
 
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
-                <AlertTriangle className="w-3.5 h-3.5" /> Intensity
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {DANGER_OPTIONS.map((opt) => {
-                  const isActive = filters.dangerLevels.includes(opt.value);
-                  return (
-                    <button key={opt.value} onClick={() => toggleDangerLevel(opt.value)}
-                      className={cn("px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border btn-3d",
-                        isActive 
-                          ? "border-transparent text-black" 
-                          : "bg-muted/20 border-l-[3px] border-border/50 text-muted-foreground hover:border-primary/40"
-                      )}
-                      style={isActive 
-                        ? { backgroundColor: `hsl(var(${opt.cssVar}))` } 
-                        : { borderLeftColor: `hsl(var(${opt.cssVar}))` }
-                      }
-                    >{opt.label}</button>
-                  );
-                })}
+              {/* Filters */}
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
+                    <MapPin className="w-3.5 h-3.5" /> Max Distance
+                  </label>
+                  <input type="range" min="1" max="10" value={filters.maxDistance} onChange={(e) => onFiltersChange({ ...filters, maxDistance: parseInt(e.target.value) })} className="w-full accent-primary" />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>1h</span><span className="text-primary font-medium">{filters.maxDistance}h</span><span>10h+</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
+                    <DollarSign className="w-3.5 h-3.5" /> Price
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {[1, 2, 3, 4, 5].map((price) => {
+                      const isActive = price >= filters.priceRange[0] && price <= filters.priceRange[1];
+                      return (
+                        <button key={price} onClick={() => {
+                          const [min, max] = filters.priceRange;
+                          if (price < min) onFiltersChange({ ...filters, priceRange: [price, max] });
+                          else if (price > max) onFiltersChange({ ...filters, priceRange: [min, price] });
+                          else if (price === min && min < max) onFiltersChange({ ...filters, priceRange: [price + 1, max] });
+                          else if (price === max && max > min) onFiltersChange({ ...filters, priceRange: [min, price - 1] });
+                        }}
+                        className={cn("flex-1 py-2 rounded-lg text-xs font-bold transition-all border",
+                          isActive
+                            ? "bg-primary/15 border-primary/40 text-primary"
+                            : "bg-muted/20 border-border/30 text-muted-foreground hover:border-primary/40"
+                        )}>{"$".repeat(price)}</button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
+                    <Clock className="w-3.5 h-3.5" /> Duration
+                  </label>
+                  <select value={filters.maxDuration} onChange={(e) => onFiltersChange({ ...filters, maxDuration: e.target.value })} className="w-full px-3 py-2 bg-muted/20 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/50">
+                    {DURATION_OPTIONS.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
+                    <AlertTriangle className="w-3.5 h-3.5" /> Intensity
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {DANGER_OPTIONS.map((opt) => {
+                      const isActive = filters.dangerLevels.includes(opt.value);
+                      return (
+                        <button key={opt.value} onClick={() => toggleDangerLevel(opt.value)}
+                          className={cn("px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border",
+                            isActive
+                              ? "border-transparent text-black"
+                              : "bg-muted/20 border-l-[3px] border-border/30 text-muted-foreground hover:border-primary/40"
+                          )}
+                          style={isActive
+                            ? { backgroundColor: `hsl(var(${opt.cssVar}))` }
+                            : { borderLeftColor: `hsl(var(${opt.cssVar}))` }
+                          }
+                        >{opt.label}</button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
+
+              {hasActiveFilters && (
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-sm text-muted-foreground"><span className="stat-value text-sm">{totalResults}</span> results</span>
+                  <button onClick={clearFilters} className="text-xs text-destructive hover:underline">Clear all filters</button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
