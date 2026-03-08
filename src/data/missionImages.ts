@@ -17,6 +17,16 @@ import bungeeFreefall from "@/assets/missions/bungee-freefall.jpg";
 import exoticSafari from "@/assets/missions/exotic-safari.jpg";
 import goKartRacing from "@/assets/missions/go-kart-racing.jpg";
 import tacticalTraining from "@/assets/missions/tactical-training.jpg";
+import driftRacing from "@/assets/missions/drift-racing.jpg";
+import bullRiding from "@/assets/missions/bull-riding.jpg";
+import zombieLarp from "@/assets/missions/zombie-larp.jpg";
+import fighterJet from "@/assets/missions/fighter-jet.jpg";
+import flamethrower from "@/assets/missions/flamethrower.jpg";
+import axeThrowing from "@/assets/missions/axe-throwing.jpg";
+import caveExploration from "@/assets/missions/cave-exploration.jpg";
+import zipline from "@/assets/missions/zipline.jpg";
+import thermalHunting from "@/assets/missions/thermal-hunting.jpg";
+import warbird from "@/assets/missions/warbird.jpg";
 
 export const missionImages: Record<string, string> = {
   // Metal Gods
@@ -30,17 +40,17 @@ export const missionImages: Record<string, string> = {
   "heli-hog-hunt": heliHunt,
   "skydive-okc": skydiving,
   "flight-lesson": flightTraining,
-  "l39-fighter-jet": flightTraining,
-  "warbird-rides": flightTraining,
+  "l39-fighter-jet": fighterJet,
+  "warbird-rides": warbird,
   
   // The Armory
   "full-auto-okc": fullAuto,
   "d-day-adventure": dDayPaintball,
   "tactical-firearms": tacticalTraining,
-  "flamethrower-experience": fullAuto,
-  "urban-tomahawk": tacticalTraining,
-  "class-axe-dallas": tacticalTraining,
-  "thermal-hog-hunt": heliHunt,
+  "flamethrower-experience": flamethrower,
+  "urban-tomahawk": axeThrowing,
+  "class-axe-dallas": axeThrowing,
+  "thermal-hog-hunt": thermalHunting,
   
   // Jurassic Encounters
   "tiger-safari": tigerSafari,
@@ -52,29 +62,29 @@ export const missionImages: Record<string, string> = {
   
   // Nuclear Option
   "valhalla-silo": missileSiloDive,
-  "natural-bridge-caverns": missileSiloDive,
-  "war-eagle-cavern": missileSiloDive,
+  "natural-bridge-caverns": caveExploration,
+  "war-eagle-cavern": caveExploration,
   
   // Aquatic Assault
   "noodling": catfishNoodling,
   "whitewater-okc": whitewaterRafting,
-  "sky-trail": whitewaterRafting,
-  "rugaru-zipline": whitewaterRafting,
-  "buffalo-river-canopy": whitewaterRafting,
+  "sky-trail": zipline,
+  "rugaru-zipline": zipline,
+  "buffalo-river-canopy": zipline,
   
   // Velocity
   "exotic-racing-dfw": supercarRacing,
   "go-kart-racing": goKartRacing,
   "motorsport-ranch": supercarRacing,
-  "texas-drift-academy": rallyDriving,
+  "texas-drift-academy": driftRacing,
   
   // Wasteland Warriors
-  "zombie-larp": dDayPaintball,
+  "zombie-larp": zombieLarp,
   "escape-room-extreme": dDayPaintball,
   
   // Rodeo Legends
-  "bull-riding-school": exoticSafari,
-  "sankey-rodeo-school": exoticSafari,
+  "bull-riding-school": bullRiding,
+  "sankey-rodeo-school": bullRiding,
   "ranch-hand-experience": exoticSafari,
 };
 
