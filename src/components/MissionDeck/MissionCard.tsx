@@ -72,7 +72,7 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
           
           {/* NEW badge */}
           {mission.isNew && (
-            <div className="px-2 py-1.5 rounded-lg text-[9px] font-bold tracking-wider uppercase bg-emerald-500 text-white shadow-lg animate-pulse">
+            <div className="px-2 py-1.5 rounded-lg text-[9px] font-bold tracking-wider uppercase bg-danger-low text-primary-foreground shadow-lg animate-pulse">
               NEW
             </div>
           )}

@@ -59,7 +59,7 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
                 {count}
               </span>
               {realm.isNew && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-danger-low rounded-full animate-pulse" />
               )}
             </button>
           );
