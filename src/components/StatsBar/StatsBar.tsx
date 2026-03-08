@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { missions } from "@/data/missions";
 import { realms } from "@/data/realms";
-import { MapPin, Compass, Mountain, Users } from "lucide-react";
+import { MapPin, Compass, Mountain, Flame, Clock, DollarSign } from "lucide-react";
 
 const useCountUp = (target: number, duration = 1000) => {
   const [count, setCount] = useState(0);
@@ -34,43 +34,47 @@ const useCountUp = (target: number, duration = 1000) => {
 const StatsBar = () => {
   const totalMissions = missions.length;
   const totalRealms = realms.length;
-  const extremeMissions = missions.filter(m => m.dangerLevel === "EXTREME").length;
-  const newMissions = missions.filter(m => m.isNew).length;
+  const extremeCount = missions.filter(m => m.dangerLevel === "EXTREME").length;
+  const totalDriveHours = Math.round(missions.reduce((a, m) => a + m.distanceFromOKC, 0));
+  const avgCost = Math.round(missions.reduce((a, m) => {
+    const match = m.priceEstimate.match(/\$?([\d,]+)/);
+    return a + (match ? parseInt(match[1].replace(',', '')) : 0);
+  }, 0) / missions.length);
 
   const stats = [
-    { icon: Compass, label: "Adventures", value: totalMissions },
-    { icon: Mountain, label: "Regions", value: totalRealms },
-    { icon: MapPin, label: "Extreme", value: extremeMissions },
-    { icon: Users, label: "New This Season", value: newMissions },
+    { icon: Compass, label: "Adventures", value: totalMissions, suffix: "" },
+    { icon: Mountain, label: "Regions", value: totalRealms, suffix: "" },
+    { icon: Flame, label: "Extreme", value: extremeCount, suffix: "" },
+    { icon: Clock, label: "Drive Hours", value: totalDriveHours, suffix: "h" },
+    { icon: DollarSign, label: "Avg Cost", value: avgCost, suffix: "", prefix: "$" },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {stats.map((stat, index) => {
-        const { count, ref } = useCountUp(stat.value);
-        return (
-          <div ref={ref} key={stat.label}>
-            <div
-              className="relative bg-gradient-to-br from-card to-muted/30 border border-border/50 rounded-xl p-5 group warm-glow-border hover:translate-y-[-2px] transition-all duration-300"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {/* Subtle gradient divider on right */}
-              {index < 3 && (
-                <div className="absolute right-0 top-3 bottom-3 w-px bg-gradient-to-b from-transparent via-border/40 to-transparent hidden md:block" />
-              )}
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors ring-2 ring-primary/[0.08] group-hover:ring-primary/20 group-hover:shadow-[0_0_16px_-4px_hsl(var(--primary)/0.3)]">
-                  <stat.icon className="w-5 h-5" />
+    <div className="overflow-x-auto -mx-4 px-4">
+      <div className="flex items-stretch gap-3 min-w-max">
+        {stats.map((stat, index) => {
+          const { count, ref } = useCountUp(stat.value);
+          return (
+            <div ref={ref} key={stat.label} className="flex-1 min-w-[140px]">
+              <div className="relative h-full bg-card/50 border border-border/30 rounded-xl px-5 py-4 group warm-glow-border hover:translate-y-[-2px] transition-all duration-300 flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15 transition-colors ring-1 ring-primary/10 group-hover:ring-primary/20 group-hover:shadow-[0_0_12px_hsl(var(--primary)/0.2)]">
+                  <stat.icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="stat-value text-2xl font-bold">{count}</div>
-                  <div className="text-xs text-muted-foreground">{stat.label}</div>
+                  <div className="stat-value text-xl font-bold leading-tight">
+                    {stat.prefix || ""}{count}{stat.suffix}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground tracking-wider uppercase">{stat.label}</div>
                 </div>
+                {/* Divider between stats */}
+                {index < stats.length - 1 && (
+                  <div className="absolute right-0 top-3 bottom-3 w-px bg-gradient-to-b from-transparent via-border/30 to-transparent" />
+                )}
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

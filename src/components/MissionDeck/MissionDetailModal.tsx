@@ -27,74 +27,71 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
 
   useEffect(() => {
     requestAnimationFrame(() => setIsVisible(true));
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div 
-        className={cn("absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300", isVisible ? "opacity-100" : "opacity-0")}
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
+      <div
+        className={cn("absolute inset-0 bg-background/90 backdrop-blur-md transition-opacity duration-300", isVisible ? "opacity-100" : "opacity-0")}
         onClick={onClose}
       />
-      
-      <div 
+
+      <div
         className={cn(
-          "relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-card border border-border/50 rounded-2xl shadow-2xl transition-all duration-500",
-          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          "relative w-full sm:max-w-3xl sm:max-h-[90vh] max-h-[95vh] overflow-y-auto bg-card border-t sm:border border-border/30 sm:rounded-2xl shadow-[0_-10px_60px_hsl(0_0%_0%/0.5)] transition-all duration-500",
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
         )}
-        style={{
-          transform: isVisible ? 'scale(1)' : 'scale(0.95)',
-          transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease',
-        }}
       >
-        {/* Hero Image — taller with vignette */}
-        <div className="relative h-72 md:h-96 overflow-hidden rounded-t-2xl">
-          <div 
+        {/* Hero Image — cinematic */}
+        <div className="relative h-64 sm:h-80 md:h-[400px] overflow-hidden sm:rounded-t-2xl">
+          <div
             className="absolute inset-0 bg-cover bg-center animate-ken-burns"
             style={{ backgroundImage: `url(${imageUrl})`, backgroundColor: 'hsl(var(--muted))' }}
           />
-          {/* Vignette + gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
-          <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 80px 20px hsl(var(--background) / 0.3)' }} />
-          
+          <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 100px 30px hsl(var(--background) / 0.3)' }} />
+
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary hover:text-primary-foreground transition-all btn-3d"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-background/50 backdrop-blur-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-all"
           >
             <X className="w-5 h-5" />
           </button>
-          
+
           <div className="absolute top-4 left-4">
-            <span className={cn("px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider flex items-center gap-2", dangerConfig.class)}>
+            <span className={cn("px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider", dangerConfig.class)}>
               {dangerConfig.label}
             </span>
           </div>
-          
+
           {onAddToItinerary && (
             <button
               onClick={(e) => { e.stopPropagation(); onAddToItinerary(); }}
               className={cn(
-                "absolute top-4 right-16 px-4 py-2 rounded-lg text-sm font-medium transition-all border backdrop-blur-sm btn-3d",
-                isInItinerary 
-                  ? "bg-primary text-primary-foreground border-primary" 
-                  : "bg-black/40 text-white border-white/20 hover:bg-primary hover:text-primary-foreground"
+                "absolute top-4 right-16 px-4 py-2 rounded-lg text-sm font-medium transition-all border backdrop-blur-sm",
+                isInItinerary
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-background/40 text-foreground border-border/30 hover:bg-primary hover:text-primary-foreground"
               )}
             >
               {isInItinerary ? "✓ Saved" : "+ Save"}
             </button>
           )}
-          
+
           <div className="absolute bottom-4 left-6 right-6">
             <span className="text-xs font-semibold text-primary tracking-widest uppercase">{mission.codename}</span>
-            <h2 className="font-display text-2xl md:text-4xl font-bold text-white mt-1">{mission.name}</h2>
-            <div className="flex items-center gap-2 text-white/70 mt-2">
-              <MapPin className="w-4 h-4 text-primary/80" />
+            <h2 className="font-display text-2xl md:text-4xl font-bold text-foreground mt-1">{mission.name}</h2>
+            <div className="flex items-center gap-2 text-muted-foreground mt-2">
+              <MapPin className="w-4 h-4 text-primary/70" />
               <span className="text-sm">{mission.location} · {mission.city}, {mission.state}</span>
             </div>
           </div>
         </div>
-        
+
         <div className="p-6 space-y-6">
-          {/* Stats with left-colored border accent */}
+          {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { icon: DollarSign, label: "Investment", value: mission.priceEstimate },
@@ -102,12 +99,11 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
               { icon: Users, label: "Group Size", value: mission.groupSize },
               { icon: MapPin, label: "Distance", value: `${mission.distanceFromOKC}h` },
             ].map((stat, i) => (
-              <div 
-                key={stat.label} 
-                className="relative bg-muted/30 border border-border/30 rounded-xl p-4 text-center group hover:border-primary/30 transition-all animate-count-pop overflow-hidden" 
+              <div
+                key={stat.label}
+                className="relative bg-muted/20 border border-border/20 rounded-xl p-4 text-center overflow-hidden animate-count-pop"
                 style={{ animationDelay: `${200 + i * 80}ms` }}
               >
-                {/* Left accent bar */}
                 <div className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full" style={{ background: `hsl(var(${dangerConfig.cssVar}))` }} />
                 <stat.icon className="w-4 h-4 text-primary mx-auto mb-2" />
                 <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">{stat.label}</div>
@@ -115,18 +111,18 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
               </div>
             ))}
           </div>
-          
-          {/* Description with parchment bg */}
-          <div className="parchment-bg border border-border/30 rounded-xl p-5">
+
+          {/* Description */}
+          <div className="parchment-bg border border-border/20 rounded-xl p-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2 font-display">
               <AlertTriangle className="w-4 h-4 text-primary" />
               About This Adventure
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">{mission.description}</p>
           </div>
-          
-          {/* Rating with animated stars */}
-          <div className="relative bg-primary/[0.08] border border-primary/20 rounded-xl p-5">
+
+          {/* Rating */}
+          <div className="bg-primary/[0.06] border border-primary/15 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="flex">
                 {Array.from({ length: mission.broRating }).map((_, i) => (
@@ -140,27 +136,26 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
             </div>
             <p className="text-sm text-muted-foreground italic">"{mission.broCodeAnalysis}"</p>
           </div>
-          
-          {/* Tags with hover glow */}
+
+          {/* Tags */}
           <div className="flex flex-wrap gap-2">
             {mission.tags.map((tag, i) => (
-              <span key={tag} className="cascade-item px-3 py-1.5 text-xs bg-muted/40 text-muted-foreground rounded-full border border-border/30 hover:border-primary/40 hover:text-primary hover:scale-105 hover:shadow-[0_0_12px_hsl(var(--primary)/0.15)] transition-all" style={{ animationDelay: `${400 + i * 50}ms` }}>
+              <span key={tag} className="px-3 py-1.5 text-xs bg-muted/30 text-muted-foreground rounded-full border border-border/20 hover:border-primary/40 hover:text-primary transition-all cascade-item" style={{ animationDelay: `${400 + i * 50}ms` }}>
                 {tag}
               </span>
             ))}
           </div>
-          
-          {/* CTA with gradient + ripple */}
+
+          {/* CTA */}
           <a
             href={mission.bookingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="ripple-btn group flex items-center justify-center gap-3 w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold text-lg rounded-xl hover:brightness-110 transition-all btn-3d shadow-[0_4px_20px_hsl(var(--primary)/0.3)]"
+            className="ripple-btn group flex items-center justify-center gap-3 w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold text-lg rounded-xl hover:brightness-110 transition-all shadow-[0_4px_20px_hsl(var(--primary)/0.3)]"
           >
             Book This Adventure
             <ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
-          
           <p className="text-center text-xs text-muted-foreground">Opens official booking site</p>
         </div>
       </div>

@@ -1,56 +1,45 @@
-import { missions } from "@/data/missions";
-import { realms } from "@/data/realms";
-import { Heart } from "lucide-react";
-
 const AppFooter = () => {
   return (
-    <footer className="border-t border-border/30 mt-16 bg-gradient-to-b from-background to-card/20 relative">
-      {/* Gradient top border */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-      
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
-          <div>
-            <span className="font-display text-xl font-bold shimmer-text">Remember You Must Live</span>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-              Life's greatest adventures are waiting. Discover extraordinary experiences that create lasting memories.
+    <footer className="relative mt-20 overflow-hidden">
+      {/* Ember particles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="ember-particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${3 + Math.random() * 4}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative bg-gradient-to-b from-background via-card/30 to-card/60 border-t border-border/20 py-20 md:py-28">
+        <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
+          <blockquote className="font-display text-2xl md:text-4xl font-bold text-foreground leading-snug italic">
+            "The purpose of life is not to be happy. It is to be useful, to be honorable, to be compassionate, to have it matter that you have lived."
+          </blockquote>
+          <p className="text-sm text-muted-foreground tracking-wider uppercase">— Ralph Waldo Emerson</p>
+
+          <div className="pt-8">
+            <h2 className="font-display text-3xl md:text-5xl font-black text-foreground tracking-tight">
+              BEFORE <span className="shimmer-text">YOU GO</span>
+            </h2>
+            <p className="text-sm text-muted-foreground mt-3 tracking-wide">
+              The Bucket List Engine for the Brotherhood
             </p>
           </div>
-          <div>
-            <h4 className="font-display text-sm font-bold text-foreground mb-4">By the Numbers</h4>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { value: missions.length, label: "Adventures" },
-                { value: realms.length, label: "Regions" },
-                { value: "7", label: "States" },
-                { value: "∞", label: "Memories" },
-              ].map((stat) => (
-                <div key={stat.label} className="bg-muted/20 rounded-lg p-3 text-center border border-border/20 warm-glow-border transition-all">
-                  <div className="stat-value text-2xl font-bold">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h4 className="font-display text-sm font-bold text-foreground mb-4">Our Mission</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Curating extraordinary outdoor adventures and unforgettable experiences across the American heartland.
-            </p>
-            <div className="flex items-center gap-2 text-xs text-primary">
-              <span className="w-2 h-2 rounded-full bg-earth-forest" />
-              <span>Based in Oklahoma City</span>
-            </div>
-          </div>
-        </div>
-        <div className="pt-8 border-t border-border/20">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-              © 2024 Remember You Must Live · 
-              <Heart className="w-3 h-3 text-primary animate-pulse inline" />
-              Memento Mori
-            </p>
-            <p className="text-xs text-muted-foreground">Adventure awaits those who seek it</p>
+
+          <div className="gradient-divider" />
+
+          <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
+            <span>Memento Mori</span>
+            <span className="w-1 h-1 rounded-full bg-primary" />
+            <span>Based in OKC</span>
+            <span className="w-1 h-1 rounded-full bg-primary" />
+            <span>© {new Date().getFullYear()}</span>
           </div>
         </div>
       </div>

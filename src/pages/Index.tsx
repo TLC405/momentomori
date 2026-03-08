@@ -2,15 +2,17 @@ import { useState, useMemo } from "react";
 import { Realm } from "@/data/realms";
 import { Mission, missions } from "@/data/missions";
 import { FilterState } from "@/components/SearchFilter/SearchFilter";
+import HeroBanner from "@/components/Layout/HeroBanner";
+import FloatingNav from "@/components/Layout/FloatingNav";
+import AppFooter from "@/components/Layout/AppFooter";
+import WarRoomMap from "@/components/WarRoomMap/WarRoomMap";
+import LegendaryPicks from "@/components/LegendaryPicks/LegendaryPicks";
+import StatsBar from "@/components/StatsBar/StatsBar";
+import SearchFilter from "@/components/SearchFilter/SearchFilter";
 import RealmSelector from "@/components/RealmSelector/RealmSelector";
 import MissionDeck from "@/components/MissionDeck/MissionDeck";
 import MissionDetailModal from "@/components/MissionDeck/MissionDetailModal";
-import WarRoomMap from "@/components/WarRoomMap/WarRoomMap";
 import ItineraryBuilder from "@/components/ItineraryBuilder/ItineraryBuilder";
-import SearchFilter from "@/components/SearchFilter/SearchFilter";
-import StatsBar from "@/components/StatsBar/StatsBar";
-import AppHeader from "@/components/Layout/AppHeader";
-import AppFooter from "@/components/Layout/AppFooter";
 import { Helmet } from "react-helmet";
 
 const Index = () => {
@@ -58,38 +60,54 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Remember You Must Live | Extraordinary Adventures</title>
-        <meta name="description" content="Discover extraordinary outdoor adventures and unforgettable experiences across Oklahoma, Texas, and beyond. From storm chasing to exotic safaris — live before you die." />
+        <title>BEFORE YOU GO | Life is Short. Make it Legendary.</title>
+        <meta name="description" content="The Bucket List Engine for the Brotherhood. Discover extraordinary adventures — tank driving, helicopter hunts, storm chasing, and more across the American heartland." />
       </Helmet>
-      
+
       <div className="min-h-screen bg-background">
-        <AppHeader />
-        
-        {/* Hero Map — full-width, immersive, first thing visitors see */}
-        <section className="w-full px-4 md:px-8 pt-4 pb-2 max-w-7xl mx-auto animate-fade-in-up">
-          <WarRoomMap 
-            selectedRealm={selectedRealm} 
+        {/* Floating nav appears on scroll */}
+        <FloatingNav
+          itineraryCount={itineraryMissions.length}
+          onItineraryToggle={() => setIsItineraryOpen(!isItineraryOpen)}
+        />
+
+        {/* Cinematic hero — no traditional header */}
+        <HeroBanner />
+
+        {/* Full immersive map */}
+        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto -mt-16 relative z-10">
+          <WarRoomMap
+            selectedRealm={selectedRealm}
             onMissionSelect={setSelectedMission}
             onAddToItinerary={handleAddToItinerary}
             itineraryMissions={itineraryMissions}
           />
         </section>
-        
-        <main className="max-w-7xl mx-auto px-4 md:px-8 py-6 space-y-10">
-          <section className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+
+        <main className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-12">
+          {/* Stats ticker */}
+          <section className="animate-fade-in-up">
             <StatsBar />
           </section>
 
+          {/* Legendary picks marquee */}
+          <section className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+            <LegendaryPicks onMissionSelect={setSelectedMission} />
+          </section>
+
+          {/* Search (command palette trigger) */}
           <section>
             <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
           </section>
 
+          {/* Realm selector — visual grid */}
           <section>
             <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
-          
+
+          {/* Mission cards — editorial grid */}
           <section>
-            <MissionDeck 
+            <MissionDeck
               selectedRealm={selectedRealm}
               itineraryMissions={itineraryMissions}
               onAddToItinerary={handleAddToItinerary}
@@ -97,9 +115,11 @@ const Index = () => {
             />
           </section>
         </main>
-        
+
+        {/* "The Last Word" footer */}
         <AppFooter />
-        
+
+        {/* Itinerary side drawer */}
         <ItineraryBuilder
           selectedMissions={itineraryMissions}
           onRemoveMission={(id) => setItineraryMissions(prev => prev.filter(m => m.id !== id))}
@@ -107,7 +127,8 @@ const Index = () => {
           isOpen={isItineraryOpen}
           onToggle={() => setIsItineraryOpen(!isItineraryOpen)}
         />
-        
+
+        {/* Mission detail from map/marquee clicks */}
         {selectedMission && (
           <MissionDetailModal
             mission={selectedMission}
