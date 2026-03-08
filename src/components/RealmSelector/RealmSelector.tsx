@@ -22,11 +22,11 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
         <button
           onClick={() => onSelectRealm(null)}
           className={cn(
-            "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300",
+            "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 btn-3d",
             "border backdrop-blur-sm",
             !selectedRealm
-              ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)]"
-              : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
+              ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)] translate-y-[-2px]"
+              : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card hover:translate-y-[-2px]"
           )}
         >
           <span className="font-orbitron">All ({missions.length})</span>
@@ -36,23 +36,29 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
         
         {realms.map((realm) => {
           const count = getRealmMissionCount(realm.id);
+          const isSelected = selectedRealm?.id === realm.id;
           return (
             <button
               key={realm.id}
               onClick={() => onSelectRealm(realm)}
               className={cn(
-                "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300",
+                "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 btn-3d",
                 "border flex items-center gap-2 backdrop-blur-sm relative",
-                selectedRealm?.id === realm.id
-                  ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)]"
-                  : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
+                isSelected
+                  ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)] translate-y-[-2px]"
+                  : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card hover:translate-y-[-2px]"
               )}
             >
-              <span className="text-lg">{realm.icon}</span>
+              <span className={cn(
+                "text-lg transition-transform duration-300",
+                isSelected && "scale-125"
+              )}>
+                {realm.icon}
+              </span>
               <span className="hidden sm:inline">{realm.name}</span>
               <span className={cn(
-                "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
-                selectedRealm?.id === realm.id
+                "text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-all",
+                isSelected
                   ? "bg-primary/30 text-primary"
                   : "bg-muted/50 text-muted-foreground"
               )}>
