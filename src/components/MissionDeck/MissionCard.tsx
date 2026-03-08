@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { cn } from "@/lib/utils";
-import { MapPin, Clock } from "lucide-react";
+import { MapPin, Clock, Star } from "lucide-react";
 
 interface MissionCardProps {
   mission: Mission;
@@ -14,10 +14,10 @@ interface MissionCardProps {
 
 const getDangerConfig = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return { class: "danger-bg-low", icon: "🏕️" };
-    case "MEDIUM": return { class: "danger-bg-medium", icon: "⚔️" };
-    case "HIGH": return { class: "danger-bg-high", icon: "🔥" };
-    case "EXTREME": return { class: "danger-bg-extreme", icon: "💀" };
+    case "LOW": return { class: "danger-bg-low text-black", label: "Easy" };
+    case "MEDIUM": return { class: "danger-bg-medium text-black", label: "Moderate" };
+    case "HIGH": return { class: "danger-bg-high text-black", label: "Intense" };
+    case "EXTREME": return { class: "danger-bg-extreme text-white", label: "Extreme" };
   }
 };
 
@@ -34,18 +34,9 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
     const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
-    const tiltX = (y - 0.5) * -12;
-    const tiltY = (x - 0.5) * 12;
-    setTilt({ x: tiltX, y: tiltY });
+    setTilt({ x: (y - 0.5) * -8, y: (x - 0.5) * 8 });
     setMousePos({ x: x * 100, y: y * 100 });
   }, []);
-
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setTilt({ x: 0, y: 0 });
-    setMousePos({ x: 50, y: 50 });
-  };
 
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -55,151 +46,103 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
   return (
     <div
       className="card-3d animate-fade-in-up"
-      style={{ animationDelay: `${index * 60}ms`, animationFillMode: 'both' }}
+      style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
     >
       <div
         ref={cardRef}
         className={cn(
-          "card-3d-inner group relative w-full aspect-[4/5] overflow-hidden rounded-2xl",
-          "bg-gradient-to-br from-card via-card to-card/90 border-2 border-border/40",
-          "cursor-pointer",
-          "hover:border-primary/60",
-          isHovered && "shadow-[0_30px_80px_-20px_hsl(var(--tactical-amber)/0.5)]"
+          "card-3d-inner group relative w-full overflow-hidden rounded-xl",
+          "bg-card border border-border/40",
+          "cursor-pointer transition-shadow duration-500",
+          isHovered && "shadow-[0_20px_50px_-15px_hsl(var(--primary)/0.3)]"
         )}
         style={{
-          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${isHovered ? 1.03 : 1})`,
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${isHovered ? 1.02 : 1})`,
         }}
         onClick={onClick}
         onMouseMove={handleMouseMove}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }); }}
       >
-        {/* Background Image with parallax */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
-          style={{ 
-            backgroundImage: `url(${imageUrl})`,
-            backgroundColor: 'hsl(var(--muted))',
-            transform: isHovered
-              ? `scale(1.12) translate(${(mousePos.x - 50) * -0.08}%, ${(mousePos.y - 50) * -0.08}%)`
-              : 'scale(1)',
-          }}
-        />
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-85 group-hover:opacity-75 transition-opacity duration-500" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        {/* Holographic shine overlay */}
-        <div 
-          className="holographic-shine"
-          style={{ 
-            opacity: isHovered ? 1 : 0,
-            backgroundPosition: `${mousePos.x}% ${mousePos.y}%`,
-          }}
-        />
-
-        {/* Top decorative line */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        
-        {/* Top Badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
-          <div className="flex items-center gap-1.5">
-            <div className={cn(
-              "px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wider text-black uppercase flex items-center gap-1.5 shadow-lg",
-              dangerConfig.class
-            )}>
-              <span className="text-sm">{dangerConfig.icon}</span>
-              {mission.dangerLevel}
+        {/* Image */}
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
+            style={{ 
+              backgroundImage: `url(${imageUrl})`,
+              backgroundColor: 'hsl(var(--muted))',
+              transform: isHovered
+                ? `scale(1.08) translate(${(mousePos.x - 50) * -0.05}%, ${(mousePos.y - 50) * -0.05}%)`
+                : 'scale(1)',
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
+          
+          {/* Holographic shine */}
+          <div 
+            className="holographic-shine rounded-xl"
+            style={{ opacity: isHovered ? 1 : 0, backgroundPosition: `${mousePos.x}% ${mousePos.y}%` }}
+          />
+          
+          {/* Badges */}
+          <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
+            <div className="flex items-center gap-1.5">
+              <span className={cn("px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider", dangerConfig.class)}>
+                {dangerConfig.label}
+              </span>
+              {mission.isNew && (
+                <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase bg-earth-forest text-white">New</span>
+              )}
             </div>
             
-            {mission.isNew && (
-              <div className="px-2 py-1.5 rounded-lg text-[9px] font-bold tracking-wider uppercase bg-danger-low text-primary-foreground shadow-lg animate-pulse">
-                NEW
-              </div>
-            )}
-            
-            {mission.isHot && !mission.isNew && (
-              <div className="px-2 py-1.5 rounded-lg text-[9px] font-bold tracking-wider uppercase bg-danger-extreme text-white shadow-lg animate-danger-throb">
-                🔥 HOT
-              </div>
+            {onAddToItinerary && (
+              <button
+                onClick={handleAddClick}
+                className={cn(
+                  "w-8 h-8 flex items-center justify-center rounded-lg transition-all border backdrop-blur-sm btn-3d",
+                  isInItinerary 
+                    ? "bg-primary text-primary-foreground border-primary" 
+                    : "bg-black/40 text-white/80 border-white/10 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+                )}
+              >
+                {isInItinerary ? "✓" : "+"}
+              </button>
             )}
           </div>
-          
-          {onAddToItinerary && (
-            <button
-              onClick={handleAddClick}
-              className={cn(
-                "w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300 shadow-lg border backdrop-blur-sm btn-3d",
-                isInItinerary 
-                  ? "bg-primary text-primary-foreground border-primary shadow-[0_0_20px_hsl(var(--tactical-amber)/0.5)]" 
-                  : "bg-black/60 text-white/80 border-white/10 hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_0_15px_hsl(var(--tactical-amber)/0.3)]"
-              )}
-            >
-              {isInItinerary ? (
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                </svg>
-              ) : (
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 5v14M5 12h14"/>
-                </svg>
-              )}
-            </button>
-          )}
         </div>
         
-        {/* Content Overlay with parallax */}
-        <div 
-          className="absolute inset-x-0 bottom-0 p-4 z-10 transition-transform duration-300"
-          style={{
-            transform: isHovered
-              ? `translate(${(mousePos.x - 50) * 0.04}%, ${(mousePos.y - 50) * 0.04}%)`
-              : 'translate(0, 0)',
-          }}
-        >
-          <div className="inline-block px-2.5 py-1 mb-2 text-[9px] font-bold bg-primary/30 text-primary rounded-md border border-primary/40 tracking-wider">
-            {mission.codename}
+        {/* Content */}
+        <div className="p-4 space-y-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <MapPin className="w-3 h-3 text-primary/70" />
+            <span>{mission.city}, {mission.state}</span>
+            <span className="ml-auto text-primary/60 font-medium">{mission.distanceFromOKC}h</span>
           </div>
           
-          <div className="flex items-center gap-1.5 mb-2">
-            <MapPin className="w-3 h-3 text-primary" />
-            <span className="text-xs text-white/70">
-              {mission.city}, {mission.state}
-            </span>
-            <span className="text-xs text-primary/80 font-semibold ml-auto">
-              {mission.distanceFromOKC}h
-            </span>
-          </div>
-          
-          <h3 className="font-orbitron text-base sm:text-lg font-bold text-white leading-tight mb-3 group-hover:text-primary transition-colors duration-300 line-clamp-2">
+          <h3 className="font-display text-base font-bold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {mission.name}
           </h3>
           
-          <div className="flex items-center gap-3 text-xs pt-3 border-t border-white/10">
-            <span className="text-primary font-bold text-sm">{mission.priceEstimate}</span>
-            <div className="flex items-center gap-1 text-white/50">
+          <div className="flex items-center justify-between pt-2 border-t border-border/30">
+            <span className="text-sm font-semibold text-primary">{mission.priceEstimate}</span>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Clock className="w-3 h-3" />
               <span>{mission.duration}</span>
             </div>
-            <div className="flex items-center gap-0.5 ml-auto">
+            <div className="flex items-center gap-0.5">
               {Array.from({ length: mission.broRating }).map((_, i) => (
-                <span key={i} className="text-xs">🔥</span>
+                <Star key={i} className="w-3 h-3 text-primary fill-primary/50" />
               ))}
             </div>
           </div>
         </div>
         
-        {/* Hover Border Glow */}
-        <div className="absolute inset-0 rounded-2xl border-2 border-primary/0 group-hover:border-primary/50 transition-all duration-500 pointer-events-none" />
-        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_30px_hsl(var(--tactical-amber)/0.1)]" />
-        
-        {/* Itinerary Flag */}
+        {/* Saved flag */}
         {isInItinerary && (
-          <div className="absolute top-0 left-0 w-0 h-0 border-l-[45px] border-l-primary border-b-[45px] border-b-transparent shadow-lg">
-            <span className="absolute -left-[38px] top-[10px] text-primary-foreground text-[10px] font-bold rotate-[-45deg]">
-              ✓
-            </span>
+          <div className="absolute top-0 right-0">
+            <div className="w-0 h-0 border-t-[35px] border-t-primary border-l-[35px] border-l-transparent">
+              <span className="absolute -top-[28px] right-[6px] text-primary-foreground text-[10px] font-bold">✓</span>
+            </div>
           </div>
         )}
       </div>

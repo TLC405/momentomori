@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { missions } from "@/data/missions";
 import { realms } from "@/data/realms";
-import { MapPin, Flame, Users, Skull } from "lucide-react";
+import { MapPin, Compass, Mountain, Users } from "lucide-react";
 
-const useCountUp = (target: number, duration = 1200) => {
+const useCountUp = (target: number, duration = 1000) => {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
@@ -38,39 +38,29 @@ const StatsBar = () => {
   const newMissions = missions.filter(m => m.isNew).length;
 
   const stats = [
-    { icon: MapPin, label: "Epic Quests", value: totalMissions, color: "text-primary" },
-    { icon: Flame, label: "Realms", value: totalRealms, color: "text-primary" },
-    { icon: Skull, label: "Extreme Danger", value: extremeMissions, color: "text-danger-extreme" },
-    { icon: Users, label: "New Adventures", value: newMissions, color: "text-primary" },
+    { icon: Compass, label: "Adventures", value: totalMissions },
+    { icon: Mountain, label: "Regions", value: totalRealms },
+    { icon: MapPin, label: "Extreme", value: extremeMissions },
+    { icon: Users, label: "New This Season", value: newMissions },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {stats.map((stat, index) => {
         const { count, ref } = useCountUp(stat.value);
         return (
-          <div 
-            ref={ref}
-            key={stat.label}
-            className="card-3d"
-          >
+          <div ref={ref} key={stat.label}>
             <div
-              className="relative overflow-hidden bg-card border border-border/50 rounded-xl p-4 group hover:border-primary/50 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0_15px_40px_-10px_hsl(var(--tactical-amber)/0.3)]"
+              className="relative bg-card border border-border/50 rounded-xl p-5 group hover:border-primary/40 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_12px_30px_-8px_hsl(var(--primary)/0.15)]"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              
-              <div className="relative flex items-center gap-3">
-                <div className={`p-2.5 rounded-lg bg-muted/50 ${stat.color} group-hover:scale-110 transition-transform duration-500`}>
-                  <stat.icon className="w-5 h-5 group-hover:rotate-[360deg] transition-transform duration-700" />
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15 transition-colors">
+                  <stat.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-orbitron text-xl font-bold text-foreground">
-                    {count}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {stat.label}
-                  </div>
+                  <div className="font-display text-2xl font-bold text-foreground">{count}</div>
+                  <div className="text-xs text-muted-foreground">{stat.label}</div>
                 </div>
               </div>
             </div>

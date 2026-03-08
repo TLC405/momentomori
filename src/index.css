@@ -2,69 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 @layer base {
   :root {
-    /* WAR ROOM Premium Fantasy Dark Theme */
-    --background: 25 15% 5%;
-    --foreground: 38 20% 90%;
+    /* Adventure/Outdoors Professional Palette */
+    --background: 30 10% 6%;
+    --foreground: 35 15% 88%;
     
-    --card: 28 18% 8%;
-    --card-foreground: 38 20% 90%;
+    --card: 30 12% 9%;
+    --card-foreground: 35 15% 88%;
     
-    --popover: 28 18% 8%;
-    --popover-foreground: 38 20% 90%;
+    --popover: 30 12% 9%;
+    --popover-foreground: 35 15% 88%;
     
-    /* Amber/Gold Primary - Fantasy warmth */
-    --primary: 38 92% 50%;
-    --primary-foreground: 25 30% 8%;
+    /* Warm Earth Primary — burnt sienna/copper */
+    --primary: 24 80% 52%;
+    --primary-foreground: 30 10% 6%;
     
-    /* Deep Bronze Secondary */
-    --secondary: 30 40% 20%;
-    --secondary-foreground: 38 20% 90%;
+    /* Forest secondary */
+    --secondary: 150 20% 18%;
+    --secondary-foreground: 35 15% 88%;
     
-    --muted: 25 15% 12%;
-    --muted-foreground: 38 20% 55%;
+    --muted: 30 10% 13%;
+    --muted-foreground: 35 10% 50%;
     
-    --accent: 38 92% 50%;
-    --accent-foreground: 25 30% 8%;
+    --accent: 40 60% 50%;
+    --accent-foreground: 30 10% 6%;
     
-    --destructive: 0 72% 51%;
+    --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 38 30% 18%;
-    --input: 25 15% 12%;
-    --ring: 38 92% 50%;
+    --border: 30 12% 18%;
+    --input: 30 10% 13%;
+    --ring: 24 80% 52%;
     
     --radius: 0.75rem;
     
-    /* Tactical Colors - Fantasy Edition */
-    --tactical-amber: 38 92% 50%;
-    --tactical-amber-dim: 38 70% 35%;
-    --tactical-amber-glow: 38 100% 60%;
-    --tactical-crimson: 0 72% 51%;
-    --tactical-olive: 83 35% 25%;
-    --tactical-steel: 215 20% 40%;
-    --tactical-black: 25 15% 5%;
-    --tactical-dark: 28 18% 8%;
-    --tactical-darker: 25 15% 6%;
-    --tactical-parchment: 35 30% 12%;
+    /* Adventure accent colors */
+    --tactical-amber: 40 70% 48%;
+    --tactical-amber-dim: 35 50% 30%;
+    --tactical-amber-glow: 40 80% 58%;
+    --tactical-crimson: 0 65% 48%;
+    --tactical-olive: 140 25% 22%;
+    --tactical-steel: 200 15% 35%;
+    --tactical-black: 30 10% 6%;
+    --tactical-dark: 30 12% 9%;
+    --tactical-darker: 30 10% 7%;
+    --tactical-parchment: 35 25% 14%;
 
-    /* Danger level colors - more vibrant */
-    --danger-low: 142 76% 42%;
-    --danger-medium: 48 100% 50%;
-    --danger-high: 25 100% 50%;
-    --danger-extreme: 0 80% 50%;
+    /* Adventure palette extras */
+    --earth-copper: 24 80% 52%;
+    --earth-forest: 150 30% 28%;
+    --earth-stone: 30 8% 40%;
+    --earth-sand: 38 30% 75%;
+    --earth-moss: 100 20% 30%;
+    --earth-sky: 200 40% 55%;
+    --earth-cream: 38 25% 90%;
 
-    --sidebar-background: 28 18% 7%;
-    --sidebar-foreground: 38 20% 90%;
-    --sidebar-primary: 38 92% 50%;
-    --sidebar-primary-foreground: 25 30% 8%;
-    --sidebar-accent: 25 15% 12%;
-    --sidebar-accent-foreground: 38 20% 90%;
-    --sidebar-border: 38 30% 18%;
-    --sidebar-ring: 38 92% 50%;
+    /* Danger level colors */
+    --danger-low: 150 50% 42%;
+    --danger-medium: 40 90% 50%;
+    --danger-high: 24 95% 50%;
+    --danger-extreme: 0 70% 48%;
+
+    --sidebar-background: 30 12% 8%;
+    --sidebar-foreground: 35 15% 88%;
+    --sidebar-primary: 24 80% 52%;
+    --sidebar-primary-foreground: 30 10% 6%;
+    --sidebar-accent: 30 10% 13%;
+    --sidebar-accent-foreground: 35 15% 88%;
+    --sidebar-border: 30 12% 18%;
+    --sidebar-ring: 24 80% 52%;
   }
 }
 
@@ -74,37 +83,36 @@
   }
   
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Custom Scrollbar - Fantasy style */
+  /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
-    background: hsl(var(--tactical-black));
-    border-radius: 4px;
+    background: hsl(var(--background));
   }
   
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, hsl(var(--tactical-amber-dim)), hsl(var(--tactical-amber) / 0.6));
-    border-radius: 4px;
-    border: 1px solid hsl(var(--tactical-amber) / 0.3);
+    background: hsl(var(--earth-stone) / 0.5);
+    border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, hsl(var(--tactical-amber)), hsl(var(--tactical-amber-glow)));
+    background: hsl(var(--primary) / 0.7);
   }
 }
 
 @layer components {
-  /* Premium Card Hover - Fantasy Edition */
+  /* Premium Card */
   .premium-card {
     @apply relative overflow-hidden transition-all duration-500;
-    @apply hover:shadow-[0_25px_80px_-20px_hsl(var(--tactical-amber)/0.35)];
+    @apply hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.25)];
   }
   
   .premium-card::before {
@@ -112,9 +120,9 @@
     @apply absolute inset-0 opacity-0 transition-opacity duration-500;
     background: linear-gradient(
       135deg,
-      hsl(var(--tactical-amber) / 0.15) 0%,
+      hsl(var(--primary) / 0.08) 0%,
       transparent 50%,
-      hsl(var(--tactical-amber) / 0.05) 100%
+      hsl(var(--primary) / 0.03) 100%
     );
   }
   
@@ -122,31 +130,21 @@
     @apply opacity-100;
   }
   
-  /* Image Overlay Gradient - Deeper */
+  /* Image Overlay Gradient */
   .image-overlay {
     background: linear-gradient(
       to top,
       hsl(var(--tactical-black)) 0%,
-      hsl(var(--tactical-black) / 0.85) 25%,
-      hsl(var(--tactical-black) / 0.5) 50%,
+      hsl(var(--tactical-black) / 0.7) 30%,
       transparent 100%
     );
   }
   
-  /* Amber Glow - Enhanced */
+  /* Warm glow text */
   .amber-glow {
     text-shadow: 
-      0 0 20px hsl(var(--tactical-amber) / 0.6),
-      0 0 40px hsl(var(--tactical-amber) / 0.4),
-      0 0 60px hsl(var(--tactical-amber) / 0.2);
-  }
-  
-  /* Fantasy border glow */
-  .fantasy-border {
-    box-shadow: 
-      0 0 0 1px hsl(var(--tactical-amber) / 0.3),
-      0 0 20px hsl(var(--tactical-amber) / 0.1),
-      inset 0 0 20px hsl(var(--tactical-black) / 0.5);
+      0 0 20px hsl(var(--primary) / 0.4),
+      0 0 40px hsl(var(--primary) / 0.2);
   }
   
   /* Danger Indicators */
@@ -162,15 +160,18 @@
 }
 
 @layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  
   .font-orbitron {
     font-family: 'Orbitron', sans-serif;
   }
   
   .font-sans {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
   }
   
-  /* Text line clamp */
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -187,36 +188,19 @@
 }
 
 @layer components {
-  /* Pulse glow animation for itinerary button */
   .animate-pulse-glow {
     animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 20px hsl(38 92% 50% / 0.4);
+      box-shadow: 0 0 15px hsl(var(--primary) / 0.3);
     }
     50% {
-      box-shadow: 0 0 40px hsl(38 92% 50% / 0.7);
+      box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
     }
   }
   
-  /* Radar sweep animation */
-  .animate-radar-sweep {
-    animation: radar-sweep 12s linear infinite;
-    transform-origin: center;
-  }
-  
-  @keyframes radar-sweep {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  /* Fade in up animation */
   .animate-fade-in-up {
     animation: fade-in-up 0.6s ease-out;
   }
@@ -224,7 +208,7 @@
   @keyframes fade-in-up {
     from {
       opacity: 0;
-      transform: translateY(25px);
+      transform: translateY(20px);
     }
     to {
       opacity: 1;
@@ -232,325 +216,148 @@
     }
   }
   
-  /* Marker pulse animation */
   @keyframes marker-pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.5;
-    }
-    100% {
-      transform: scale(2.8);
-      opacity: 0;
-    }
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(2.5); opacity: 0; }
   }
   
   .animate-marker-pulse {
     animation: marker-pulse 2.5s ease-out infinite;
   }
   
-  /* Float animation for decorative elements */
   @keyframes float {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
   }
   
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
   
-  /* Shimmer effect for premium elements */
   @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
   
   .animate-shimmer {
     background: linear-gradient(
       90deg,
       transparent 0%,
-      hsl(var(--tactical-amber) / 0.1) 50%,
+      hsl(var(--primary) / 0.08) 50%,
       transparent 100%
     );
     background-size: 200% 100%;
     animation: shimmer 3s ease-in-out infinite;
   }
   
-  /* Premium map effects */
   .map-glow {
-    filter: drop-shadow(0 0 15px hsl(38 92% 50% / 0.35));
+    filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.25));
   }
   
-  .tactical-border {
-    border: 2px solid hsl(38 92% 50% / 0.3);
-    box-shadow: 
-      inset 0 2px 0 hsl(38 92% 50% / 0.15),
-      0 8px 30px -8px hsl(0 0% 0% / 0.6);
-  }
-  
-  /* Glow text for headers */
   .glow-text {
-    text-shadow: 
-      0 0 10px currentColor,
-      0 0 20px currentColor,
-      0 0 30px currentColor;
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
   }
-  
-  /* ============================================
-     ULTRA-PREMIUM FANTASY ANIMATIONS
-     Major Payne Approved! 
-     "Pain is weakness leaving the body!"
-     ============================================ */
-  
-  /* Smoke rise - for volcanoes, fires, danger zones */
+
+  /* Fantasy map animations */
   @keyframes smoke-rise {
-    0% {
-      transform: translateY(0) scale(1);
-      opacity: 0.6;
-    }
-    50% {
-      transform: translateY(-15px) scale(1.2);
-      opacity: 0.3;
-    }
-    100% {
-      transform: translateY(-30px) scale(1.5);
-      opacity: 0;
-    }
+    0% { transform: translateY(0) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-15px) scale(1.2); opacity: 0.3; }
+    100% { transform: translateY(-30px) scale(1.5); opacity: 0; }
   }
-  
-  .animate-smoke-rise {
-    animation: smoke-rise 3s ease-out infinite;
-  }
-  
-  /* Flag wave - for itinerary markers, banners */
+  .animate-smoke-rise { animation: smoke-rise 3s ease-out infinite; }
+
   @keyframes flag-wave {
-    0%, 100% {
-      transform: skewX(0deg) scaleX(1);
-    }
-    25% {
-      transform: skewX(-3deg) scaleX(0.95);
-    }
-    75% {
-      transform: skewX(3deg) scaleX(1.05);
-    }
+    0%, 100% { transform: skewX(0deg) scaleX(1); }
+    25% { transform: skewX(-3deg) scaleX(0.95); }
+    75% { transform: skewX(3deg) scaleX(1.05); }
   }
-  
-  .animate-flag-wave {
-    animation: flag-wave 1.5s ease-in-out infinite;
-    transform-origin: left center;
-  }
-  
-  /* Water ripple - for lakes, rivers */
+  .animate-flag-wave { animation: flag-wave 1.5s ease-in-out infinite; transform-origin: left center; }
+
   @keyframes water-ripple {
-    0% {
-      transform: scale(0.8);
-      opacity: 0.8;
-    }
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2); opacity: 0; }
   }
-  
-  .animate-water-ripple {
-    animation: water-ripple 3s ease-out infinite;
-  }
-  
-  /* Firefly float - ambient magical particles */
+  .animate-water-ripple { animation: water-ripple 3s ease-out infinite; }
+
   @keyframes firefly-float {
-    0%, 100% {
-      transform: translate(0, 0);
-      opacity: 0.3;
-    }
-    25% {
-      transform: translate(5px, -8px);
-      opacity: 0.8;
-    }
-    50% {
-      transform: translate(-3px, -12px);
-      opacity: 0.5;
-    }
-    75% {
-      transform: translate(-6px, -5px);
-      opacity: 0.9;
-    }
+    0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+    25% { transform: translate(5px, -8px); opacity: 0.8; }
+    50% { transform: translate(-3px, -12px); opacity: 0.5; }
+    75% { transform: translate(-6px, -5px); opacity: 0.9; }
   }
-  
-  .animate-firefly {
-    animation: firefly-float 4s ease-in-out infinite;
-  }
-  
-  /* Storm flash - lightning effects */
+  .animate-firefly { animation: firefly-float 4s ease-in-out infinite; }
+
   @keyframes storm-flash {
-    0%, 90%, 100% {
-      opacity: 0;
-    }
-    92%, 94% {
-      opacity: 1;
-    }
-    93%, 95% {
-      opacity: 0;
-    }
-    96% {
-      opacity: 0.8;
-    }
+    0%, 90%, 100% { opacity: 0; }
+    92%, 94% { opacity: 1; }
+    93%, 95% { opacity: 0; }
+    96% { opacity: 0.8; }
   }
-  
-  .animate-storm-flash {
-    animation: storm-flash 5s ease-in-out infinite;
-  }
-  
-  /* Compass spin - for coordinate display */
+  .animate-storm-flash { animation: storm-flash 5s ease-in-out infinite; }
+
   @keyframes compass-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
-  
-  .animate-compass-spin {
-    animation: compass-spin 20s linear infinite;
-  }
-  
-  /* Path draw - for journey lines */
+  .animate-compass-spin { animation: compass-spin 20s linear infinite; }
+
   @keyframes path-draw {
-    from {
-      stroke-dashoffset: 1000;
-    }
-    to {
-      stroke-dashoffset: 0;
-    }
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
   }
-  
-  .animate-path-draw {
-    animation: path-draw 2s ease-out forwards;
-  }
-  
-  /* Scroll unroll - for tooltips */
+  .animate-path-draw { animation: path-draw 2s ease-out forwards; }
+
   @keyframes scroll-unroll {
-    0% {
-      transform: scaleY(0) translateY(-20px);
-      opacity: 0;
-    }
-    100% {
-      transform: scaleY(1) translateY(0);
-      opacity: 1;
-    }
+    0% { transform: scaleY(0) translateY(-20px); opacity: 0; }
+    100% { transform: scaleY(1) translateY(0); opacity: 1; }
   }
-  
-  .animate-scroll-unroll {
-    animation: scroll-unroll 0.3s ease-out forwards;
-    transform-origin: top center;
-  }
-  
-  /* Ember float - fire particles */
+  .animate-scroll-unroll { animation: scroll-unroll 0.3s ease-out forwards; transform-origin: top center; }
+
   @keyframes ember-float {
-    0% {
-      transform: translateY(0) rotate(0deg);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-30px) rotate(180deg);
-      opacity: 0;
-    }
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-30px) rotate(180deg); opacity: 0; }
   }
-  
-  .animate-ember {
-    animation: ember-float 1.5s ease-out infinite;
-  }
-  
-  /* Mist drift - fog/atmosphere */
+  .animate-ember { animation: ember-float 1.5s ease-out infinite; }
+
   @keyframes mist-drift {
-    0%, 100% {
-      transform: translateX(0);
-      opacity: 0.3;
-    }
-    50% {
-      transform: translateX(20px);
-      opacity: 0.5;
-    }
+    0%, 100% { transform: translateX(0); opacity: 0.3; }
+    50% { transform: translateX(20px); opacity: 0.5; }
   }
-  
-  .animate-mist {
-    animation: mist-drift 8s ease-in-out infinite;
-  }
-  
-  /* Beacon pulse - for HQ and important markers */
+  .animate-mist { animation: mist-drift 8s ease-in-out infinite; }
+
   @keyframes beacon-pulse {
-    0%, 100% {
-      box-shadow: 0 0 0 0 hsl(var(--tactical-amber) / 0.7);
-    }
-    50% {
-      box-shadow: 0 0 0 15px hsl(var(--tactical-amber) / 0);
-    }
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5); }
+    50% { box-shadow: 0 0 0 12px hsl(var(--primary) / 0); }
   }
-  
-  .animate-beacon {
-    animation: beacon-pulse 2s ease-in-out infinite;
-  }
-  
-  /* Danger throb - for extreme danger markers */
+  .animate-beacon { animation: beacon-pulse 2s ease-in-out infinite; }
+
   @keyframes danger-throb {
-    0%, 100% {
-      transform: scale(1);
-      filter: brightness(1);
-    }
-    50% {
-      transform: scale(1.05);
-      filter: brightness(1.3);
-    }
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.05); filter: brightness(1.2); }
   }
-  
-  .animate-danger-throb {
-    animation: danger-throb 0.8s ease-in-out infinite;
-  }
-  
-  /* War drum - subtle background pulse */
-  @keyframes war-drum {
-    0%, 100% {
-      opacity: 0.8;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-  
-  .animate-war-drum {
-    animation: war-drum 1s ease-in-out infinite;
-  }
-  
-  /* Radar ping - for location markers */
+  .animate-danger-throb { animation: danger-throb 0.8s ease-in-out infinite; }
+
   @keyframes radar-ping {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    75%, 100% {
-      transform: scale(3);
-      opacity: 0;
-    }
+    0% { transform: scale(1); opacity: 1; }
+    75%, 100% { transform: scale(3); opacity: 0; }
   }
-  
-  .animate-radar-ping {
-    animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  .animate-radar-ping { animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+  @keyframes radar-sweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
+  .animate-radar-sweep { animation: radar-sweep 12s linear infinite; transform-origin: center; }
+
+  @keyframes war-drum {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+  .animate-war-drum { animation: war-drum 1s ease-in-out infinite; }
 }
 
 @layer components {
-  /* ============================================
-     NEXT-GEN 3D CARD SYSTEM
-     ============================================ */
-
-  /* 3D Card perspective container */
+  /* 3D Card System */
   .card-3d {
     perspective: 1000px;
     transform-style: preserve-3d;
@@ -562,16 +369,15 @@
     will-change: transform;
   }
 
-  /* Holographic shine overlay */
   .holographic-shine {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       105deg,
       transparent 30%,
-      hsl(var(--tactical-amber) / 0.12) 45%,
-      hsl(var(--tactical-amber) / 0.25) 50%,
-      hsl(var(--tactical-amber) / 0.12) 55%,
+      hsl(var(--primary) / 0.08) 45%,
+      hsl(var(--primary) / 0.16) 50%,
+      hsl(var(--primary) / 0.08) 55%,
       transparent 70%
     );
     background-size: 300% 300%;
@@ -582,69 +388,32 @@
     border-radius: inherit;
   }
 
-  /* Glass premium */
   .glass-premium {
-    background: hsl(var(--card) / 0.6);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid hsl(var(--primary) / 0.15);
-    box-shadow:
-      0 8px 32px hsl(0 0% 0% / 0.3),
-      inset 0 1px 0 hsl(var(--primary) / 0.1);
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid hsl(var(--primary) / 0.12);
+    box-shadow: 0 8px 32px hsl(0 0% 0% / 0.3);
   }
 
-  /* Ken Burns zoom effect */
   @keyframes ken-burns {
-    0% {
-      transform: scale(1) translate(0, 0);
-    }
-    50% {
-      transform: scale(1.15) translate(-2%, -1%);
-    }
-    100% {
-      transform: scale(1.05) translate(1%, 0.5%);
-    }
+    0% { transform: scale(1) translate(0, 0); }
+    50% { transform: scale(1.12) translate(-2%, -1%); }
+    100% { transform: scale(1.05) translate(1%, 0.5%); }
   }
+  .animate-ken-burns { animation: ken-burns 20s ease-in-out infinite alternate; }
 
-  .animate-ken-burns {
-    animation: ken-burns 20s ease-in-out infinite alternate;
-  }
-
-  /* Float gentle */
   @keyframes float-gentle {
-    0%, 100% {
-      transform: translateY(0) rotate(0deg);
-    }
-    33% {
-      transform: translateY(-4px) rotate(0.5deg);
-    }
-    66% {
-      transform: translateY(-2px) rotate(-0.3deg);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
   }
+  .animate-float-gentle { animation: float-gentle 5s ease-in-out infinite; }
 
-  .animate-float-gentle {
-    animation: float-gentle 6s ease-in-out infinite;
-  }
-
-  /* Shimmer text sweep */
   @keyframes shimmer-text {
-    0% {
-      background-position: -200% center;
-    }
-    100% {
-      background-position: 200% center;
-    }
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
   }
-
   .shimmer-text {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--tactical-amber-glow)) 25%,
-      hsl(var(--primary)) 50%,
-      hsl(var(--tactical-amber-glow)) 75%,
-      hsl(var(--primary)) 100%
-    );
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--earth-sand)) 25%, hsl(var(--primary)) 50%, hsl(var(--earth-sand)) 75%, hsl(var(--primary)) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -652,131 +421,61 @@
     animation: shimmer-text 4s linear infinite;
   }
 
-  /* Gradient border sweep */
   @keyframes gradient-sweep {
-    0% {
-      background-position: 0% 50%;
-    }
-    100% {
-      background-position: 200% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
   }
-
   .animate-gradient-sweep {
-    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.8), hsl(var(--tactical-amber-glow) / 0.6), hsl(var(--primary) / 0.8), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), hsl(var(--earth-sand) / 0.4), hsl(var(--primary) / 0.6), transparent);
     background-size: 200% 100%;
-    animation: gradient-sweep 3s linear infinite;
+    animation: gradient-sweep 4s linear infinite;
   }
 
-  /* Count up (for JS-driven counters) */
   @keyframes count-pop {
-    0% {
-      transform: scale(0.5);
-      opacity: 0;
-    }
-    60% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
   }
+  .animate-count-pop { animation: count-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
-  .animate-count-pop {
-    animation: count-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
-
-  /* 3D unfold reveal */
   @keyframes unfold-3d {
-    0% {
-      transform: perspective(800px) rotateX(-15deg);
-      opacity: 0;
-      transform-origin: top center;
-    }
-    100% {
-      transform: perspective(800px) rotateX(0deg);
-      opacity: 1;
-      transform-origin: top center;
-    }
+    0% { transform: perspective(800px) rotateX(-10deg); opacity: 0; transform-origin: top center; }
+    100% { transform: perspective(800px) rotateX(0deg); opacity: 1; transform-origin: top center; }
   }
+  .animate-unfold { animation: unfold-3d 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
-  .animate-unfold {
-    animation: unfold-3d 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
-
-  /* Staggered cascade */
   .cascade-item {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-15px);
     animation: cascade-in 0.4s ease-out forwards;
   }
-
   @keyframes cascade-in {
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    to { opacity: 1; transform: translateX(0); }
   }
 
-  /* 3D press effect for buttons */
   .btn-3d {
     transform: translateZ(0);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-
   .btn-3d:active {
     transform: translateY(2px) scale(0.97);
-    box-shadow: 0 2px 8px hsl(var(--tactical-amber) / 0.3) !important;
   }
 
-  /* Orbital glow ring */
   @keyframes orbital-glow {
-    0% {
-      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.6), 0 0 0 0 hsl(var(--primary) / 0.3);
-    }
-    50% {
-      box-shadow: 0 0 0 8px hsl(var(--primary) / 0), 0 0 20px 4px hsl(var(--primary) / 0.2);
-    }
-    100% {
-      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.6), 0 0 0 0 hsl(var(--primary) / 0.3);
-    }
+    0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5); }
+    50% { box-shadow: 0 0 0 6px hsl(var(--primary) / 0), 0 0 15px 3px hsl(var(--primary) / 0.15); }
+    100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5); }
   }
+  .animate-orbital-glow { animation: orbital-glow 2s ease-in-out infinite; }
 
-  .animate-orbital-glow {
-    animation: orbital-glow 2s ease-in-out infinite;
-  }
-
-  /* Item remove animation */
-  @keyframes shrink-out {
-    to {
-      transform: scale(0.8) rotateX(10deg);
-      opacity: 0;
-      max-height: 0;
-      margin: 0;
-      padding: 0;
-    }
-  }
-
-  /* Slide in from right with 3D */
   @keyframes slide-in-3d {
-    0% {
-      transform: perspective(800px) rotateY(-5deg) translateX(100%);
-      opacity: 0;
-    }
-    100% {
-      transform: perspective(800px) rotateY(0deg) translateX(0);
-      opacity: 1;
-    }
+    0% { transform: translateX(100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
   }
-
-  .animate-slide-in-3d {
-    animation: slide-in-3d 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
+  .animate-slide-in-3d { animation: slide-in-3d 0.4s ease-out forwards; }
 }
 
-/* Selection styling */
 ::selection {
-  background: hsl(var(--tactical-amber) / 0.3);
+  background: hsl(var(--primary) / 0.3);
   color: hsl(var(--foreground));
 }
