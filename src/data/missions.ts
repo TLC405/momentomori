@@ -385,7 +385,7 @@ export const missions: Mission[] = [
     duration: "2-3 hours",
     description: "Drive-through safari with exotic animals. Giraffes, zebras, buffalo feeding from your car.",
     broCodeAnalysis: "Family-friendly on paper. Actually hilarious when a camel sticks its head in your window.",
-    bookingUrl: "https://arbucklewilderness.com",
+    bookingUrl: "https://www.arbucklewildernesspark.com",
     imageUrl: "/placeholder.svg",
     tags: ["safari", "animals", "drive-through"],
     dangerLevel: "LOW",
