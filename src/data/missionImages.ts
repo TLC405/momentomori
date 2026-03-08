@@ -30,11 +30,17 @@ export const missionImages: Record<string, string> = {
   "heli-hog-hunt": heliHunt,
   "skydive-okc": skydiving,
   "flight-lesson": flightTraining,
+  "l39-fighter-jet": flightTraining,
+  "warbird-rides": flightTraining,
   
   // The Armory
   "full-auto-okc": fullAuto,
   "d-day-adventure": dDayPaintball,
   "tactical-firearms": tacticalTraining,
+  "flamethrower-experience": fullAuto,
+  "urban-tomahawk": tacticalTraining,
+  "class-axe-dallas": tacticalTraining,
+  "thermal-hog-hunt": heliHunt,
   
   // Jurassic Encounters
   "tiger-safari": tigerSafari,
@@ -46,17 +52,32 @@ export const missionImages: Record<string, string> = {
   
   // Nuclear Option
   "valhalla-silo": missileSiloDive,
+  "natural-bridge-caverns": missileSiloDive,
+  "war-eagle-cavern": missileSiloDive,
   
   // Aquatic Assault
   "noodling": catfishNoodling,
   "whitewater-okc": whitewaterRafting,
+  "sky-trail": whitewaterRafting,
+  "rugaru-zipline": whitewaterRafting,
+  "buffalo-river-canopy": whitewaterRafting,
   
   // Velocity
   "exotic-racing-dfw": supercarRacing,
   "go-kart-racing": goKartRacing,
   "motorsport-ranch": supercarRacing,
+  "texas-drift-academy": rallyDriving,
+  
+  // Wasteland Warriors
+  "zombie-larp": dDayPaintball,
+  "escape-room-extreme": dDayPaintball,
+  
+  // Rodeo Legends
+  "bull-riding-school": exoticSafari,
+  "sankey-rodeo-school": exoticSafari,
+  "ranch-hand-experience": exoticSafari,
 };
 
 export const getMissionImage = (missionId: string): string => {
-  return missionImages[missionId] || tankDrive; // Default fallback
+  return missionImages[missionId] || tankDrive;
 };

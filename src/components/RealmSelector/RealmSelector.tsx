@@ -1,4 +1,5 @@
 import { Realm, realms } from "@/data/realms";
+import { missions } from "@/data/missions";
 import { cn } from "@/lib/utils";
 
 interface RealmSelectorProps {
@@ -7,17 +8,17 @@ interface RealmSelectorProps {
 }
 
 const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => {
+  const getRealmMissionCount = (realmId: string) =>
+    missions.filter(m => m.realmId === realmId).length;
+
   return (
     <div className="space-y-3">
-      {/* Section Header */}
       <div className="flex items-center gap-2">
         <div className="w-1 h-5 bg-primary/50 rounded-full" />
         <span className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Filter by Realm</span>
       </div>
       
-      {/* Realm Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-        {/* All button */}
         <button
           onClick={() => onSelectRealm(null)}
           className={cn(
@@ -28,29 +29,41 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
               : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
           )}
         >
-          <span className="font-orbitron">All Missions</span>
+          <span className="font-orbitron">All ({missions.length})</span>
         </button>
         
-        {/* Divider */}
         <div className="w-px h-6 bg-border/50 flex-shrink-0" />
         
-        {/* Realm buttons */}
-        {realms.map((realm) => (
-          <button
-            key={realm.id}
-            onClick={() => onSelectRealm(realm)}
-            className={cn(
-              "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300",
-              "border flex items-center gap-2 backdrop-blur-sm",
-              selectedRealm?.id === realm.id
-                ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)]"
-                : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
-            )}
-          >
-            <span className="text-lg">{realm.icon}</span>
-            <span className="hidden sm:inline">{realm.name}</span>
-          </button>
-        ))}
+        {realms.map((realm) => {
+          const count = getRealmMissionCount(realm.id);
+          return (
+            <button
+              key={realm.id}
+              onClick={() => onSelectRealm(realm)}
+              className={cn(
+                "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300",
+                "border flex items-center gap-2 backdrop-blur-sm relative",
+                selectedRealm?.id === realm.id
+                  ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)]"
+                  : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
+              )}
+            >
+              <span className="text-lg">{realm.icon}</span>
+              <span className="hidden sm:inline">{realm.name}</span>
+              <span className={cn(
+                "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
+                selectedRealm?.id === realm.id
+                  ? "bg-primary/30 text-primary"
+                  : "bg-muted/50 text-muted-foreground"
+              )}>
+                {count}
+              </span>
+              {realm.isNew && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              )}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
