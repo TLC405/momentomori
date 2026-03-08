@@ -51,15 +51,19 @@ const StatsBar = () => {
         return (
           <div ref={ref} key={stat.label}>
             <div
-              className="relative bg-card border border-border/50 rounded-xl p-5 group hover:border-primary/40 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_12px_30px_-8px_hsl(var(--primary)/0.15)]"
+              className="relative bg-gradient-to-br from-card to-muted/30 border border-border/50 rounded-xl p-5 group warm-glow-border hover:translate-y-[-2px] transition-all duration-300"
               style={{ animationDelay: `${index * 100}ms` }}
             >
+              {/* Subtle gradient divider on right */}
+              {index < 3 && (
+                <div className="absolute right-0 top-3 bottom-3 w-px bg-gradient-to-b from-transparent via-border/40 to-transparent hidden md:block" />
+              )}
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15 transition-colors">
+                <div className="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors ring-2 ring-primary/[0.08] group-hover:ring-primary/20 group-hover:shadow-[0_0_16px_-4px_hsl(var(--primary)/0.3)]">
                   <stat.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-display text-2xl font-bold text-foreground">{count}</div>
+                  <div className="stat-value text-2xl font-bold">{count}</div>
                   <div className="text-xs text-muted-foreground">{stat.label}</div>
                 </div>
               </div>

@@ -1,13 +1,17 @@
 import { missions } from "@/data/missions";
 import { realms } from "@/data/realms";
+import { Heart } from "lucide-react";
 
 const AppFooter = () => {
   return (
-    <footer className="border-t border-border/30 mt-16 bg-gradient-to-b from-background to-card/20">
+    <footer className="border-t border-border/30 mt-16 bg-gradient-to-b from-background to-card/20 relative">
+      {/* Gradient top border */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <span className="font-display text-xl font-bold text-foreground">Remember You Must Live</span>
+            <span className="font-display text-xl font-bold shimmer-text">Remember You Must Live</span>
             <p className="text-sm text-muted-foreground leading-relaxed mt-3">
               Life's greatest adventures are waiting. Discover extraordinary experiences that create lasting memories.
             </p>
@@ -21,8 +25,8 @@ const AppFooter = () => {
                 { value: "7", label: "States" },
                 { value: "∞", label: "Memories" },
               ].map((stat) => (
-                <div key={stat.label} className="bg-muted/20 rounded-lg p-3 text-center border border-border/20 hover:border-primary/20 transition-all">
-                  <div className="font-display text-2xl text-primary font-bold">{stat.value}</div>
+                <div key={stat.label} className="bg-muted/20 rounded-lg p-3 text-center border border-border/20 warm-glow-border transition-all">
+                  <div className="stat-value text-2xl font-bold">{stat.value}</div>
                   <div className="text-xs text-muted-foreground">{stat.label}</div>
                 </div>
               ))}
@@ -41,7 +45,11 @@ const AppFooter = () => {
         </div>
         <div className="pt-8 border-t border-border/20">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground">© 2024 Remember You Must Live · Memento Mori</p>
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              © 2024 Remember You Must Live · 
+              <Heart className="w-3 h-3 text-primary animate-pulse inline" />
+              Memento Mori
+            </p>
             <p className="text-xs text-muted-foreground">Adventure awaits those who seek it</p>
           </div>
         </div>

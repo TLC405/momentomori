@@ -13,10 +13,10 @@ interface MissionDetailModalProps {
 
 const getDangerConfig = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return { class: "danger-bg-low text-black", label: "Easy Going" };
-    case "MEDIUM": return { class: "danger-bg-medium text-black", label: "Moderate Challenge" };
-    case "HIGH": return { class: "danger-bg-high text-black", label: "High Intensity" };
-    case "EXTREME": return { class: "danger-bg-extreme text-white", label: "Extreme Danger" };
+    case "LOW": return { class: "danger-bg-low text-black", label: "Easy Going", cssVar: "--danger-low" };
+    case "MEDIUM": return { class: "danger-bg-medium text-black", label: "Moderate Challenge", cssVar: "--danger-medium" };
+    case "HIGH": return { class: "danger-bg-high text-black", label: "High Intensity", cssVar: "--danger-high" };
+    case "EXTREME": return { class: "danger-bg-extreme text-white", label: "Extreme Danger", cssVar: "--danger-extreme" };
   }
 };
 
@@ -46,13 +46,15 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
           transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease',
         }}
       >
-        {/* Hero Image */}
-        <div className="relative h-64 md:h-80 overflow-hidden rounded-t-2xl">
+        {/* Hero Image — taller with vignette */}
+        <div className="relative h-72 md:h-96 overflow-hidden rounded-t-2xl">
           <div 
             className="absolute inset-0 bg-cover bg-center animate-ken-burns"
             style={{ backgroundImage: `url(${imageUrl})`, backgroundColor: 'hsl(var(--muted))' }}
           />
+          {/* Vignette + gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+          <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 80px 20px hsl(var(--background) / 0.3)' }} />
           
           <button
             onClick={onClose}
@@ -92,7 +94,7 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
         </div>
         
         <div className="p-6 space-y-6">
-          {/* Stats */}
+          {/* Stats with left-colored border accent */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { icon: DollarSign, label: "Investment", value: mission.priceEstimate },
@@ -100,7 +102,13 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
               { icon: Users, label: "Group Size", value: mission.groupSize },
               { icon: MapPin, label: "Distance", value: `${mission.distanceFromOKC}h` },
             ].map((stat, i) => (
-              <div key={stat.label} className="bg-muted/30 border border-border/30 rounded-xl p-4 text-center group hover:border-primary/30 transition-all animate-count-pop" style={{ animationDelay: `${200 + i * 80}ms` }}>
+              <div 
+                key={stat.label} 
+                className="relative bg-muted/30 border border-border/30 rounded-xl p-4 text-center group hover:border-primary/30 transition-all animate-count-pop overflow-hidden" 
+                style={{ animationDelay: `${200 + i * 80}ms` }}
+              >
+                {/* Left accent bar */}
+                <div className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full" style={{ background: `hsl(var(${dangerConfig.cssVar}))` }} />
                 <stat.icon className="w-4 h-4 text-primary mx-auto mb-2" />
                 <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">{stat.label}</div>
                 <div className="font-semibold text-foreground text-sm">{stat.value}</div>
@@ -108,8 +116,8 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
             ))}
           </div>
           
-          {/* Description */}
-          <div className="bg-muted/20 border border-border/30 rounded-xl p-5">
+          {/* Description with parchment bg */}
+          <div className="parchment-bg border border-border/30 rounded-xl p-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2 font-display">
               <AlertTriangle className="w-4 h-4 text-primary" />
               About This Adventure
@@ -117,37 +125,37 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
             <p className="text-sm text-muted-foreground leading-relaxed">{mission.description}</p>
           </div>
           
-          {/* Rating */}
-          <div className="relative bg-primary/8 border border-primary/20 rounded-xl p-5">
+          {/* Rating with animated stars */}
+          <div className="relative bg-primary/[0.08] border border-primary/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="flex">
                 {Array.from({ length: mission.broRating }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-primary fill-primary/60" />
+                  <Star key={i} className="w-5 h-5 text-primary fill-primary animate-star-pop" style={{ animationDelay: `${i * 100}ms` }} />
                 ))}
                 {Array.from({ length: 5 - mission.broRating }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-muted-foreground/20" />
+                  <Star key={`e-${i}`} className="w-5 h-5 text-muted-foreground/20 animate-star-pop" style={{ animationDelay: `${(mission.broRating + i) * 100}ms` }} />
                 ))}
               </div>
-              <span className="text-sm font-bold text-primary">{mission.broRating}/5</span>
+              <span className="stat-value text-sm font-bold">{mission.broRating}/5</span>
             </div>
             <p className="text-sm text-muted-foreground italic">"{mission.broCodeAnalysis}"</p>
           </div>
           
-          {/* Tags */}
+          {/* Tags with hover glow */}
           <div className="flex flex-wrap gap-2">
             {mission.tags.map((tag, i) => (
-              <span key={tag} className="cascade-item px-3 py-1.5 text-xs bg-muted/40 text-muted-foreground rounded-full border border-border/30 hover:border-primary/40 hover:text-primary transition-all" style={{ animationDelay: `${400 + i * 50}ms` }}>
+              <span key={tag} className="cascade-item px-3 py-1.5 text-xs bg-muted/40 text-muted-foreground rounded-full border border-border/30 hover:border-primary/40 hover:text-primary hover:scale-105 hover:shadow-[0_0_12px_hsl(var(--primary)/0.15)] transition-all" style={{ animationDelay: `${400 + i * 50}ms` }}>
                 {tag}
               </span>
             ))}
           </div>
           
-          {/* CTA */}
+          {/* CTA with gradient + ripple */}
           <a
             href={mission.bookingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center justify-center gap-3 w-full py-4 bg-primary text-primary-foreground font-semibold text-lg rounded-xl hover:brightness-110 transition-all btn-3d"
+            className="ripple-btn group flex items-center justify-center gap-3 w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold text-lg rounded-xl hover:brightness-110 transition-all btn-3d shadow-[0_4px_20px_hsl(var(--primary)/0.3)]"
           >
             Book This Adventure
             <ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
