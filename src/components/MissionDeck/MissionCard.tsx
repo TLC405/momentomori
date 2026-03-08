@@ -14,10 +14,10 @@ interface MissionCardProps {
 
 const getDangerConfig = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return { class: "danger-bg-low text-black", label: "Easy" };
-    case "MEDIUM": return { class: "danger-bg-medium text-black", label: "Moderate" };
-    case "HIGH": return { class: "danger-bg-high text-black", label: "Intense" };
-    case "EXTREME": return { class: "danger-bg-extreme text-white", label: "Extreme" };
+    case "LOW": return { class: "danger-bg-low text-black", label: "Easy", cssVar: "--danger-low" };
+    case "MEDIUM": return { class: "danger-bg-medium text-black", label: "Moderate", cssVar: "--danger-medium" };
+    case "HIGH": return { class: "danger-bg-high text-black", label: "Intense", cssVar: "--danger-high" };
+    case "EXTREME": return { class: "danger-bg-extreme text-white", label: "Extreme", cssVar: "--danger-extreme" };
   }
 };
 
@@ -64,6 +64,12 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }); }}
       >
+        {/* Top accent line matching danger level */}
+        <div 
+          className="absolute top-0 left-0 right-0 h-[3px] z-20"
+          style={{ background: `hsl(var(${dangerConfig.cssVar}))` }}
+        />
+        
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <div 
@@ -76,7 +82,8 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
                 : 'scale(1)',
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
+          {/* Deeper bottom gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent opacity-70" />
           
           {/* Holographic shine */}
           <div 
@@ -102,7 +109,7 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
                   "w-8 h-8 flex items-center justify-center rounded-lg transition-all border backdrop-blur-sm btn-3d",
                   isInItinerary 
                     ? "bg-primary text-primary-foreground border-primary" 
-                    : "bg-black/40 text-white/80 border-white/10 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+                    : "bg-black/40 text-white/80 border-white/10 hover:bg-primary hover:text-primary-foreground hover:border-primary hover:ring-2 hover:ring-primary/30"
                 )}
               >
                 {isInItinerary ? "✓" : "+"}
@@ -124,14 +131,17 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index 
           </h3>
           
           <div className="flex items-center justify-between pt-2 border-t border-border/30">
-            <span className="text-sm font-semibold text-primary">{mission.priceEstimate}</span>
+            <span className="text-sm font-semibold text-primary" style={{ textShadow: '0 0 12px hsl(var(--primary) / 0.3)' }}>{mission.priceEstimate}</span>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Clock className="w-3 h-3" />
               <span>{mission.duration}</span>
             </div>
             <div className="flex items-center gap-0.5">
               {Array.from({ length: mission.broRating }).map((_, i) => (
-                <Star key={i} className="w-3 h-3 text-primary fill-primary/50" />
+                <Star key={i} className="w-3 h-3 text-primary fill-primary" />
+              ))}
+              {Array.from({ length: 5 - mission.broRating }).map((_, i) => (
+                <Star key={`e-${i}`} className="w-3 h-3 text-muted-foreground/20" />
               ))}
             </div>
           </div>

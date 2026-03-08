@@ -22,16 +22,18 @@ const ItineraryBuilder = ({ selectedMissions, onRemoveMission, onClearAll, isOpe
 
   return (
     <>
+      {/* FAB with bounce appear and enhanced shadow */}
       <button
         onClick={onToggle}
         className={cn(
           "fixed bottom-6 right-6 z-40 flex items-center gap-3 px-5 py-3 rounded-full",
-          "bg-primary text-primary-foreground font-semibold shadow-xl",
-          "hover:scale-105 transition-all duration-300 btn-3d animate-orbital-glow"
+          "bg-primary text-primary-foreground font-semibold",
+          "shadow-[0_8px_30px_-4px_hsl(var(--primary)/0.5)]",
+          "hover:scale-105 transition-all duration-300 btn-3d animate-bounce-appear"
         )}
       >
         <span className="text-lg">🎒</span>
-        <span>{selectedMissions.length}</span>
+        <span className="stat-value text-sm">{selectedMissions.length}</span>
         <span className="hidden sm:inline">Saved</span>
       </button>
 
@@ -41,7 +43,9 @@ const ItineraryBuilder = ({ selectedMissions, onRemoveMission, onClearAll, isOpe
         "transform transition-all duration-400",
         isOpen ? "translate-y-0 md:translate-x-0" : "translate-y-full md:translate-y-0 md:translate-x-full"
       )}>
-        <div className="flex items-center justify-between p-4 border-b border-border/30">
+        {/* Header with gradient accent line */}
+        <div className="flex items-center justify-between p-4 border-b border-border/30 relative">
+          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
           <div>
             <h3 className="font-display text-lg font-bold text-foreground">Your Trip</h3>
             <p className="text-xs text-muted-foreground">{selectedMissions.length} adventures saved</p>
@@ -49,16 +53,16 @@ const ItineraryBuilder = ({ selectedMissions, onRemoveMission, onClearAll, isOpe
           <div className="flex items-center gap-2">
             <button onClick={onClearAll} className="px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10 rounded transition-colors">Clear</button>
             <button onClick={onToggle} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors">
-              <X />
+              <CloseIcon />
             </button>
           </div>
         </div>
 
         <div className="overflow-y-auto max-h-[40vh] p-4 space-y-3">
           {selectedMissions.map((mission, index) => (
-            <div key={mission.id} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 group hover:border-primary/30 transition-all animate-slide-in-3d" style={{ animationDelay: `${index * 60}ms` }}>
+            <div key={mission.id} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 group hover:border-primary/30 transition-all animate-slide-in-3d warm-glow-border" style={{ animationDelay: `${index * 60}ms` }}>
               <div className="relative flex-shrink-0">
-                <span className="absolute -top-2 -left-2 w-5 h-5 flex items-center justify-center bg-primary text-primary-foreground text-xs font-bold rounded-full">{index + 1}</span>
+                <span className="absolute -top-2 -left-2 w-5 h-5 flex items-center justify-center bg-primary text-primary-foreground text-xs font-bold rounded-full ring-2 ring-primary/30 shadow-[0_0_10px_hsl(var(--primary)/0.3)]">{index + 1}</span>
                 <div className="w-11 h-11 rounded-lg bg-cover bg-center border border-border/30" style={{ backgroundImage: `url(${getMissionImage(mission.id)})` }} />
               </div>
               <div className="flex-1 min-w-0">
@@ -79,15 +83,15 @@ const ItineraryBuilder = ({ selectedMissions, onRemoveMission, onClearAll, isOpe
             {[
               { label: "Est. Cost", value: `$${totalCost.toLocaleString()}+`, color: "text-primary" },
               { label: "Drive Time", value: `${totalTime}h`, color: "text-foreground" },
-              { label: "Extreme", value: `${extremeCount}`, color: "text-danger-extreme" },
+              { label: "Extreme", value: `${extremeCount}`, color: "text-destructive" },
             ].map((stat) => (
-              <div key={stat.label} className="text-center p-3 bg-muted/20 rounded-lg border border-border/30">
+              <div key={stat.label} className="text-center p-3 bg-muted/20 rounded-lg border border-border/30 warm-glow-border">
                 <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">{stat.label}</div>
-                <div className={cn("font-display text-lg font-bold", stat.color)}>{stat.value}</div>
+                <div className={cn("stat-value text-lg font-bold", stat.color)}>{stat.value}</div>
               </div>
             ))}
           </div>
-          <button className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:brightness-110 transition-all btn-3d">
+          <button className="ripple-btn w-full py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold rounded-xl hover:brightness-110 transition-all btn-3d shadow-[0_4px_16px_hsl(var(--primary)/0.25)]">
             Share Trip Plan
           </button>
         </div>
@@ -96,7 +100,7 @@ const ItineraryBuilder = ({ selectedMissions, onRemoveMission, onClearAll, isOpe
   );
 };
 
-const X = () => (
+const CloseIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M6 18L18 6M6 6l12 12" />
   </svg>

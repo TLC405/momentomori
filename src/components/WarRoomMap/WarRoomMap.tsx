@@ -66,7 +66,6 @@ const createHQIcon = () => {
   });
 };
 
-// Distance ring component
 const DistanceRings = () => {
   const rings = [
     { radius: 95000, label: "1hr", opacity: 0.15 },
@@ -94,7 +93,6 @@ const DistanceRings = () => {
   );
 };
 
-// Auto-fit map bounds
 const FitBounds = ({ missions: displayedMissions }: { missions: Mission[] }) => {
   const map = useMap();
   
@@ -139,7 +137,6 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           style={{ height: "100%", width: "100%" }}
           className="leaflet-terrain-map"
         >
-          {/* Stamen Terrain tiles via Stadia Maps */}
           <TileLayer
             attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
             url="https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png"
@@ -148,7 +145,6 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           <DistanceRings />
           <FitBounds missions={displayedMissions} />
 
-          {/* OKC HQ marker */}
           <Marker position={OKC_CENTER} icon={createHQIcon()}>
             <Popup className="hq-popup">
               <div className="text-center p-1">
@@ -158,7 +154,6 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
             </Popup>
           </Marker>
 
-          {/* Mission markers */}
           {displayedMissions.map((mission) => (
             <Marker
               key={mission.id}
@@ -209,13 +204,13 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           ))}
         </MapContainer>
 
-        {/* HUD Overlays */}
-        {/* Top left - Title */}
         <div className="absolute top-3 left-3 z-[1000]">
           <div className="bg-white/92 backdrop-blur-md border border-[hsl(33,25%,80%)] rounded-lg px-4 py-2.5 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[hsl(16,55%,42%)] to-[hsl(33,40%,35%)] flex items-center justify-center">
-                <span className="text-white text-sm">⛰</span>
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[hsl(16,55%,42%)] to-[hsl(33,40%,35%)] flex items-center justify-center shadow-[0_2px_8px_hsl(16,55%,42%,0.3)]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+                </svg>
               </div>
               <div>
                 <h2 className="font-display text-xs font-bold text-[hsl(33,35%,22%)] tracking-wide uppercase">
@@ -229,14 +224,16 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           </div>
         </div>
 
-        {/* Bottom left - Legend */}
         <div className="absolute bottom-3 left-3 z-[1000]">
-          <div className="bg-white/92 backdrop-blur-md border border-[hsl(33,25%,80%)] rounded-lg px-3 py-2 shadow-sm">
-            <p className="text-[8px] text-[hsl(33,15%,50%)] tracking-wider uppercase mb-1 font-medium">Difficulty</p>
-            <div className="flex items-center gap-2.5">
+          <div className="bg-white/92 backdrop-blur-md border border-[hsl(33,25%,80%)] rounded-lg px-3.5 py-2.5 shadow-sm">
+            <p className="text-[8px] text-[hsl(33,15%,50%)] tracking-wider uppercase mb-1.5 font-medium">Difficulty</p>
+            <div className="flex items-center gap-3">
               {difficultyLevels.map((level) => (
-                <div key={level.label} className="flex items-center gap-1">
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: level.color }} />
+                <div key={level.label} className="flex items-center gap-1.5">
+                  <div 
+                    className="w-2.5 h-2.5 rounded-full animate-pulse" 
+                    style={{ backgroundColor: level.color, animationDuration: '3s' }} 
+                  />
                   <span className="text-[9px] text-[hsl(33,20%,40%)] font-medium">{level.label}</span>
                 </div>
               ))}
@@ -244,15 +241,13 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           </div>
         </div>
 
-        {/* Bottom right - CTA */}
         <div className="absolute bottom-3 right-3 z-[1000]">
           <div className="bg-white/85 backdrop-blur-md border border-[hsl(33,25%,80%)] rounded-lg px-3 py-2 shadow-sm">
-            <p className="text-[10px] text-[hsl(33,15%,50%)]">📍 Click pins to explore adventures</p>
+            <p className="text-[10px] text-[hsl(33,15%,50%)] animate-typewriter">📍 Click pins to explore adventures</p>
           </div>
         </div>
       </div>
 
-      {/* Mission Detail Modal */}
       {selectedMission && (
         <MissionDetailModal
           mission={selectedMission}

@@ -25,11 +25,12 @@ const MissionDeck = ({ selectedRealm, itineraryMissions = [], onAddToItinerary, 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display text-xl font-bold text-foreground">
+          <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-3">
             {selectedRealm ? selectedRealm.name : "All Adventures"}
+            <div className="h-[2px] w-12 bg-gradient-to-r from-primary to-transparent rounded-full" />
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            {displayedMissions.length} experiences available
+            <span className="stat-value text-sm">{displayedMissions.length}</span> experiences available
           </p>
         </div>
       </div>
