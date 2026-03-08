@@ -29,14 +29,14 @@ const ItineraryBuilder = ({
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button with orbital glow */}
       <button
         onClick={onToggle}
         className={cn(
           "fixed bottom-6 right-6 z-40 flex items-center gap-3 px-5 py-3 rounded-full",
           "bg-primary text-primary-foreground font-semibold shadow-2xl",
-          "hover:scale-105 transition-all duration-300",
-          "animate-pulse-glow"
+          "hover:scale-105 transition-all duration-300 btn-3d",
+          "animate-orbital-glow"
         )}
       >
         <span className="text-lg">💀</span>
@@ -49,13 +49,21 @@ const ItineraryBuilder = ({
         )}
       </button>
 
-      {/* Panel */}
+      {/* Panel with 3D slide */}
       <div className={cn(
         "fixed bottom-0 right-0 z-50 w-full md:w-96 max-h-[70vh]",
-        "bg-card/95 backdrop-blur-xl border-t md:border-l border-primary/30 shadow-[0_0_60px_hsl(var(--tactical-amber)/0.15)]",
-        "transform transition-transform duration-300",
-        isOpen ? "translate-y-0" : "translate-y-full md:translate-y-0 md:translate-x-full"
-      )}>
+        "glass-premium border-t md:border-l border-primary/30 shadow-[0_0_60px_hsl(var(--tactical-amber)/0.15)]",
+        "transform transition-all duration-500 ease-out",
+        isOpen 
+          ? "translate-y-0 md:translate-x-0 opacity-100" 
+          : "translate-y-full md:translate-y-0 md:translate-x-full opacity-0"
+      )}
+      style={{
+        transform: isOpen 
+          ? 'perspective(800px) rotateY(0deg) translateX(0)' 
+          : undefined,
+      }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-primary/20 bg-gradient-to-r from-primary/10 to-transparent">
           <div>
@@ -67,13 +75,13 @@ const ItineraryBuilder = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onClearAll}
-              className="px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10 rounded transition-colors"
+              className="px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10 rounded transition-colors btn-3d"
             >
               Clear All
             </button>
             <button
               onClick={onToggle}
-              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors btn-3d"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M6 18L18 6M6 6l12 12" />
@@ -82,13 +90,13 @@ const ItineraryBuilder = ({
           </div>
         </div>
 
-        {/* Mission List */}
+        {/* Mission List with staggered slide-in */}
         <div className="overflow-y-auto max-h-[40vh] p-4 space-y-3">
           {selectedMissions.map((mission, index) => (
             <div 
               key={mission.id}
-              className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 group hover:border-primary/30 transition-all animate-fade-in"
-              style={{ animationDelay: `${index * 50}ms` }}
+              className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 group hover:border-primary/30 transition-all animate-slide-in-3d"
+              style={{ animationDelay: `${index * 80}ms` }}
             >
               <div className="relative flex-shrink-0">
                 <span className="absolute -top-2 -left-2 w-5 h-5 flex items-center justify-center bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-lg">
@@ -110,7 +118,7 @@ const ItineraryBuilder = ({
               </div>
               <button
                 onClick={() => onRemoveMission(mission.id)}
-                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-destructive/10 rounded transition-all"
+                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-destructive/10 rounded transition-all btn-3d"
               >
                 <svg className="w-4 h-4 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M6 18L18 6M6 6l12 12" />
@@ -123,21 +131,19 @@ const ItineraryBuilder = ({
         {/* Summary */}
         <div className="p-4 border-t border-primary/20 bg-gradient-to-t from-card to-transparent">
           <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border/50">
-              <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Cost</div>
-              <div className="font-orbitron text-lg text-primary font-bold">${totalCost.toLocaleString()}+</div>
-            </div>
-            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border/50">
-              <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Drive</div>
-              <div className="font-orbitron text-lg text-foreground font-bold">{totalTime}h</div>
-            </div>
-            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border/50">
-              <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Danger</div>
-              <div className="font-orbitron text-lg text-danger-extreme font-bold">{extremeCount}💀</div>
-            </div>
+            {[
+              { label: "Cost", value: `$${totalCost.toLocaleString()}+`, color: "text-primary" },
+              { label: "Drive", value: `${totalTime}h`, color: "text-foreground" },
+              { label: "Danger", value: `${extremeCount}💀`, color: "text-danger-extreme" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center p-3 bg-muted/30 rounded-lg border border-border/50 hover:border-primary/30 hover:translate-y-[-2px] transition-all duration-300">
+                <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">{stat.label}</div>
+                <div className={cn("font-orbitron text-lg font-bold", stat.color)}>{stat.value}</div>
+              </div>
+            ))}
           </div>
           
-          <button className="w-full py-3 bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground font-orbitron font-bold rounded-xl hover:shadow-[0_0_30px_hsl(var(--tactical-amber)/0.5)] transition-all">
+          <button className="w-full py-3 bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground font-orbitron font-bold rounded-xl hover:shadow-[0_0_30px_hsl(var(--tactical-amber)/0.5)] transition-all btn-3d">
             Share Itinerary 💀
           </button>
         </div>
