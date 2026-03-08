@@ -54,7 +54,7 @@ export const missions: Mission[] = [
     name: "Hallett Motor Racing Circuit",
     codename: "APEX PREDATOR",
     location: "Hallett",
-    city: "Tulsa",
+    city: "Jennings",
     state: "OK",
     coordinates: { lat: 36.2289, lng: -96.5503 },
     distanceFromOKC: 2,
