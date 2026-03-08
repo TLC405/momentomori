@@ -7,7 +7,6 @@ import MissionDeck from "@/components/MissionDeck/MissionDeck";
 import MissionDetailModal from "@/components/MissionDeck/MissionDetailModal";
 import WarRoomMap from "@/components/WarRoomMap/WarRoomMap";
 import ItineraryBuilder from "@/components/ItineraryBuilder/ItineraryBuilder";
-import FeaturedQuest from "@/components/FeaturedQuest/FeaturedQuest";
 import SearchFilter from "@/components/SearchFilter/SearchFilter";
 import StatsBar from "@/components/StatsBar/StatsBar";
 import AppHeader from "@/components/Layout/AppHeader";
@@ -66,36 +65,21 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         <AppHeader />
         
-        <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-10">
-          <section className="animate-fade-in-up">
+        {/* Hero Map — full-width, immersive, first thing visitors see */}
+        <section className="w-full px-4 md:px-8 pt-4 pb-2 max-w-7xl mx-auto animate-fade-in-up">
+          <WarRoomMap 
+            selectedRealm={selectedRealm} 
+            onMissionSelect={setSelectedMission}
+            onAddToItinerary={handleAddToItinerary}
+            itineraryMissions={itineraryMissions}
+          />
+        </section>
+        
+        <main className="max-w-7xl mx-auto px-4 md:px-8 py-6 space-y-10">
+          <section className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             <StatsBar />
           </section>
 
-          <section className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-            <FeaturedQuest
-              onSelectMission={setSelectedMission}
-              onAddToItinerary={handleAddToItinerary}
-              isInItinerary={false}
-            />
-          </section>
-
-          <section className="space-y-4 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <div>
-              <h2 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1">
-                Explore the Map
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Click on markers to discover adventures near you
-              </p>
-            </div>
-            <WarRoomMap 
-              selectedRealm={selectedRealm} 
-              onMissionSelect={setSelectedMission}
-              onAddToItinerary={handleAddToItinerary}
-              itineraryMissions={itineraryMissions}
-            />
-          </section>
-          
           <section>
             <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
           </section>

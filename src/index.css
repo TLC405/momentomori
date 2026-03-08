@@ -479,3 +479,62 @@
   background: hsl(var(--primary) / 0.3);
   color: hsl(var(--foreground));
 }
+
+/* ========== Leaflet Map Overrides ========== */
+.leaflet-terrain-map {
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+.leaflet-terrain-map .leaflet-control-attribution {
+  background: hsl(40, 30%, 96%, 0.85) !important;
+  font-size: 9px !important;
+  color: hsl(33, 15%, 50%) !important;
+  border-radius: 4px 0 0 0 !important;
+}
+
+.leaflet-terrain-map .leaflet-popup-content-wrapper {
+  background: hsl(40, 30%, 98%) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px hsl(33, 20%, 30%, 0.15) !important;
+  border: 1px solid hsl(33, 25%, 82%) !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.leaflet-terrain-map .leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-terrain-map .leaflet-popup-tip {
+  background: hsl(40, 30%, 98%) !important;
+  border: 1px solid hsl(33, 25%, 82%) !important;
+  box-shadow: none !important;
+}
+
+.leaflet-terrain-map .leaflet-popup-close-button {
+  color: hsl(33, 15%, 50%) !important;
+  font-size: 18px !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 4px !important;
+  z-index: 10;
+}
+
+/* Mission marker animations */
+.mission-marker-icon {
+  background: none !important;
+  border: none !important;
+}
+
+.hq-marker-icon {
+  background: none !important;
+  border: none !important;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
