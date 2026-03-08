@@ -99,12 +99,12 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--earth-stone) / 0.5);
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.4), hsl(var(--earth-stone) / 0.5));
     border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.7);
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.7), hsl(var(--primary) / 0.5));
   }
 }
 
