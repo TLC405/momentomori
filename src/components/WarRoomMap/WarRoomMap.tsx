@@ -1,12 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { missions, Mission } from "@/data/missions";
 import { Realm } from "@/data/realms";
 import { getMissionImage } from "@/data/missionImages";
-import { fantasyStatePaths, fantasyRivers, fantasyCities } from "./FantasyStatePaths";
-import FantasyMapFilters from "./FantasyMapFilters";
-import FantasyTerrainElements from "./FantasyTerrainElements";
-import FantasyMissionMarker from "./FantasyMissionMarker";
-import FantasyMapHUD from "./FantasyMapHUD";
 import MissionDetailModal from "../MissionDeck/MissionDetailModal";
 
 interface WarRoomMapProps {
@@ -16,281 +14,245 @@ interface WarRoomMapProps {
   itineraryMissions?: Mission[];
 }
 
-const projectCoordinates = (lat: number, lng: number) => {
-  const minLat = 28, maxLat = 39, minLng = -105, maxLng = -91;
-  const width = 800, height = 400;
-  const x = ((lng - minLng) / (maxLng - minLng)) * width;
-  const y = height - ((lat - minLat) / (maxLat - minLat)) * height;
-  return { x, y };
+const OKC_CENTER: [number, number] = [35.4676, -97.5164];
+
+const getDangerColor = (level: Mission["dangerLevel"]) => {
+  switch (level) {
+    case "LOW": return { bg: "#2d7a4f", border: "#1e5c3a", text: "#e8f5ee" };
+    case "MEDIUM": return { bg: "#c4851c", border: "#9a6a15", text: "#fef3e2" };
+    case "HIGH": return { bg: "#c44b1c", border: "#9a3a15", text: "#feeee2" };
+    case "EXTREME": return { bg: "#b33030", border: "#8a2424", text: "#fde8e8" };
+  }
 };
 
-const OKC = projectCoordinates(35.4676, -97.5164);
+const createMissionIcon = (mission: Mission, isInItinerary: boolean) => {
+  const colors = getDangerColor(mission.dangerLevel);
+  return L.divIcon({
+    className: "mission-marker-icon",
+    iconSize: [28, 36],
+    iconAnchor: [14, 36],
+    popupAnchor: [0, -38],
+    html: `
+      <div style="position:relative;width:28px;height:36px;cursor:pointer;">
+        <svg width="28" height="36" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" 
+                fill="${colors.bg}" stroke="${colors.border}" stroke-width="1.5"/>
+          <circle cx="14" cy="13" r="6" fill="${colors.text}" opacity="0.9"/>
+          <circle cx="14" cy="13" r="3" fill="${colors.bg}"/>
+        </svg>
+        ${isInItinerary ? `
+          <div style="position:absolute;top:-6px;right:-6px;width:16px;height:16px;border-radius:50%;background:#c44b1c;border:2px solid #fef3e2;display:flex;align-items:center;justify-content:center;">
+            <span style="color:#fff;font-size:9px;font-weight:bold;">✓</span>
+          </div>
+        ` : ""}
+      </div>
+    `,
+  });
+};
+
+const createHQIcon = () => {
+  return L.divIcon({
+    className: "hq-marker-icon",
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    html: `
+      <div style="position:relative;width:44px;height:44px;">
+        <div style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(180,100,40,0.3);animation:ping 2s cubic-bezier(0,0,0.2,1) infinite;"></div>
+        <div style="position:absolute;inset:6px;border-radius:50%;background:linear-gradient(135deg,#8b5e34,#6b4423);border:2.5px solid #c49a6c;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+          <span style="color:#fef3e2;font-size:14px;font-weight:800;font-family:'Playfair Display',serif;letter-spacing:1px;">HQ</span>
+        </div>
+      </div>
+    `,
+  });
+};
+
+// Distance ring component
+const DistanceRings = () => {
+  const rings = [
+    { radius: 95000, label: "1hr", opacity: 0.15 },
+    { radius: 290000, label: "3hr", opacity: 0.1 },
+    { radius: 500000, label: "6hr", opacity: 0.08 },
+  ];
+
+  return (
+    <>
+      {rings.map((ring, i) => (
+        <Circle
+          key={i}
+          center={OKC_CENTER}
+          radius={ring.radius}
+          pathOptions={{
+            color: "hsl(33, 30%, 45%)",
+            weight: 1,
+            dashArray: "8,12",
+            fillOpacity: 0,
+            opacity: ring.opacity * 3,
+          }}
+        />
+      ))}
+    </>
+  );
+};
+
+// Auto-fit map bounds
+const FitBounds = ({ missions: displayedMissions }: { missions: Mission[] }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (displayedMissions.length === 0) return;
+    const bounds = L.latLngBounds(
+      displayedMissions.map(m => [m.coordinates.lat, m.coordinates.lng] as [number, number])
+    );
+    bounds.extend(OKC_CENTER);
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 8 });
+  }, [displayedMissions, map]);
+
+  return null;
+};
 
 const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itineraryMissions = [] }: WarRoomMapProps) => {
-  const [hoveredMission, setHoveredMission] = useState<string | null>(null);
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
-  const [hoveredCoords, setHoveredCoords] = useState<{ lat: number; lng: number } | null>(null);
-  
-  const displayedMissions = useMemo(() => 
+
+  const displayedMissions = useMemo(() =>
     selectedRealm ? missions.filter((m) => m.realmId === selectedRealm.id) : missions,
     [selectedRealm]
   );
 
-  const handleMissionClick = (mission: Mission) => setSelectedMission(mission);
-  const isInItinerary = (missionId: string) => itineraryMissions.some(m => m.id === missionId);
+  const isInItinerary = (missionId: string) =>
+    itineraryMissions.some(m => m.id === missionId);
 
-  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    const svg = e.currentTarget;
-    const rect = svg.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 800;
-    const y = ((e.clientY - rect.top) / rect.height) * 400;
-    const lng = -105 + (x / 800) * 14;
-    const lat = 28 + ((400 - y) / 400) * 11;
-    setHoveredCoords({ lat, lng });
-  };
+  const difficultyLevels = [
+    { color: "#2d7a4f", label: "Easy" },
+    { color: "#c4851c", label: "Moderate" },
+    { color: "#c44b1c", label: "Hard" },
+    { color: "#b33030", label: "Extreme" },
+  ];
 
   return (
     <div className="relative w-full">
-      {/* Map Container — warm parchment/cream style */}
-      <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden rounded-2xl border border-[hsl(33,25%,72%)] bg-[hsl(40,30%,85%)] shadow-[0_4px_24px_hsl(33,20%,30%,0.12)]">
-        
-        {/* Subtle corner accents */}
-        <div className="absolute top-0 left-0 w-10 h-10 border-l border-t border-[hsl(33,30%,60%)] rounded-tl-2xl pointer-events-none opacity-40" />
-        <div className="absolute top-0 right-0 w-10 h-10 border-r border-t border-[hsl(33,30%,60%)] rounded-tr-2xl pointer-events-none opacity-40" />
-        <div className="absolute bottom-0 left-0 w-10 h-10 border-l border-b border-[hsl(33,30%,60%)] rounded-bl-2xl pointer-events-none opacity-40" />
-        <div className="absolute bottom-0 right-0 w-10 h-10 border-r border-b border-[hsl(33,30%,60%)] rounded-br-2xl pointer-events-none opacity-40" />
-        
-        <svg
-          viewBox="0 0 800 400"
-          className="w-full h-full"
-          preserveAspectRatio="xMidYMid slice"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setHoveredCoords(null)}
+      <div className="relative w-full h-[65vh] min-h-[500px] overflow-hidden rounded-2xl border border-[hsl(33,25%,72%)] shadow-[0_4px_30px_hsl(33,20%,30%,0.15)]">
+        <MapContainer
+          center={OKC_CENTER}
+          zoom={6}
+          scrollWheelZoom={true}
+          zoomControl={false}
+          style={{ height: "100%", width: "100%" }}
+          className="leaflet-terrain-map"
         >
-          <FantasyMapFilters />
-          
-          {/* Cream/tan background */}
-          <rect width="100%" height="100%" fill="url(#parchmentGradient)" />
-          
-          {/* Subtle paper grain */}
-          <rect width="100%" height="100%" filter="url(#parchmentTexture)" opacity="0.5" />
+          {/* Stamen Terrain tiles via Stadia Maps */}
+          <TileLayer
+            attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+            url="https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png"
+          />
 
-          {/* Topographic contour pattern overlay */}
-          <rect width="100%" height="100%" fill="url(#topoPattern)" opacity="0.35" />
-          
-          {/* Soft vignette */}
-          <rect width="100%" height="100%" fill="url(#vignette)" />
-          
-          {/* State regions */}
-          <g id="states">
-            <path d={fantasyStatePaths.colorado.path} fill="url(#stateGradient)" stroke="hsl(33, 25%, 62%)" strokeWidth="0.8" opacity="0.35" />
-            <path d={fantasyStatePaths.newMexico.path} fill="url(#stateGradient)" stroke="hsl(33, 25%, 62%)" strokeWidth="0.8" opacity="0.35" />
-            <path d={fantasyStatePaths.kansas.path} fill="url(#stateGradient)" stroke="hsl(33, 28%, 60%)" strokeWidth="0.8" opacity="0.4" />
-            <path d={fantasyStatePaths.missouri.path} fill="url(#stateGradient)" stroke="hsl(33, 25%, 62%)" strokeWidth="0.8" opacity="0.35" />
-            <path d={fantasyStatePaths.arkansas.path} fill="url(#stateGradient)" stroke="hsl(33, 28%, 60%)" strokeWidth="0.8" opacity="0.4" />
-            <path d={fantasyStatePaths.texas.path} fill="url(#stateGradient)" stroke="hsl(33, 30%, 58%)" strokeWidth="1" opacity="0.4" />
-            
-            {/* Oklahoma — highlighted */}
-            <path d={fantasyStatePaths.oklahoma.path} fill="url(#oklahomaGradient)" stroke="hsl(33, 40%, 48%)" strokeWidth="1.5" filter="url(#territoryGlow)" />
-            <path d={fantasyStatePaths.oklahoma.innerPath} fill="none" stroke="hsl(33, 30%, 55%)" strokeWidth="0.4" strokeDasharray="6,4" opacity="0.3" />
-          </g>
-          
-          {/* Rivers */}
-          <g id="rivers" opacity="0.5">
-            {fantasyRivers.map((river, i) => (
-              <g key={i}>
-                <path d={river.path} fill="none" stroke="url(#riverGradient)" strokeWidth={river.width * 0.7} strokeLinecap="round" opacity={river.importance === "major" ? 0.7 : 0.4} />
-                {river.tributaries?.map((trib, j) => (
-                  <path key={j} d={trib} fill="none" stroke="url(#riverGradient)" strokeWidth={river.width * 0.35} strokeLinecap="round" opacity="0.35" />
-                ))}
-                {river.importance === "major" && (
-                  <text opacity="0.35" fontSize="4.5" fill="hsl(210, 40%, 45%)" fontFamily="'Playfair Display', serif" fontStyle="italic">
-                    <textPath href={`#river-path-${i}`} startOffset="35%">{river.name}</textPath>
-                  </text>
-                )}
-                <path id={`river-path-${i}`} d={river.path} fill="none" stroke="none" />
-              </g>
-            ))}
-          </g>
-          
-          {/* Terrain */}
-          <FantasyTerrainElements animate={true} />
-          
-          {/* State labels — cartographic serif style */}
-          <g id="state-labels">
-            <text x={fantasyStatePaths.oklahoma.label.x} y={fantasyStatePaths.oklahoma.label.y - 6} fill="hsl(33, 40%, 38%)" fontSize="13" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="700" opacity="0.55" letterSpacing="5" filter="url(#textGlow)">
-              OKLAHOMA
-            </text>
-            <text x={fantasyStatePaths.oklahoma.label.x} y={fantasyStatePaths.oklahoma.label.y + 6} fill="hsl(33, 25%, 48%)" fontSize="5.5" fontFamily="'Playfair Display', serif" textAnchor="middle" fontStyle="italic" opacity="0.4" letterSpacing="1.5">
-              The Heartlands
-            </text>
-            
-            <text x={fantasyStatePaths.texas.label.x} y={fantasyStatePaths.texas.label.y - 3} fill="hsl(33, 28%, 45%)" fontSize="14" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="600" opacity="0.3" letterSpacing="7">
-              TEXAS
-            </text>
-            <text x={fantasyStatePaths.texas.label.x} y={fantasyStatePaths.texas.label.y + 9} fill="hsl(33, 20%, 50%)" fontSize="5" fontFamily="'Playfair Display', serif" textAnchor="middle" fontStyle="italic" opacity="0.22">
-              The Lone Star State
-            </text>
-            
-            <text x={fantasyStatePaths.kansas.label.x} y={fantasyStatePaths.kansas.label.y} fill="hsl(33, 22%, 48%)" fontSize="10" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="500" letterSpacing="4" opacity="0.3">
-              KANSAS
-            </text>
-            
-            <text x={fantasyStatePaths.arkansas.label.x} y={fantasyStatePaths.arkansas.label.y} fill="hsl(33, 20%, 50%)" fontSize="8" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="500" letterSpacing="2" opacity="0.25">
-              ARKANSAS
-            </text>
-            
-            <text x={fantasyStatePaths.missouri.label.x} y={fantasyStatePaths.missouri.label.y} fill="hsl(33, 20%, 50%)" fontSize="8" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="500" letterSpacing="2" opacity="0.25">
-              MISSOURI
-            </text>
-            
-            <text x={fantasyStatePaths.colorado.label.x} y={fantasyStatePaths.colorado.label.y} fill="hsl(33, 18%, 52%)" fontSize="7" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="500" letterSpacing="2" opacity="0.2">
-              COLORADO
-            </text>
-            
-            <text x={fantasyStatePaths.newMexico.label.x} y={fantasyStatePaths.newMexico.label.y} fill="hsl(33, 18%, 52%)" fontSize="6.5" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="500" letterSpacing="1.5" opacity="0.2">
-              NEW MEXICO
-            </text>
-          </g>
-          
-          {/* Cities — clean cartographic marks */}
-          <g id="cities">
-            {fantasyCities.map((city, i) => {
-              const pos = projectCoordinates(city.lat, city.lng);
-              const isMetropolis = city.population === "metropolis";
-              const isLarge = city.population === "large";
-              return (
-                <g key={i} transform={`translate(${pos.x}, ${pos.y})`}>
-                  {isMetropolis && (
-                    <>
-                      <circle r="4.5" fill="none" stroke="hsl(33, 30%, 48%)" strokeWidth="0.6" opacity="0.5" />
-                      <circle r="2.5" fill="hsl(33, 25%, 42%)" opacity="0.7" />
-                    </>
-                  )}
-                  {isLarge && !isMetropolis && (
-                    <circle r="2" fill="hsl(33, 22%, 45%)" opacity="0.6" />
-                  )}
-                  {!isLarge && !isMetropolis && (
-                    <circle r="1.5" fill="hsl(33, 18%, 50%)" opacity="0.45" />
-                  )}
-                  <text
-                    x={city.importance === "major" ? 0 : 5}
-                    y={city.importance === "major" ? -8 : -4}
-                    fill={city.importance === "major" ? "hsl(33, 35%, 30%)" : "hsl(33, 20%, 42%)"}
-                    fontSize={city.importance === "major" ? "6.5" : "5"}
-                    fontFamily="'Source Sans 3', sans-serif"
-                    textAnchor={city.importance === "major" ? "middle" : "start"}
-                    fontWeight={city.importance === "major" ? "600" : "400"}
-                    opacity={city.importance === "major" ? 0.7 : 0.5}
-                  >
-                    {city.fantasyName}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
-          
-          {/* Distance rings from HQ */}
-          <g id="distance-rings" opacity="0.18">
-            {[
-              { r: 35, label: "1hr" },
-              { r: 90, label: "3hr" },
-              { r: 150, label: "6hr" },
-            ].map((ring, i) => (
-              <g key={i}>
-                <circle cx={OKC.x} cy={OKC.y} r={ring.r} fill="none" stroke="hsl(33, 30%, 50%)" strokeWidth="0.5" strokeDasharray="4,6" />
-                <text x={OKC.x + ring.r + 3} y={OKC.y - 3} fill="hsl(33, 25%, 45%)" fontSize="4.5" fontFamily="'Source Sans 3', sans-serif" opacity="0.6">
-                  {ring.label}
-                </text>
-              </g>
-            ))}
-          </g>
-          
-          {/* OKC Basecamp */}
-          <g id="hq" transform={`translate(${OKC.x}, ${OKC.y})`}>
-            <circle r="16" fill="none" stroke="hsl(16, 50%, 45%)" strokeWidth="0.8" opacity="0.15" className="animate-ping" />
-            <g filter="url(#hqGlow)">
-              <circle r="6" fill="hsl(16, 55%, 42%)" stroke="hsl(16, 60%, 50%)" strokeWidth="1.5" />
-              <circle r="3" fill="hsl(40, 35%, 90%)" />
-              <circle r="1.5" fill="hsl(16, 55%, 42%)" />
-            </g>
-            <text y="16" fill="hsl(33, 40%, 30%)" fontSize="7" fontFamily="'Playfair Display', serif" textAnchor="middle" fontWeight="700" letterSpacing="1.5">
-              OKC
-            </text>
-            <text y="23" fill="hsl(33, 25%, 48%)" fontSize="4.5" fontFamily="'Source Sans 3', sans-serif" textAnchor="middle" opacity="0.6">
-              Basecamp
-            </text>
-          </g>
-          
+          <DistanceRings />
+          <FitBounds missions={displayedMissions} />
+
+          {/* OKC HQ marker */}
+          <Marker position={OKC_CENTER} icon={createHQIcon()}>
+            <Popup className="hq-popup">
+              <div className="text-center p-1">
+                <p className="font-display font-bold text-sm text-[hsl(33,35%,22%)]">OKC Basecamp</p>
+                <p className="text-xs text-[hsl(33,15%,50%)]">Mission Command Center</p>
+              </div>
+            </Popup>
+          </Marker>
+
           {/* Mission markers */}
-          <g id="missions">
-            {displayedMissions.map((mission) => {
-              const pos = projectCoordinates(mission.coordinates.lat, mission.coordinates.lng);
-              return (
-                <FantasyMissionMarker
-                  key={mission.id}
-                  mission={mission}
-                  x={pos.x}
-                  y={pos.y}
-                  isHovered={hoveredMission === mission.id}
-                  isInItinerary={isInItinerary(mission.id)}
-                  onHover={() => setHoveredMission(mission.id)}
-                  onLeave={() => setHoveredMission(null)}
-                  onClick={() => handleMissionClick(mission)}
-                />
-              );
-            })}
-          </g>
-          
-          {/* Atmosphere */}
-          <rect width="100%" height="100%" fill="url(#atmosphereGlow)" style={{ pointerEvents: "none" }} />
-        </svg>
-        
-        <FantasyMapHUD 
-          missionCount={displayedMissions.length}
-          hoveredCoords={hoveredCoords}
-          selectedRealm={selectedRealm?.name}
-        />
-      </div>
-      
-      {/* Hover preview panel */}
-      {hoveredMission && (
-        <div className="absolute top-20 right-4 z-10 w-72 bg-[hsl(40,30%,96%)] backdrop-blur-lg border border-[hsl(33,25%,75%)] rounded-xl shadow-lg overflow-hidden animate-scale-in">
-          {(() => {
-            const mission = displayedMissions.find(m => m.id === hoveredMission);
-            if (!mission) return null;
-            return (
-              <>
-                <div className="h-28 bg-cover bg-center relative" style={{ backgroundImage: `url(${getMissionImage(mission.id)})` }}>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[hsl(40,30%,96%)] via-[hsl(40,30%,96%)/40%] to-transparent" />
-                  <div className="absolute bottom-2 left-3 right-3">
-                    <h4 className="font-display text-sm font-bold text-[hsl(33,35%,18%)] drop-shadow-sm">
-                      {mission.name}
-                    </h4>
-                  </div>
-                </div>
-                <div className="p-3">
-                  <div className="flex items-center gap-2 text-xs text-[hsl(33,15%,45%)] mb-2">
-                    <span>📍</span>
-                    <span>{mission.city}, {mission.state}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm text-[hsl(16,55%,42%)]">
-                      {mission.priceEstimate}
-                    </span>
-                    <div className="flex items-center gap-0.5">
-                      {Array.from({ length: mission.broRating }).map((_, i) => (
-                        <span key={i} className="text-xs">★</span>
-                      ))}
+          {displayedMissions.map((mission) => (
+            <Marker
+              key={mission.id}
+              position={[mission.coordinates.lat, mission.coordinates.lng]}
+              icon={createMissionIcon(mission, isInItinerary(mission.id))}
+              eventHandlers={{
+                click: () => setSelectedMission(mission),
+              }}
+            >
+              <Popup className="mission-popup" maxWidth={260}>
+                <div className="w-[240px] overflow-hidden rounded-lg">
+                  <div
+                    className="h-24 bg-cover bg-center relative"
+                    style={{ backgroundImage: `url(${getMissionImage(mission.id)})` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/90 to-transparent" />
+                    <div className="absolute bottom-1.5 left-2 right-2">
+                      <h4 className="font-display text-sm font-bold text-[hsl(33,35%,18%)] leading-tight">
+                        {mission.name}
+                      </h4>
                     </div>
                   </div>
+                  <div className="p-2.5">
+                    <p className="text-xs text-[hsl(33,15%,45%)] mb-1.5">
+                      📍 {mission.city}, {mission.state} · {mission.distanceFromOKC}h drive
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-sm" style={{ color: getDangerColor(mission.dangerLevel).bg }}>
+                        {mission.priceEstimate}
+                      </span>
+                      <span className="text-xs text-[hsl(33,15%,55%)]">
+                        {"★".repeat(mission.broRating)}{"☆".repeat(5 - mission.broRating)}
+                      </span>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedMission(mission);
+                      }}
+                      className="mt-2 w-full py-1.5 px-3 text-xs font-semibold rounded-md bg-[hsl(16,55%,42%)] text-white hover:bg-[hsl(16,55%,36%)] transition-colors"
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
-              </>
-            );
-          })()}
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+
+        {/* HUD Overlays */}
+        {/* Top left - Title */}
+        <div className="absolute top-3 left-3 z-[1000]">
+          <div className="bg-white/92 backdrop-blur-md border border-[hsl(33,25%,80%)] rounded-lg px-4 py-2.5 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[hsl(16,55%,42%)] to-[hsl(33,40%,35%)] flex items-center justify-center">
+                <span className="text-white text-sm">⛰</span>
+              </div>
+              <div>
+                <h2 className="font-display text-xs font-bold text-[hsl(33,35%,22%)] tracking-wide uppercase">
+                  Adventure Map
+                </h2>
+                <p className="text-[9px] text-[hsl(33,15%,50%)] tracking-wide mt-0.5">
+                  {selectedRealm?.name || "All Regions"} · {displayedMissions.length} Experiences
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-      
+
+        {/* Bottom left - Legend */}
+        <div className="absolute bottom-3 left-3 z-[1000]">
+          <div className="bg-white/92 backdrop-blur-md border border-[hsl(33,25%,80%)] rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[8px] text-[hsl(33,15%,50%)] tracking-wider uppercase mb-1 font-medium">Difficulty</p>
+            <div className="flex items-center gap-2.5">
+              {difficultyLevels.map((level) => (
+                <div key={level.label} className="flex items-center gap-1">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: level.color }} />
+                  <span className="text-[9px] text-[hsl(33,20%,40%)] font-medium">{level.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom right - CTA */}
+        <div className="absolute bottom-3 right-3 z-[1000]">
+          <div className="bg-white/85 backdrop-blur-md border border-[hsl(33,25%,80%)] rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[10px] text-[hsl(33,15%,50%)]">📍 Click pins to explore adventures</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mission Detail Modal */}
       {selectedMission && (
         <MissionDetailModal
           mission={selectedMission}
