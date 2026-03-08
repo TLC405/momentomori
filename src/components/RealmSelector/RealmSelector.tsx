@@ -13,26 +13,22 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <div className="w-1 h-5 bg-primary/50 rounded-full" />
-        <span className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Filter by Realm</span>
-      </div>
+      <span className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Filter by Region</span>
       
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <button
           onClick={() => onSelectRealm(null)}
           className={cn(
-            "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 btn-3d",
-            "border backdrop-blur-sm",
+            "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 border btn-3d",
             !selectedRealm
-              ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)] translate-y-[-2px]"
-              : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card hover:translate-y-[-2px]"
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-border/50 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
           )}
         >
-          <span className="font-orbitron">All ({missions.length})</span>
+          All ({missions.length})
         </button>
         
-        <div className="w-px h-6 bg-border/50 flex-shrink-0" />
+        <div className="w-px h-5 bg-border/50 flex-shrink-0" />
         
         {realms.map((realm) => {
           const count = getRealmMissionCount(realm.id);
@@ -42,30 +38,22 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
               key={realm.id}
               onClick={() => onSelectRealm(realm)}
               className={cn(
-                "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 btn-3d",
-                "border flex items-center gap-2 backdrop-blur-sm relative",
+                "flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 border flex items-center gap-2 relative btn-3d",
                 isSelected
-                  ? "border-primary bg-primary/15 text-primary shadow-[0_0_15px_hsl(var(--tactical-amber)/0.2)] translate-y-[-2px]"
-                  : "border-border/50 bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card hover:translate-y-[-2px]"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border/50 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
               )}
             >
-              <span className={cn(
-                "text-lg transition-transform duration-300",
-                isSelected && "scale-125"
-              )}>
-                {realm.icon}
-              </span>
+              <span className="text-lg">{realm.icon}</span>
               <span className="hidden sm:inline">{realm.name}</span>
               <span className={cn(
-                "text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-all",
-                isSelected
-                  ? "bg-primary/30 text-primary"
-                  : "bg-muted/50 text-muted-foreground"
+                "text-[10px] font-semibold px-1.5 py-0.5 rounded-full",
+                isSelected ? "bg-primary/20 text-primary" : "bg-muted/50 text-muted-foreground"
               )}>
                 {count}
               </span>
               {realm.isNew && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-danger-low rounded-full animate-pulse" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-earth-forest rounded-full animate-pulse" />
               )}
             </button>
           );

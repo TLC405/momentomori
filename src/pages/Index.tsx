@@ -42,15 +42,9 @@ const Index = () => {
         m.codename.toLowerCase().includes(q)
       );
     }
-    if (filters.maxDistance < 10) {
-      result = result.filter(m => m.distanceFromOKC <= filters.maxDistance);
-    }
-    if (filters.priceRange[0] > 1 || filters.priceRange[1] < 5) {
-      result = result.filter(m => m.priceRange >= filters.priceRange[0] && m.priceRange <= filters.priceRange[1]);
-    }
-    if (filters.dangerLevels.length > 0) {
-      result = result.filter(m => filters.dangerLevels.includes(m.dangerLevel));
-    }
+    if (filters.maxDistance < 10) result = result.filter(m => m.distanceFromOKC <= filters.maxDistance);
+    if (filters.priceRange[0] > 1 || filters.priceRange[1] < 5) result = result.filter(m => m.priceRange >= filters.priceRange[0] && m.priceRange <= filters.priceRange[1]);
+    if (filters.dangerLevels.length > 0) result = result.filter(m => filters.dangerLevels.includes(m.dangerLevel));
     return result;
   }, [selectedRealm, filters]);
 
@@ -62,32 +56,21 @@ const Index = () => {
     });
   };
 
-  const handleRemoveFromItinerary = (missionId: string) => {
-    setItineraryMissions(prev => prev.filter(m => m.id !== missionId));
-  };
-
-  const handleClearItinerary = () => {
-    setItineraryMissions([]);
-    setIsItineraryOpen(false);
-  };
-
   return (
     <>
       <Helmet>
-        <title>REMEMBER YOU MUST DIE | Epic Adventures Await</title>
-        <meta name="description" content="Memento Mori. Epic adventures for the bold. Remember you must die — so LIVE first! Tanks, helicopters, storm chasing, and legendary experiences across Oklahoma and Texas." />
+        <title>Remember You Must Live | Extraordinary Adventures</title>
+        <meta name="description" content="Discover extraordinary outdoor adventures and unforgettable experiences across Oklahoma, Texas, and beyond. From storm chasing to exotic safaris — live before you die." />
       </Helmet>
       
       <div className="min-h-screen bg-background">
         <AppHeader />
         
         <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-10">
-          {/* Stats Dashboard */}
           <section className="animate-fade-in-up">
             <StatsBar />
           </section>
 
-          {/* Featured Quest */}
           <section className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             <FeaturedQuest
               onSelectMission={setSelectedMission}
@@ -96,17 +79,14 @@ const Index = () => {
             />
           </section>
 
-          {/* Map */}
           <section className="space-y-4 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-orbitron text-lg md:text-xl font-bold text-foreground mb-1">
-                  Choose Your Adventure
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  Click on quest markers to explore legendary experiences
-                </p>
-              </div>
+            <div>
+              <h2 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1">
+                Explore the Map
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Click on markers to discover adventures near you
+              </p>
             </div>
             <WarRoomMap 
               selectedRealm={selectedRealm} 
@@ -116,24 +96,14 @@ const Index = () => {
             />
           </section>
           
-          {/* Search & Filter */}
           <section>
-            <SearchFilter
-              filters={filters}
-              onFiltersChange={setFilters}
-              totalResults={filteredMissions.length}
-            />
+            <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
           </section>
 
-          {/* Realm Filter */}
           <section>
-            <RealmSelector
-              selectedRealm={selectedRealm}
-              onSelectRealm={setSelectedRealm}
-            />
+            <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
           
-          {/* Missions Grid */}
           <section>
             <MissionDeck 
               selectedRealm={selectedRealm}
@@ -146,16 +116,14 @@ const Index = () => {
         
         <AppFooter />
         
-        {/* Itinerary Builder */}
         <ItineraryBuilder
           selectedMissions={itineraryMissions}
-          onRemoveMission={handleRemoveFromItinerary}
-          onClearAll={handleClearItinerary}
+          onRemoveMission={(id) => setItineraryMissions(prev => prev.filter(m => m.id !== id))}
+          onClearAll={() => { setItineraryMissions([]); setIsItineraryOpen(false); }}
           isOpen={isItineraryOpen}
           onToggle={() => setIsItineraryOpen(!isItineraryOpen)}
         />
         
-        {/* Mission Detail Modal */}
         {selectedMission && (
           <MissionDetailModal
             mission={selectedMission}
