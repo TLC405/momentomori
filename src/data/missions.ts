@@ -363,7 +363,7 @@ export const missions: Mission[] = [
     duration: "2-3 hours",
     description: "Up-close encounters with big cats. Lions, tigers, and other apex predators.",
     broCodeAnalysis: "Stare into the eyes of an apex predator. It stares back. You both know who would win.",
-    bookingUrl: "https://www.tigersafari.us",
+    bookingUrl: "https://www.tigersafarizoo.com",
     imageUrl: "/placeholder.svg",
     tags: ["animals", "exotic", "safari"],
     dangerLevel: "LOW",
