@@ -23,10 +23,9 @@ const ItineraryBuilder = ({
   }, 0);
   
   const totalTime = selectedMissions.reduce((acc, m) => acc + m.distanceFromOKC, 0);
+  const extremeCount = selectedMissions.filter(m => m.dangerLevel === "EXTREME").length;
   
-  if (selectedMissions.length === 0) {
-    return null;
-  }
+  if (selectedMissions.length === 0) return null;
 
   return (
     <>
@@ -40,25 +39,30 @@ const ItineraryBuilder = ({
           "animate-pulse-glow"
         )}
       >
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
+        <span className="text-lg">💀</span>
         <span className="font-orbitron">{selectedMissions.length}</span>
-        <span className="hidden sm:inline">Missions</span>
+        <span className="hidden sm:inline">Quests</span>
+        {extremeCount > 0 && (
+          <span className="w-5 h-5 flex items-center justify-center bg-danger-extreme text-white text-[10px] font-bold rounded-full animate-danger-throb">
+            {extremeCount}
+          </span>
+        )}
       </button>
 
       {/* Panel */}
       <div className={cn(
         "fixed bottom-0 right-0 z-50 w-full md:w-96 max-h-[70vh]",
-        "bg-card border-t md:border-l border-border shadow-2xl",
+        "bg-card/95 backdrop-blur-xl border-t md:border-l border-primary/30 shadow-[0_0_60px_hsl(var(--tactical-amber)/0.15)]",
         "transform transition-transform duration-300",
         isOpen ? "translate-y-0" : "translate-y-full md:translate-y-0 md:translate-x-full"
       )}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-muted/50">
+        <div className="flex items-center justify-between p-4 border-b border-primary/20 bg-gradient-to-r from-primary/10 to-transparent">
           <div>
-            <h3 className="font-orbitron text-lg font-bold text-primary">Mission Itinerary</h3>
-            <p className="text-xs text-muted-foreground">{selectedMissions.length} missions selected</p>
+            <h3 className="font-orbitron text-lg font-bold text-primary flex items-center gap-2">
+              💀 Quest Itinerary
+            </h3>
+            <p className="text-xs text-muted-foreground">{selectedMissions.length} quests selected</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -83,14 +87,15 @@ const ItineraryBuilder = ({
           {selectedMissions.map((mission, index) => (
             <div 
               key={mission.id}
-              className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 group hover:border-primary/30 transition-colors"
+              className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 group hover:border-primary/30 transition-all animate-fade-in"
+              style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="relative flex-shrink-0">
-                <span className="absolute -top-2 -left-2 w-5 h-5 flex items-center justify-center bg-primary text-primary-foreground text-xs font-bold rounded-full">
+                <span className="absolute -top-2 -left-2 w-5 h-5 flex items-center justify-center bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-lg">
                   {index + 1}
                 </span>
                 <div 
-                  className="w-12 h-12 rounded-lg bg-cover bg-center"
+                  className="w-12 h-12 rounded-lg bg-cover bg-center border border-border/50"
                   style={{ backgroundImage: `url(${getMissionImage(mission.id)})` }}
                 />
               </div>
@@ -100,6 +105,7 @@ const ItineraryBuilder = ({
                   <span>{mission.priceEstimate}</span>
                   <span>•</span>
                   <span>{mission.distanceFromOKC}h</span>
+                  {mission.dangerLevel === "EXTREME" && <span className="text-danger-extreme">💀</span>}
                 </div>
               </div>
               <button
@@ -115,20 +121,24 @@ const ItineraryBuilder = ({
         </div>
 
         {/* Summary */}
-        <div className="p-4 border-t border-border bg-muted/30">
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="text-center p-3 bg-card rounded-lg border border-border/50">
-              <div className="text-xs text-muted-foreground mb-1">Est. Total Cost</div>
-              <div className="font-orbitron text-xl text-primary font-bold">${totalCost.toLocaleString()}+</div>
+        <div className="p-4 border-t border-primary/20 bg-gradient-to-t from-card to-transparent">
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border/50">
+              <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Cost</div>
+              <div className="font-orbitron text-lg text-primary font-bold">${totalCost.toLocaleString()}+</div>
             </div>
-            <div className="text-center p-3 bg-card rounded-lg border border-border/50">
-              <div className="text-xs text-muted-foreground mb-1">Total Drive Time</div>
-              <div className="font-orbitron text-xl text-foreground font-bold">{totalTime}h</div>
+            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border/50">
+              <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Drive</div>
+              <div className="font-orbitron text-lg text-foreground font-bold">{totalTime}h</div>
+            </div>
+            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border/50">
+              <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Danger</div>
+              <div className="font-orbitron text-lg text-danger-extreme font-bold">{extremeCount}💀</div>
             </div>
           </div>
           
-          <button className="w-full py-3 bg-primary text-primary-foreground font-orbitron font-bold rounded-lg hover:bg-primary/90 transition-colors">
-            Share Itinerary
+          <button className="w-full py-3 bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground font-orbitron font-bold rounded-xl hover:shadow-[0_0_30px_hsl(var(--tactical-amber)/0.5)] transition-all">
+            Share Itinerary 💀
           </button>
         </div>
       </div>
