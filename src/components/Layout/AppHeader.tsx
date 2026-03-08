@@ -1,3 +1,5 @@
+import headerGuys from "@/assets/header-guys-adventure.png";
+
 const AppHeader = () => {
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-b from-background via-background to-background/95 backdrop-blur-xl border-b border-primary/20">
@@ -5,8 +7,8 @@ const AppHeader = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary via-primary/90 to-danger-extreme/70 flex items-center justify-center shadow-[0_0_25px_hsl(var(--tactical-amber)/0.4)]">
-                <span className="text-2xl">💀</span>
+              <div className="w-14 h-14 rounded-xl overflow-hidden shadow-[0_0_25px_hsl(var(--tactical-amber)/0.4)]">
+                <img src={headerGuys} alt="Adventure crew" className="w-full h-full object-cover" />
               </div>
               <div className="absolute -inset-0.5 rounded-xl bg-primary/30 blur-sm -z-10" />
             </div>
