@@ -269,17 +269,17 @@
   border-radius: 4px 0 0 0 !important;
 }
 .leaflet-terrain-map .leaflet-popup-content-wrapper {
-  background: hsl(40, 30%, 98%) !important; border-radius: 12px !important;
-  box-shadow: 0 4px 20px hsl(33, 20%, 30%, 0.15) !important;
-  border: 1px solid hsl(33, 25%, 82%) !important; padding: 0 !important; overflow: hidden;
+  background: hsl(30, 12%, 9%) !important; border-radius: 12px !important;
+  box-shadow: 0 8px 30px hsl(0, 0%, 0%, 0.4) !important;
+  border: 1px solid hsl(30, 12%, 18%) !important; padding: 0 !important; overflow: hidden;
 }
 .leaflet-terrain-map .leaflet-popup-content { margin: 0 !important; line-height: 1.4 !important; }
 .leaflet-terrain-map .leaflet-popup-tip {
-  background: hsl(40, 30%, 98%) !important;
-  border: 1px solid hsl(33, 25%, 82%) !important; box-shadow: none !important;
+  background: hsl(30, 12%, 9%) !important;
+  border: 1px solid hsl(30, 12%, 18%) !important; box-shadow: none !important;
 }
 .leaflet-terrain-map .leaflet-popup-close-button {
-  color: hsl(33, 15%, 50%) !important; font-size: 18px !important;
+  color: hsl(35, 10%, 50%) !important; font-size: 18px !important;
   width: 24px !important; height: 24px !important; padding: 4px !important; z-index: 10;
 }
 

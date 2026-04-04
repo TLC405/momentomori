@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { cn } from "@/lib/utils";
-import { ExternalLink, MapPin, Clock, Users, DollarSign, X, Star, AlertTriangle } from "lucide-react";
+import { ExternalLink, MapPin, Clock, Users, DollarSign, X, Star, AlertTriangle, Plus, Check, Bookmark } from "lucide-react";
 
 interface MissionDetailModalProps {
   mission: Mission;
@@ -44,7 +44,7 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
         )}
       >
-        {/* Hero Image — cinematic */}
+        {/* Hero Image */}
         <div className="relative h-64 sm:h-80 md:h-[400px] overflow-hidden sm:rounded-t-2xl">
           <div
             className="absolute inset-0 bg-cover bg-center animate-ken-burns"
@@ -70,13 +70,13 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
             <button
               onClick={(e) => { e.stopPropagation(); onAddToItinerary(); }}
               className={cn(
-                "absolute top-4 right-16 px-4 py-2 rounded-lg text-sm font-medium transition-all border backdrop-blur-sm",
+                "absolute top-4 right-16 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border backdrop-blur-sm active:scale-95",
                 isInItinerary
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background/40 text-foreground border-border/30 hover:bg-primary hover:text-primary-foreground"
               )}
             >
-              {isInItinerary ? "✓ Saved" : "+ Save"}
+              {isInItinerary ? <><Bookmark className="w-4 h-4 fill-current" /> Saved</> : <><Plus className="w-4 h-4" /> Save</>}
             </button>
           )}
 
@@ -121,12 +121,12 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary 
             <p className="text-sm text-muted-foreground leading-relaxed">{mission.description}</p>
           </div>
 
-          {/* Rating */}
+          {/* Rating — premium gradient stars */}
           <div className="bg-primary/[0.06] border border-primary/15 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
-              <div className="flex">
+              <div className="flex gap-0.5">
                 {Array.from({ length: mission.broRating }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-primary fill-primary animate-star-pop" style={{ animationDelay: `${i * 100}ms` }} />
+                  <Star key={i} className="w-5 h-5 text-primary fill-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)] animate-star-pop" style={{ animationDelay: `${i * 100}ms` }} />
                 ))}
                 {Array.from({ length: 5 - mission.broRating }).map((_, i) => (
                   <Star key={`e-${i}`} className="w-5 h-5 text-muted-foreground/20 animate-star-pop" style={{ animationDelay: `${(mission.broRating + i) * 100}ms` }} />

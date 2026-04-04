@@ -6,7 +6,7 @@ import { missions, Mission } from "@/data/missions";
 import { Realm } from "@/data/realms";
 import { getMissionImage } from "@/data/missionImages";
 import MissionDetailModal from "../MissionDeck/MissionDetailModal";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Minimize2, MapPin, Star } from "lucide-react";
 
 interface WarRoomMapProps {
   selectedRealm: Realm | null;
@@ -43,7 +43,7 @@ const createMissionIcon = (mission: Mission, isInItinerary: boolean) => {
         </svg>
         ${isInItinerary ? `
           <div style="position:absolute;top:-6px;right:-6px;width:16px;height:16px;border-radius:50%;background:#c44b1c;border:2px solid #fef3e2;display:flex;align-items:center;justify-content:center;">
-            <span style="color:#fff;font-size:9px;font-weight:bold;">✓</span>
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
         ` : ""}
       </div>
@@ -87,11 +87,8 @@ const DistanceRings = () => {
   );
 };
 
-// Curved arc between two points
 const getArcPoints = (start: [number, number], end: [number, number], segments = 30): [number, number][] => {
   const points: [number, number][] = [];
-  const midLat = (start[0] + end[0]) / 2;
-  const midLng = (start[1] + end[1]) / 2;
   const dist = Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[1] - start[1], 2));
   const bulge = dist * 0.15;
 
@@ -115,6 +112,17 @@ const FitBounds = ({ missions: displayedMissions }: { missions: Mission[] }) => 
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 8 });
   }, [displayedMissions, map]);
   return null;
+};
+
+// Render star SVGs as HTML for popup
+const renderStars = (rating: number) => {
+  let html = '';
+  for (let i = 0; i < 5; i++) {
+    const fill = i < rating ? 'hsl(24, 80%, 52%)' : 'hsl(30, 10%, 20%)';
+    const stroke = i < rating ? 'hsl(24, 80%, 52%)' : 'hsl(30, 10%, 25%)';
+    html += `<svg width="12" height="12" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  }
+  return html;
 };
 
 const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itineraryMissions = [] }: WarRoomMapProps) => {
@@ -154,7 +162,6 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           <DistanceRings />
           <FitBounds missions={displayedMissions} />
 
-          {/* Flight path arcs from HQ */}
           {displayedMissions.map((mission) => (
             <Polyline
               key={`arc-${mission.id}`}
@@ -169,10 +176,10 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           ))}
 
           <Marker position={OKC_CENTER} icon={createHQIcon()}>
-            <Popup className="hq-popup">
-              <div className="text-center p-1">
-                <p className="font-display font-bold text-sm text-[hsl(33,35%,22%)]">OKC Basecamp</p>
-                <p className="text-xs text-[hsl(33,15%,50%)]">Mission HQ</p>
+            <Popup className="dark-popup">
+              <div className="text-center p-2">
+                <p className="font-bold text-sm" style={{ color: 'hsl(35,15%,88%)' }}>OKC Basecamp</p>
+                <p className="text-xs" style={{ color: 'hsl(35,10%,50%)' }}>Mission HQ</p>
               </div>
             </Popup>
           </Marker>
@@ -184,21 +191,27 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
               icon={createMissionIcon(mission, isInItinerary(mission.id))}
               eventHandlers={{ click: () => setSelectedMission(mission) }}
             >
-              <Popup className="mission-popup" maxWidth={260}>
-                <div className="w-[240px] overflow-hidden rounded-lg">
-                  <div className="h-24 bg-cover bg-center relative" style={{ backgroundImage: `url(${getMissionImage(mission.id)})` }}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/90 to-transparent" />
-                    <div className="absolute bottom-1.5 left-2 right-2">
-                      <h4 className="font-display text-sm font-bold text-[hsl(33,35%,18%)] leading-tight">{mission.name}</h4>
+              <Popup className="dark-popup" maxWidth={260}>
+                <div style={{ width: 240, overflow: 'hidden', borderRadius: 12 }}>
+                  <div style={{ height: 96, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', backgroundImage: `url(${getMissionImage(mission.id)})` }}>
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, hsl(30,12%,9%) 0%, transparent 100%)' }} />
+                    <div style={{ position: 'absolute', bottom: 6, left: 8, right: 8 }}>
+                      <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 700, color: 'hsl(35,15%,88%)', lineHeight: 1.2 }}>{mission.name}</h4>
                     </div>
                   </div>
-                  <div className="p-2.5">
-                    <p className="text-xs text-[hsl(33,15%,45%)] mb-1.5">📍 {mission.city}, {mission.state} · {mission.distanceFromOKC}h drive</p>
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm" style={{ color: getDangerColor(mission.dangerLevel).bg }}>{mission.priceEstimate}</span>
-                      <span className="text-xs text-[hsl(33,15%,55%)]">{"★".repeat(mission.broRating)}{"☆".repeat(5 - mission.broRating)}</span>
+                  <div style={{ padding: 10, background: 'hsl(30,12%,9%)' }}>
+                    <p style={{ fontSize: 11, color: 'hsl(35,10%,50%)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(24,80%,52%)" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      {mission.city}, {mission.state} · {mission.distanceFromOKC}h
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontWeight: 600, fontSize: 13, color: getDangerColor(mission.dangerLevel).bg }}>{mission.priceEstimate}</span>
+                      <span style={{ display: 'flex', gap: 1 }} dangerouslySetInnerHTML={{ __html: renderStars(mission.broRating) }} />
                     </div>
-                    <button onClick={(e) => { e.stopPropagation(); setSelectedMission(mission); }} className="mt-2 w-full py-1.5 px-3 text-xs font-semibold rounded-md bg-[hsl(16,55%,42%)] text-white hover:bg-[hsl(16,55%,36%)] transition-colors">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setSelectedMission(mission); }}
+                      style={{ marginTop: 8, width: '100%', padding: '6px 12px', fontSize: 11, fontWeight: 600, borderRadius: 6, background: 'hsl(24,80%,52%)', color: 'hsl(30,10%,6%)', border: 'none', cursor: 'pointer' }}
+                    >
                       View Details
                     </button>
                   </div>
@@ -227,7 +240,6 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           </div>
         </div>
 
-        {/* Expand button */}
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
           className="absolute top-3 right-3 z-[1000] w-9 h-9 flex items-center justify-center bg-background/80 backdrop-blur-md border border-border/30 rounded-lg text-foreground hover:bg-primary hover:text-primary-foreground transition-all"
@@ -235,7 +247,6 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
         </button>
 
-        {/* Legend */}
         <div className="absolute bottom-3 left-3 z-[1000]">
           <div className="bg-background/80 backdrop-blur-md border border-border/30 rounded-lg px-3.5 py-2.5 shadow-sm">
             <p className="text-[8px] text-muted-foreground tracking-wider uppercase mb-1.5 font-medium">Difficulty</p>
@@ -250,10 +261,12 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           </div>
         </div>
 
-        {/* Hint */}
         <div className="absolute bottom-3 right-3 z-[1000]">
           <div className="bg-background/70 backdrop-blur-md border border-border/30 rounded-lg px-3 py-2 shadow-sm">
-            <p className="text-[10px] text-muted-foreground animate-typewriter">📍 Click pins to explore adventures</p>
+            <p className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+              <MapPin className="w-3 h-3 text-primary/60" />
+              <span className="animate-typewriter">Click pins to explore adventures</span>
+            </p>
           </div>
         </div>
       </div>

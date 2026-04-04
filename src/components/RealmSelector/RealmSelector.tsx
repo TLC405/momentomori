@@ -2,13 +2,21 @@ import { Realm, realms } from "@/data/realms";
 import { missions } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { cn } from "@/lib/utils";
+import {
+  Globe, Cog, Plane, Crosshair, Bug, CloudLightning,
+  Radiation, Waves, Gauge, Skull, Crown,
+} from "lucide-react";
+
+const ICON_MAP: Record<string, React.ElementType> = {
+  Cog, Plane, Crosshair, Bug, CloudLightning,
+  Radiation, Waves, Gauge, Skull, Crown,
+};
 
 interface RealmSelectorProps {
   selectedRealm: Realm | null;
   onSelectRealm: (realm: Realm | null) => void;
 }
 
-// Get a representative image for each realm
 const getRealmImage = (realmId: string): string => {
   const realmMission = missions.find(m => m.realmId === realmId);
   return realmMission ? getMissionImage(realmMission.id) : "";
@@ -25,7 +33,6 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
         <div className="h-[2px] flex-1 bg-gradient-to-r from-primary/40 to-transparent rounded-full" />
       </div>
 
-      {/* "All" button + visual grid */}
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
         <button
           onClick={() => onSelectRealm(null)}
@@ -38,7 +45,14 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-card" />
           <div className="relative h-full flex flex-col items-center justify-center gap-1.5 p-3">
-            <span className="text-2xl">🌍</span>
+            <div className={cn(
+              "w-9 h-9 rounded-full flex items-center justify-center transition-all",
+              !selectedRealm
+                ? "bg-primary/20 ring-2 ring-primary/40 shadow-[0_0_15px_hsl(var(--primary)/0.3)]"
+                : "bg-muted/30"
+            )}>
+              <Globe className={cn("w-5 h-5 transition-colors", !selectedRealm ? "text-primary" : "text-muted-foreground")} />
+            </div>
             <span className="text-xs font-semibold text-foreground">All</span>
             <span className={cn(
               "text-[10px] px-2 py-0.5 rounded-full font-bold",
@@ -53,6 +67,7 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
           const count = getRealmMissionCount(realm.id);
           const isSelected = selectedRealm?.id === realm.id;
           const imageUrl = getRealmImage(realm.id);
+          const IconComponent = ICON_MAP[realm.lucideIcon];
 
           return (
             <button
@@ -65,7 +80,6 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
                   : "border-border/30 hover:border-primary/40 hover:translate-y-[-2px]"
               )}
             >
-              {/* Background image */}
               <div
                 className={cn(
                   "absolute inset-0 bg-cover bg-center transition-all duration-500",
@@ -75,9 +89,20 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20" />
 
-              {/* Content */}
               <div className="relative h-full flex flex-col items-center justify-end gap-1 p-3 pb-2.5">
-                <span className={cn("text-xl transition-transform duration-300", isSelected && "scale-125")}>{realm.icon}</span>
+                <div className={cn(
+                  "w-8 h-8 rounded-full flex items-center justify-center transition-all mb-0.5",
+                  isSelected
+                    ? "bg-primary/20 ring-2 ring-primary/40 shadow-[0_0_15px_hsl(var(--primary)/0.3)] animate-pulse-glow"
+                    : "bg-background/40"
+                )}>
+                  {IconComponent && (
+                    <IconComponent className={cn(
+                      "w-4 h-4 transition-all duration-300",
+                      isSelected ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"
+                    )} />
+                  )}
+                </div>
                 <span className="text-[11px] font-semibold text-foreground leading-tight text-center line-clamp-1">{realm.name}</span>
                 <span className={cn(
                   "text-[10px] px-2 py-0.5 rounded-full font-bold transition-all",
@@ -87,7 +112,6 @@ const RealmSelector = ({ selectedRealm, onSelectRealm }: RealmSelectorProps) => 
                 </span>
               </div>
 
-              {/* New badge */}
               {realm.isNew && (
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-earth-forest rounded-full animate-pulse" />
               )}

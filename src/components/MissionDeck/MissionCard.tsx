@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback } from "react";
+import { useState } from "react";
 import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { cn } from "@/lib/utils";
-import { MapPin, Clock, Star } from "lucide-react";
+import { MapPin, Clock, Star, Plus, Check } from "lucide-react";
 
 interface MissionCardProps {
   mission: Mission;
@@ -26,13 +26,13 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
   const imageUrl = getMissionImage(mission.id);
   const dangerConfig = getDangerConfig(mission.dangerLevel);
   const [isHovered, setIsHovered] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAddToItinerary?.();
   };
 
-  // Distance gauge (0-10h mapped to percentage)
   const distPercent = Math.min((mission.distanceFromOKC / 10) * 100, 100);
 
   return (
@@ -54,13 +54,19 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
       />
 
       <div className={cn("relative overflow-hidden", isFeatured ? "aspect-[16/9]" : "aspect-[4/3]")}>
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
-          style={{
-            backgroundImage: `url(${imageUrl})`,
-            backgroundColor: 'hsl(var(--muted))',
-            transform: isHovered ? 'scale(1.08)' : 'scale(1)',
-          }}
+        {/* Shimmer skeleton */}
+        {!imgLoaded && (
+          <div className="absolute inset-0 animate-shimmer bg-muted/40" />
+        )}
+        <img
+          src={imageUrl}
+          alt={mission.name}
+          onLoad={() => setImgLoaded(true)}
+          className={cn(
+            "absolute inset-0 w-full h-full object-cover transition-all duration-700",
+            imgLoaded ? "opacity-100" : "opacity-0",
+            isHovered && "scale-[1.08]"
+          )}
         />
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent opacity-80" />
@@ -80,18 +86,18 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
             <button
               onClick={handleAddClick}
               className={cn(
-                "w-8 h-8 flex items-center justify-center rounded-lg transition-all border backdrop-blur-sm",
+                "w-8 h-8 flex items-center justify-center rounded-lg transition-all border backdrop-blur-sm active:scale-90",
                 isInItinerary
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background/40 text-foreground/80 border-border/20 hover:bg-primary hover:text-primary-foreground hover:border-primary"
               )}
             >
-              {isInItinerary ? "✓" : "+"}
+              {isInItinerary ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             </button>
           )}
         </div>
 
-        {/* Distance gauge — bottom right */}
+        {/* Distance gauge */}
         <div className="absolute bottom-3 right-3 z-10">
           <div className="flex items-center gap-1.5 bg-background/60 backdrop-blur-sm rounded-full px-2 py-1 border border-border/20">
             <div className="w-12 h-1.5 rounded-full bg-muted/50 overflow-hidden">
@@ -127,10 +133,10 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
           </div>
           <div className="flex items-center gap-0.5">
             {Array.from({ length: mission.broRating }).map((_, i) => (
-              <Star key={i} className="w-3 h-3 text-primary fill-primary" />
+              <Star key={i} className="w-3.5 h-3.5 text-primary fill-primary drop-shadow-[0_0_4px_hsl(var(--primary)/0.5)]" />
             ))}
             {Array.from({ length: 5 - mission.broRating }).map((_, i) => (
-              <Star key={`e-${i}`} className="w-3 h-3 text-muted-foreground/20" />
+              <Star key={`e-${i}`} className="w-3.5 h-3.5 text-muted-foreground/20" />
             ))}
           </div>
         </div>
@@ -140,7 +146,7 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
       {isInItinerary && (
         <div className="absolute top-0 right-0">
           <div className="w-0 h-0 border-t-[30px] border-t-primary border-l-[30px] border-l-transparent">
-            <span className="absolute -top-[24px] right-[5px] text-primary-foreground text-[10px] font-bold">✓</span>
+            <Check className="absolute -top-[26px] right-[4px] w-3 h-3 text-primary-foreground" />
           </div>
         </div>
       )}
