@@ -178,8 +178,8 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
           <Marker position={OKC_CENTER} icon={createHQIcon()}>
             <Popup className="dark-popup">
               <div className="text-center p-2">
-                <p className="font-bold text-sm" style="color:hsl(35,15%,88%)">OKC Basecamp</p>
-                <p className="text-xs" style="color:hsl(35,10%,50%)">Mission HQ</p>
+                <p className="font-bold text-sm" style={{ color: 'hsl(35,15%,88%)' }}>OKC Basecamp</p>
+                <p className="text-xs" style={{ color: 'hsl(35,10%,50%)' }}>Mission HQ</p>
               </div>
             </Popup>
           </Marker>
@@ -192,23 +192,26 @@ const WarRoomMap = ({ selectedRealm, onMissionSelect, onAddToItinerary, itinerar
               eventHandlers={{ click: () => setSelectedMission(mission) }}
             >
               <Popup className="dark-popup" maxWidth={260}>
-                <div style="width:240px;overflow:hidden;border-radius:12px;">
-                  <div style="height:96px;background-size:cover;background-position:center;position:relative;background-image:url(${getMissionImage(mission.id)})">
-                    <div style="position:absolute;inset:0;background:linear-gradient(to top,hsl(30,12%,9%) 0%,transparent 100%)"></div>
-                    <div style="position:absolute;bottom:6px;left:8px;right:8px;">
-                      <h4 style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:hsl(35,15%,88%);line-height:1.2">${mission.name}</h4>
+                <div style={{ width: 240, overflow: 'hidden', borderRadius: 12 }}>
+                  <div style={{ height: 96, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', backgroundImage: `url(${getMissionImage(mission.id)})` }}>
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, hsl(30,12%,9%) 0%, transparent 100%)' }} />
+                    <div style={{ position: 'absolute', bottom: 6, left: 8, right: 8 }}>
+                      <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 700, color: 'hsl(35,15%,88%)', lineHeight: 1.2 }}>{mission.name}</h4>
                     </div>
                   </div>
-                  <div style="padding:10px;background:hsl(30,12%,9%)">
-                    <p style="font-size:11px;color:hsl(35,10%,50%);margin-bottom:6px;display:flex;align-items:center;gap:4px">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(24,80%,52%)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                      ${mission.city}, ${mission.state} · ${mission.distanceFromOKC}h
+                  <div style={{ padding: 10, background: 'hsl(30,12%,9%)' }}>
+                    <p style={{ fontSize: 11, color: 'hsl(35,10%,50%)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(24,80%,52%)" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      {mission.city}, {mission.state} · {mission.distanceFromOKC}h
                     </p>
-                    <div style="display:flex;align-items:center;justify-content:space-between">
-                      <span style="font-weight:600;font-size:13px;color:${getDangerColor(mission.dangerLevel).bg}">${mission.priceEstimate}</span>
-                      <span style="display:flex;gap:1px">${renderStars(mission.broRating)}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontWeight: 600, fontSize: 13, color: getDangerColor(mission.dangerLevel).bg }}>{mission.priceEstimate}</span>
+                      <span style={{ display: 'flex', gap: 1 }} dangerouslySetInnerHTML={{ __html: renderStars(mission.broRating) }} />
                     </div>
-                    <button onclick="event.stopPropagation()" style="margin-top:8px;width:100%;padding:6px 12px;font-size:11px;font-weight:600;border-radius:6px;background:hsl(24,80%,52%);color:hsl(30,10%,6%);border:none;cursor:pointer">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setSelectedMission(mission); }}
+                      style={{ marginTop: 8, width: '100%', padding: '6px 12px', fontSize: 11, fontWeight: 600, borderRadius: 6, background: 'hsl(24,80%,52%)', color: 'hsl(30,10%,6%)', border: 'none', cursor: 'pointer' }}
+                    >
                       View Details
                     </button>
                   </div>
