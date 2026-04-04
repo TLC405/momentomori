@@ -3,6 +3,7 @@ import { Mission, missions, getMissionsByRealm } from "@/data/missions";
 import { Realm } from "@/data/realms";
 import MissionCard from "./MissionCard";
 import MissionDetailModal from "./MissionDetailModal";
+import { Compass } from "lucide-react";
 
 interface MissionDeckProps {
   selectedRealm: Realm | null;
@@ -21,7 +22,6 @@ const MissionDeck = ({ selectedRealm, itineraryMissions = [], onAddToItinerary, 
   const isInItinerary = (missionId: string) =>
     itineraryMissions.some(m => m.id === missionId);
 
-  // Featured missions (hot or extreme + 5-star) get larger cards
   const featuredIds = new Set(
     displayedMissions
       .filter(m => m.isHot || (m.dangerLevel === "EXTREME" && m.broRating === 5))
@@ -41,7 +41,6 @@ const MissionDeck = ({ selectedRealm, itineraryMissions = [], onAddToItinerary, 
         </span>
       </div>
 
-      {/* Masonry-style editorial grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-auto">
         {displayedMissions.map((mission, index) => (
           <MissionCard
@@ -58,7 +57,11 @@ const MissionDeck = ({ selectedRealm, itineraryMissions = [], onAddToItinerary, 
 
       {displayedMissions.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 border border-border/20 rounded-xl bg-card/30">
-          <span className="text-4xl mb-4">🏔️</span>
+          <div className="animate-float mb-4">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center ring-1 ring-primary/20">
+              <Compass className="w-8 h-8 text-primary/60 animate-compass-wobble" />
+            </div>
+          </div>
           <span className="text-sm text-muted-foreground mb-2 font-display">No adventures match your filters</span>
           <span className="text-xs text-muted-foreground">Try adjusting your search criteria</span>
         </div>

@@ -3,7 +3,7 @@ export interface Realm {
   name: string;
   codename: string;
   description: string;
-  icon: string;
+  lucideIcon: string;
   color: string;
   missionCount: number;
   isNew?: boolean;
@@ -15,7 +15,7 @@ export const realms: Realm[] = [
     name: "Metal Gods",
     codename: "WRENCH",
     description: "Tanks, exotic cars, rally driving, heavy equipment mayhem",
-    icon: "⚙️",
+    lucideIcon: "Cog",
     color: "tactical-orange",
     missionCount: 5,
   },
@@ -24,7 +24,7 @@ export const realms: Realm[] = [
     name: "Red Dirt Air Force",
     codename: "SKYFALL",
     description: "Helicopter hunts, skydiving, flight experiences",
-    icon: "✈️",
+    lucideIcon: "Plane",
     color: "tactical-blue",
     missionCount: 5,
   },
@@ -33,7 +33,7 @@ export const realms: Realm[] = [
     name: "The Armory",
     codename: "ARSENAL",
     description: "Full auto ranges, tactical shooting, explosive ordnance",
-    icon: "💣",
+    lucideIcon: "Crosshair",
     color: "tactical-red",
     missionCount: 8,
   },
@@ -42,7 +42,7 @@ export const realms: Realm[] = [
     name: "Jurassic Encounters",
     codename: "APEX",
     description: "Exotic animals, tiger safari, dangerous wildlife",
-    icon: "🦖",
+    lucideIcon: "Bug",
     color: "tactical-green",
     missionCount: 2,
   },
@@ -51,7 +51,7 @@ export const realms: Realm[] = [
     name: "Storm Lords",
     codename: "TEMPEST",
     description: "Storm chasing tours, tornado alley adventures",
-    icon: "⛈️",
+    lucideIcon: "CloudLightning",
     color: "tactical-blue",
     missionCount: 2,
   },
@@ -60,7 +60,7 @@ export const realms: Realm[] = [
     name: "Nuclear Option",
     codename: "FALLOUT",
     description: "Missile silo diving, cave exploration, underground",
-    icon: "☢️",
+    lucideIcon: "Radiation",
     color: "tactical-orange",
     missionCount: 3,
   },
@@ -69,7 +69,7 @@ export const realms: Realm[] = [
     name: "Aquatic Assault",
     codename: "DEPTH",
     description: "Noodling, whitewater rafting, ziplines, water combat",
-    icon: "🌊",
+    lucideIcon: "Waves",
     color: "tactical-blue",
     missionCount: 6,
   },
@@ -78,7 +78,7 @@ export const realms: Realm[] = [
     name: "Velocity",
     codename: "REDLINE",
     description: "Supercar racing, drifting, track experiences",
-    icon: "🏎️",
+    lucideIcon: "Gauge",
     color: "tactical-red",
     missionCount: 4,
   },
@@ -87,7 +87,7 @@ export const realms: Realm[] = [
     name: "Wasteland Warriors",
     codename: "SURVIVOR",
     description: "Zombie LARP, survival games, apocalypse simulations",
-    icon: "🧟",
+    lucideIcon: "Skull",
     color: "tactical-green",
     missionCount: 2,
     isNew: true,
@@ -97,7 +97,7 @@ export const realms: Realm[] = [
     name: "Rodeo Legends",
     codename: "BRONCO",
     description: "Bull riding schools, rodeo training, cowboy experiences",
-    icon: "🤠",
+    lucideIcon: "Crown",
     color: "tactical-orange",
     missionCount: 3,
     isNew: true,

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Search, X, MapPin, Clock, DollarSign, AlertTriangle } from "lucide-react";
 import { missions } from "@/data/missions";
+import { Slider } from "@/components/ui/slider";
 
 export interface FilterState {
   search: string;
@@ -26,7 +27,7 @@ const DANGER_OPTIONS = [
 
 const DURATION_OPTIONS = [
   { value: "", label: "Any" },
-  { value: "2", label: "< 2 hours" },
+  { value: "2", label: "< 2h" },
   { value: "4", label: "< Half day" },
   { value: "8", label: "< Full day" },
   { value: "24", label: "Multi-day" },
@@ -34,7 +35,6 @@ const DURATION_OPTIONS = [
 
 const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState<typeof missions>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const hasActiveFilters = filters.search !== "" || filters.maxDistance < 10 || filters.priceRange[0] > 1 || filters.priceRange[1] < 5 || filters.dangerLevels.length > 0 || filters.maxDuration !== "";
@@ -47,33 +47,26 @@ const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterPr
     onFiltersChange({ ...filters, dangerLevels: newLevels });
   };
 
-  // Keyboard shortcut
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "/" && !isOpen && document.activeElement?.tagName !== "INPUT") {
         e.preventDefault();
         setIsOpen(true);
       }
-      if (e.key === "Escape" && isOpen) {
-        setIsOpen(false);
-      }
+      if (e.key === "Escape" && isOpen) setIsOpen(false);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
+    if (isOpen) setTimeout(() => inputRef.current?.focus(), 100);
   }, [isOpen]);
 
-  // Popular tags
   const popularTags = ["bucket-list", "extreme", "hunting", "aviation", "tanks", "racing"];
 
   return (
     <>
-      {/* Search trigger */}
       <button
         onClick={() => setIsOpen(true)}
         className="w-full flex items-center gap-3 px-5 py-3.5 bg-card/50 border border-border/30 rounded-xl text-muted-foreground hover:border-primary/40 transition-all group"
@@ -85,7 +78,6 @@ const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterPr
         <span className="text-xs text-muted-foreground"><span className="stat-value text-xs">{totalResults}</span> results</span>
       </button>
 
-      {/* Command palette overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]">
           <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={() => setIsOpen(false)} />
@@ -112,7 +104,6 @@ const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterPr
               </button>
             </div>
 
-            {/* Filter grid */}
             <div className="p-5 space-y-5 max-h-[50vh] overflow-y-auto">
               {/* Popular tags */}
               <div className="space-y-2">
@@ -132,19 +123,27 @@ const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterPr
 
               <div className="gradient-divider" />
 
-              {/* Filters */}
               <div className="grid sm:grid-cols-2 gap-5">
-                <div className="space-y-2">
+                {/* Distance slider — custom styled */}
+                <div className="space-y-3">
                   <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
                     <MapPin className="w-3.5 h-3.5" /> Max Distance
                   </label>
-                  <input type="range" min="1" max="10" value={filters.maxDistance} onChange={(e) => onFiltersChange({ ...filters, maxDistance: parseInt(e.target.value) })} className="w-full accent-primary" />
+                  <Slider
+                    min={1}
+                    max={10}
+                    step={1}
+                    value={[filters.maxDistance]}
+                    onValueChange={([v]) => onFiltersChange({ ...filters, maxDistance: v })}
+                    className="w-full"
+                  />
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>1h</span><span className="text-primary font-medium">{filters.maxDistance}h</span><span>10h+</span>
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                {/* Price pills */}
+                <div className="space-y-3">
                   <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
                     <DollarSign className="w-3.5 h-3.5" /> Price
                   </label>
@@ -169,16 +168,31 @@ const SearchFilter = ({ filters, onFiltersChange, totalResults }: SearchFilterPr
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                {/* Duration — pill buttons instead of select */}
+                <div className="space-y-3">
                   <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
                     <Clock className="w-3.5 h-3.5" /> Duration
                   </label>
-                  <select value={filters.maxDuration} onChange={(e) => onFiltersChange({ ...filters, maxDuration: e.target.value })} className="w-full px-3 py-2 bg-muted/20 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:border-primary/50">
-                    {DURATION_OPTIONS.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
-                  </select>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DURATION_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => onFiltersChange({ ...filters, maxDuration: opt.value })}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-xs font-medium transition-all border",
+                          filters.maxDuration === opt.value
+                            ? "bg-primary/15 border-primary/40 text-primary"
+                            : "bg-muted/20 border-border/30 text-muted-foreground hover:border-primary/40"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="space-y-2">
+                {/* Intensity */}
+                <div className="space-y-3">
                   <label className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider">
                     <AlertTriangle className="w-3.5 h-3.5" /> Intensity
                   </label>

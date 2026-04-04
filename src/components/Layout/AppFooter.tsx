@@ -16,6 +16,11 @@ const AppFooter = () => {
         ))}
       </div>
 
+      {/* Subtle noise/scanline texture overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+        backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, hsl(var(--foreground) / 0.05) 2px, hsl(var(--foreground) / 0.05) 4px)`,
+      }} />
+
       <div className="relative bg-gradient-to-b from-background via-card/30 to-card/60 border-t border-border/20 py-20 md:py-28">
         <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
           <blockquote className="font-display text-2xl md:text-4xl font-bold text-foreground leading-snug italic">
@@ -36,9 +41,9 @@ const AppFooter = () => {
 
           <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
             <span>Memento Mori</span>
-            <span className="w-1 h-1 rounded-full bg-primary" />
+            <div className="w-px h-3 bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
             <span>Based in OKC</span>
-            <span className="w-1 h-1 rounded-full bg-primary" />
+            <div className="w-px h-3 bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
             <span>© {new Date().getFullYear()}</span>
           </div>
         </div>
