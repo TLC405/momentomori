@@ -264,26 +264,40 @@
 /* ========== Leaflet Map Overrides ========== */
 .leaflet-terrain-map { font-family: 'Source Sans 3', sans-serif; }
 .leaflet-terrain-map .leaflet-control-attribution {
-  background: hsl(30, 10%, 10%, 0.85) !important;
-  font-size: 9px !important; color: hsl(35, 10%, 50%) !important;
+  background: hsl(30, 10%, 8%, 0.9) !important;
+  font-size: 9px !important; color: hsl(35, 10%, 40%) !important;
   border-radius: 4px 0 0 0 !important;
+  backdrop-filter: blur(8px);
 }
 .leaflet-terrain-map .leaflet-popup-content-wrapper {
-  background: hsl(30, 12%, 9%) !important; border-radius: 12px !important;
-  box-shadow: 0 8px 30px hsl(0, 0%, 0%, 0.4) !important;
-  border: 1px solid hsl(30, 12%, 18%) !important; padding: 0 !important; overflow: hidden;
+  background: hsl(30, 12%, 9%) !important; border-radius: 14px !important;
+  box-shadow: 0 12px 40px hsl(0, 0%, 0%, 0.5), 0 0 0 1px hsl(24, 80%, 52%, 0.08) !important;
+  border: 1px solid hsl(30, 12%, 16%) !important; padding: 0 !important; overflow: hidden;
 }
 .leaflet-terrain-map .leaflet-popup-content { margin: 0 !important; line-height: 1.4 !important; }
 .leaflet-terrain-map .leaflet-popup-tip {
   background: hsl(30, 12%, 9%) !important;
-  border: 1px solid hsl(30, 12%, 18%) !important; box-shadow: none !important;
+  border: 1px solid hsl(30, 12%, 16%) !important; box-shadow: none !important;
 }
 .leaflet-terrain-map .leaflet-popup-close-button {
-  color: hsl(35, 10%, 50%) !important; font-size: 18px !important;
-  width: 24px !important; height: 24px !important; padding: 4px !important; z-index: 10;
+  color: hsl(35, 10%, 45%) !important; font-size: 16px !important;
+  width: 28px !important; height: 28px !important; padding: 6px !important; z-index: 10;
+  background: hsl(30, 12%, 12%) !important; border-radius: 50% !important;
+  top: 6px !important; right: 6px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid hsl(30, 12%, 20%) !important;
+}
+.leaflet-terrain-map .leaflet-popup-close-button:hover {
+  color: hsl(24, 80%, 52%) !important;
+  background: hsl(30, 12%, 15%) !important;
 }
 
 .mission-marker-icon { background: none !important; border: none !important; }
 .hq-marker-icon { background: none !important; border: none !important; }
 
+.mission-pin-wrapper { transition: transform 0.2s ease, filter 0.2s ease; }
+.mission-pin-wrapper:hover { transform: scale(1.15) translateY(-3px); filter: brightness(1.15) drop-shadow(0 4px 12px hsl(0 0% 0%/0.6)) !important; }
+
 @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+@keyframes hq-sonar { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(2.5); opacity: 0; } }
