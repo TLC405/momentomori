@@ -1,8 +1,21 @@
 import { useState } from "react";
 import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
+import { getSeasonalInfo } from "@/data/seasonalData";
 import { cn } from "@/lib/utils";
-import { MapPin, Clock, Star, Plus, Check } from "lucide-react";
+import { MapPin, Clock, Star, Plus, Check, Leaf, Sun, CloudLightning, Snowflake, Calendar } from "lucide-react";
+
+const SeasonIcon = ({ icon }: { icon: string }) => {
+  const props = { className: "w-3 h-3" };
+  switch (icon) {
+    case "leaf": return <Leaf {...props} />;
+    case "sun": return <Sun {...props} />;
+    case "cloud-lightning": return <CloudLightning {...props} />;
+    case "snowflake": return <Snowflake {...props} />;
+    case "calendar": return <Calendar {...props} />;
+    default: return <Clock {...props} />;
+  }
+};
 
 interface MissionCardProps {
   mission: Mission;
@@ -25,6 +38,7 @@ const getDangerConfig = (level: Mission["dangerLevel"]) => {
 const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index, isFeatured }: MissionCardProps) => {
   const imageUrl = getMissionImage(mission.id);
   const dangerConfig = getDangerConfig(mission.dangerLevel);
+  const seasonal = getSeasonalInfo(mission.id);
   const [isHovered, setIsHovered] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -79,6 +93,12 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
             </span>
             {mission.isNew && (
               <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-earth-forest text-white">New</span>
+            )}
+            {seasonal && (
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-accent text-accent-foreground">
+                <SeasonIcon icon={seasonal.seasonIcon} />
+                {seasonal.seasonBadge}
+              </span>
             )}
           </div>
 
