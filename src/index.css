@@ -227,7 +227,7 @@
 
   @keyframes shimmer-text { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
   .shimmer-text {
-    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--earth-sand)) 25%, hsl(var(--primary)) 50%, hsl(var(--earth-sand)) 75%, hsl(var(--primary)) 100%);
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 25%, hsl(var(--primary)) 50%, hsl(var(--earth-copper)) 75%, hsl(var(--primary)) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     animation: shimmer-text 4s linear infinite;
@@ -264,33 +264,33 @@
 /* ========== Leaflet Map Overrides ========== */
 .leaflet-terrain-map { font-family: 'Source Sans 3', sans-serif; }
 .leaflet-terrain-map .leaflet-control-attribution {
-  background: hsl(30, 10%, 8%, 0.9) !important;
-  font-size: 9px !important; color: hsl(35, 10%, 40%) !important;
+  background: hsl(var(--card) / 0.9) !important;
+  font-size: 9px !important; color: hsl(var(--muted-foreground)) !important;
   border-radius: 4px 0 0 0 !important;
   backdrop-filter: blur(8px);
 }
 .leaflet-terrain-map .leaflet-popup-content-wrapper {
-  background: hsl(30, 12%, 9%) !important; border-radius: 14px !important;
-  box-shadow: 0 12px 40px hsl(0, 0%, 0%, 0.5), 0 0 0 1px hsl(24, 80%, 52%, 0.08) !important;
-  border: 1px solid hsl(30, 12%, 16%) !important; padding: 0 !important; overflow: hidden;
+  background: hsl(var(--card)) !important; border-radius: 14px !important;
+  box-shadow: 0 12px 40px hsl(0, 0%, 0%, 0.12), 0 0 0 1px hsl(var(--border)) !important;
+  border: 1px solid hsl(var(--border)) !important; padding: 0 !important; overflow: hidden;
 }
 .leaflet-terrain-map .leaflet-popup-content { margin: 0 !important; line-height: 1.4 !important; }
 .leaflet-terrain-map .leaflet-popup-tip {
-  background: hsl(30, 12%, 9%) !important;
-  border: 1px solid hsl(30, 12%, 16%) !important; box-shadow: none !important;
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important; box-shadow: none !important;
 }
 .leaflet-terrain-map .leaflet-popup-close-button {
-  color: hsl(35, 10%, 45%) !important; font-size: 16px !important;
+  color: hsl(var(--muted-foreground)) !important; font-size: 16px !important;
   width: 28px !important; height: 28px !important; padding: 6px !important; z-index: 10;
-  background: hsl(30, 12%, 12%) !important; border-radius: 50% !important;
+  background: hsl(var(--muted)) !important; border-radius: 50% !important;
   top: 6px !important; right: 6px !important;
   display: flex !important; align-items: center !important; justify-content: center !important;
   transition: all 0.2s ease !important;
-  border: 1px solid hsl(30, 12%, 20%) !important;
+  border: 1px solid hsl(var(--border)) !important;
 }
 .leaflet-terrain-map .leaflet-popup-close-button:hover {
-  color: hsl(24, 80%, 52%) !important;
-  background: hsl(30, 12%, 15%) !important;
+  color: hsl(var(--primary)) !important;
+  background: hsl(var(--secondary)) !important;
 }
 
 .mission-marker-icon { background: none !important; border: none !important; }
