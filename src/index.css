@@ -331,15 +331,15 @@
 }
 .cluster-core {
   position: relative; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, hsl(30, 12%, 16%), hsl(30, 10%, 8%));
-  border: 2px solid hsl(24, 80%, 52%, 0.6);
+  background: radial-gradient(circle at 35% 35%, hsl(var(--card)), hsl(var(--muted)));
+  border: 2px solid hsl(24, 85%, 48%, 0.6);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 20px hsl(24, 80%, 52%, 0.2), 0 4px 12px hsl(0 0% 0%/0.4), inset 0 1px 0 hsl(0 0% 100%/0.06);
+  box-shadow: 0 0 20px hsl(24, 85%, 48%, 0.15), 0 4px 12px hsl(0 0% 0%/0.1), inset 0 1px 0 hsl(0 0% 100%/0.3);
 }
 .cluster-count {
   font-family: 'Orbitron', sans-serif; font-weight: 700;
-  font-size: 13px; color: hsl(24, 80%, 52%);
-  text-shadow: 0 0 8px hsl(24, 80%, 52%, 0.4);
+  font-size: 13px; color: hsl(24, 85%, 48%);
+  text-shadow: 0 0 8px hsl(24, 85%, 48%, 0.3);
 }
 @keyframes cluster-pulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.8); opacity: 0; } }
 
@@ -353,10 +353,10 @@
 .hq-sonar-delayed { animation-delay: 1.2s; }
 .hq-body {
   position: absolute; inset: 0; border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, hsl(30, 12%, 18%), hsl(30, 10%, 8%));
-  border: 2px solid hsl(24, 80%, 52%, 0.5);
+  background: radial-gradient(circle at 30% 30%, hsl(var(--card)), hsl(var(--muted)));
+  border: 2px solid hsl(24, 85%, 48%, 0.5);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 24px hsl(24, 80%, 52%, 0.2), inset 0 1px 0 hsl(0 0% 100%/0.08);
+  box-shadow: 0 0 24px hsl(24, 85%, 48%, 0.15), inset 0 1px 0 hsl(0 0% 100%/0.3);
 }
 .hq-label {
   position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
