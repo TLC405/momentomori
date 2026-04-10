@@ -11,11 +11,14 @@ import StatsBar from "@/components/StatsBar/StatsBar";
 import SearchFilter from "@/components/SearchFilter/SearchFilter";
 import RealmSelector from "@/components/RealmSelector/RealmSelector";
 import MissionDeck from "@/components/MissionDeck/MissionDeck";
+import SwipeDeck from "@/components/MissionDeck/SwipeDeck";
 import MissionDetailModal from "@/components/MissionDeck/MissionDetailModal";
 import ItineraryBuilder from "@/components/ItineraryBuilder/ItineraryBuilder";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Helmet } from "react-helmet";
 
 const Index = () => {
+  const isMobile = useIsMobile();
   const [selectedRealm, setSelectedRealm] = useState<Realm | null>(null);
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [itineraryMissions, setItineraryMissions] = useState<Mission[]>([]);
@@ -105,14 +108,23 @@ const Index = () => {
             <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
 
-          {/* Mission cards — editorial grid */}
+          {/* Mission cards — editorial grid or swipe deck on mobile */}
           <section>
-            <MissionDeck
-              selectedRealm={selectedRealm}
-              itineraryMissions={itineraryMissions}
-              onAddToItinerary={handleAddToItinerary}
-              filteredMissions={filteredMissions}
-            />
+            {isMobile ? (
+              <SwipeDeck
+                missions={filteredMissions}
+                onAddToItinerary={handleAddToItinerary}
+                onViewDetail={setSelectedMission}
+                itineraryMissions={itineraryMissions}
+              />
+            ) : (
+              <MissionDeck
+                selectedRealm={selectedRealm}
+                itineraryMissions={itineraryMissions}
+                onAddToItinerary={handleAddToItinerary}
+                filteredMissions={filteredMissions}
+              />
+            )}
           </section>
         </main>
 

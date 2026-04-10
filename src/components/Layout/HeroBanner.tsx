@@ -74,7 +74,7 @@ const HeroBanner = () => {
           </span>
         </div>
 
-        <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-black text-foreground tracking-tight leading-[0.9] mb-6">
+        <h1 className="font-display text-7xl md:text-[10rem] lg:text-[14rem] font-black text-foreground tracking-tighter leading-[0.85] mb-6 drop-shadow-[0_4px_30px_hsl(var(--primary)/0.2)]">
           BEFORE
           <br />
           <span className="shimmer-text">YOU GO</span>

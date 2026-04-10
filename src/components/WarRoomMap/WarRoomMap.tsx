@@ -20,12 +20,12 @@ const OKC_CENTER: [number, number] = [35.4676, -97.5164];
 
 /* ── Tile providers (all free, no API key) ── */
 const TILE_PROVIDERS = {
-  dark: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  light: {
+    url: "https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png",
     attr: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
   },
   terrain: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
     attr: '&copy; <a href="https://carto.com/">CARTO</a>',
   },
 };
@@ -185,7 +185,7 @@ const renderStars = (rating: number) => {
 const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }: WarRoomMapProps) => {
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [mapStyle, setMapStyle] = useState<'dark' | 'terrain'>('dark');
+  const [mapStyle, setMapStyle] = useState<'light' | 'terrain'>('light');
 
   const displayedMissions = useMemo(() =>
     selectedRealm ? missions.filter(m => m.realmId === selectedRealm.id) : missions,
@@ -207,7 +207,7 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }:
       <div className={`relative w-full overflow-hidden rounded-2xl border border-border/20 shadow-[0_8px_40px_hsl(0_0%_0%/0.35),inset_0_1px_0_hsl(0_0%_100%/0.03)] ${isFullscreen ? "h-full rounded-none" : "h-[85vh] min-h-[500px]"}`}>
 
         {/* Vignette */}
-        <div className="absolute inset-0 z-[400] pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 50%, hsl(30,10%,6%,0.5) 100%)' }} />
+        <div className="absolute inset-0 z-[400] pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 50%, hsl(36,33%,97%,0.4) 100%)' }} />
 
         <MapContainer center={OKC_CENTER} zoom={6} scrollWheelZoom={true} zoomControl={false} style={{ height: "100%", width: "100%" }} className="leaflet-terrain-map">
           <TileLayer attribution={tile.attr} url={tile.url} />
@@ -228,11 +228,11 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }:
               <div style={{ padding: 14, textAlign: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 6 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(24,80%,52%)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 11, fontWeight: 700, color: 'hsl(35,15%,88%)', letterSpacing: '2px', textTransform: 'uppercase' as const }}>OKC Basecamp</p>
+                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 11, fontWeight: 700, color: 'hsl(30,15%,12%)', letterSpacing: '2px', textTransform: 'uppercase' as const }}>OKC Basecamp</p>
                 </div>
-                <p style={{ fontSize: 10, color: 'hsl(35,10%,50%)' }}>Mission Control · Ground Zero</p>
-                <div style={{ marginTop: 8, height: 1, background: 'linear-gradient(90deg, transparent, hsl(24,80%,52%,0.3), transparent)' }} />
-                <p style={{ fontSize: 9, color: 'hsl(35,10%,40%)', marginTop: 6, fontFamily: "'Orbitron', sans-serif" }}>35.47°N · 97.52°W</p>
+                <p style={{ fontSize: 10, color: 'hsl(30,8%,46%)' }}>Mission Control · Ground Zero</p>
+                <div style={{ marginTop: 8, height: 1, background: 'linear-gradient(90deg, transparent, hsl(24,85%,48%,0.3), transparent)' }} />
+                <p style={{ fontSize: 9, color: 'hsl(30,8%,46%)', marginTop: 6, fontFamily: "'Orbitron', sans-serif" }}>35.47°N · 97.52°W</p>
               </div>
             </Popup>
           </Marker>
@@ -251,23 +251,23 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }:
                 <Popup className="dark-popup" maxWidth={270}>
                   <div style={{ width: 250, overflow: 'hidden', borderRadius: 12 }}>
                     <div style={{ height: 110, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', backgroundImage: `url(${getMissionImage(mission.id)})` }}>
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, hsl(30,12%,9%) 0%, hsl(30,12%,9%,0.4) 40%, transparent 100%)' }} />
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, hsl(36,30%,99%) 0%, hsl(36,30%,99%,0.4) 40%, transparent 100%)' }} />
                       <div style={{ position: 'absolute', top: 8, right: 8, padding: '2px 8px', borderRadius: 20, fontSize: 8, fontWeight: 700, fontFamily: "'Orbitron', sans-serif", letterSpacing: '1px', textTransform: 'uppercase' as const, background: getDangerColor(mission.dangerLevel).bg, color: getDangerColor(mission.dangerLevel).text, boxShadow: `0 0 12px ${getDangerColor(mission.dangerLevel).glow}50` }}>
                         {mission.dangerLevel}
                       </div>
                       <div style={{ position: 'absolute', bottom: 8, left: 10, right: 10 }}>
-                        <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: 'hsl(35,15%,92%)', lineHeight: 1.2, textShadow: '0 2px 8px hsl(0,0%,0%,0.7)' }}>{mission.name}</h4>
+                        <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: 'hsl(30,15%,12%)', lineHeight: 1.2, textShadow: '0 2px 8px hsl(0,0%,100%,0.5)' }}>{mission.name}</h4>
                       </div>
                     </div>
-                    <div style={{ padding: 12, background: 'hsl(30,12%,9%)' }}>
+                    <div style={{ padding: 12, background: 'hsl(36,30%,99%)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8 }}>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(24,80%,52%)" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        <span style={{ fontSize: 11, color: 'hsl(35,10%,55%)' }}>{mission.city}, {mission.state}</span>
-                        <span style={{ fontSize: 9, color: 'hsl(35,10%,35%)', marginLeft: 'auto', fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.5px' }}>{mission.distanceFromOKC}h</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(24,85%,48%)" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span style={{ fontSize: 11, color: 'hsl(30,8%,46%)' }}>{mission.city}, {mission.state}</span>
+                        <span style={{ fontSize: 9, color: 'hsl(30,8%,55%)', marginLeft: 'auto', fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.5px' }}>{mission.distanceFromOKC}h</span>
                       </div>
-                      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, hsl(30,12%,22%), transparent)', marginBottom: 8 }} />
+                      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, hsl(30,15%,88%), transparent)', marginBottom: 8 }} />
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontWeight: 700, fontSize: 14, fontFamily: "'Orbitron', sans-serif", color: 'hsl(24,80%,52%)', textShadow: '0 0 8px hsl(24,80%,52%,0.3)' }}>{mission.priceEstimate}</span>
+                        <span style={{ fontWeight: 700, fontSize: 14, fontFamily: "'Orbitron', sans-serif", color: 'hsl(24,85%,48%)', textShadow: '0 0 8px hsl(24,85%,48%,0.3)' }}>{mission.priceEstimate}</span>
                         <span style={{ display: 'flex', gap: 2, alignItems: 'center' }} dangerouslySetInnerHTML={{ __html: renderStars(mission.broRating) }} />
                       </div>
                       <button onClick={(e) => { e.stopPropagation(); setSelectedMission(mission); }}
@@ -301,7 +301,7 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }:
 
         {/* ── HUD: Controls ── */}
         <div className="absolute top-3 right-3 z-[1000] flex items-center gap-2">
-          <button onClick={() => setMapStyle(s => s === 'dark' ? 'terrain' : 'dark')}
+          <button onClick={() => setMapStyle(s => s === 'light' ? 'terrain' : 'light')}
             className="w-9 h-9 flex items-center justify-center glass-premium rounded-lg text-muted-foreground hover:text-primary transition-all group" title="Toggle style">
             <Layers className="w-4 h-4 group-hover:scale-110 transition-transform" />
           </button>
