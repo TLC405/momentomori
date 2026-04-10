@@ -20,12 +20,12 @@ const OKC_CENTER: [number, number] = [35.4676, -97.5164];
 
 /* ── Tile providers (all free, no API key) ── */
 const TILE_PROVIDERS = {
-  dark: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  light: {
+    url: "https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png",
     attr: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
   },
   terrain: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
     attr: '&copy; <a href="https://carto.com/">CARTO</a>',
   },
 };
