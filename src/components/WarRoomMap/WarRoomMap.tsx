@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, Polyline } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
@@ -6,19 +6,21 @@ import "leaflet/dist/leaflet.css";
 import { missions, Mission } from "@/data/missions";
 import { Realm } from "@/data/realms";
 import { getMissionImage } from "@/data/missionImages";
+import { FilterState } from "@/components/SearchFilter/SearchFilter";
 import MissionDetailModal from "../MissionDeck/MissionDetailModal";
-import { Maximize2, Minimize2, MapPin, Navigation, Layers, Compass } from "lucide-react";
+import { Maximize2, Minimize2, MapPin, Navigation, Layers, Compass, Filter } from "lucide-react";
 
 interface WarRoomMapProps {
   selectedRealm: Realm | null;
   onMissionSelect?: (mission: Mission) => void;
   onAddToItinerary?: (mission: Mission) => void;
   itineraryMissions?: Mission[];
+  filters?: FilterState;
+  filteredMissionIds?: Set<string>;
 }
 
 const OKC_CENTER: [number, number] = [35.4676, -97.5164];
 
-/* ── Tile providers (all free, no API key) ── */
 const TILE_PROVIDERS = {
   light: {
     url: "https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png",
@@ -39,16 +41,17 @@ const getDangerColor = (level: Mission["dangerLevel"]) => {
   }
 };
 
-const createMissionIcon = (mission: Mission, isInItinerary: boolean) => {
+const createMissionIcon = (mission: Mission, isInItinerary: boolean, isDimmed: boolean) => {
   const colors = getDangerColor(mission.dangerLevel);
   const uid = mission.id.replace(/[^a-zA-Z0-9]/g, "");
+  const opacity = isDimmed ? 0.3 : 1;
   return L.divIcon({
     className: "mission-marker-icon",
     iconSize: [36, 48],
     iconAnchor: [18, 48],
     popupAnchor: [0, -50],
     html: `
-      <div class="mission-pin-wrapper">
+      <div class="mission-pin-wrapper" style="opacity:${opacity}; ${isDimmed ? 'filter:grayscale(0.6);' : ''}">
         <svg width="36" height="48" viewBox="0 0 36 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="pg-${uid}" cx="40%" cy="35%" r="65%">
@@ -59,19 +62,13 @@ const createMissionIcon = (mission: Mission, isInItinerary: boolean) => {
               <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
             </filter>
           </defs>
-          <!-- Outer glow -->
           <ellipse cx="18" cy="44" rx="8" ry="3" fill="${colors.bg}" opacity="0.3" filter="url(#gs-${uid})"/>
-          <!-- Pin body -->
           <path d="M18 2C9.163 2 2 9.163 2 18c0 13 16 28 16 28s16-15 16-28C34 9.163 26.837 2 18 2z"
                 fill="url(#pg-${uid})" stroke="${colors.border}" stroke-width="1.5"/>
-          <!-- Highlight arc -->
           <path d="M10 12 A 10 10 0 0 1 26 12" fill="none" stroke="white" stroke-width="1" opacity="0.15" stroke-linecap="round"/>
-          <!-- Inner ring -->
           <circle cx="18" cy="17" r="8" fill="${colors.text}" opacity="0.95" stroke="${colors.border}" stroke-width="0.5"/>
-          <!-- Core dot -->
           <circle cx="18" cy="17" r="4" fill="${colors.bg}"/>
           <circle cx="18" cy="17" r="2" fill="${colors.text}" opacity="0.7"/>
-          <!-- Specular -->
           <circle cx="15" cy="14" r="1.5" fill="white" opacity="0.25"/>
         </svg>
         ${isInItinerary ? `
@@ -79,6 +76,7 @@ const createMissionIcon = (mission: Mission, isInItinerary: boolean) => {
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(38,25%,95%)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
         ` : ""}
+        ${isInItinerary ? '<div class="mission-pin-itinerary-ring"></div>' : ''}
       </div>
     `,
   });
@@ -179,31 +177,42 @@ const renderStars = (rating: number) => {
   return html;
 };
 
-/* ════════════════════════════════════════════════════════════════
-   MAIN COMPONENT
-   ════════════════════════════════════════════════════════════════ */
-const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }: WarRoomMapProps) => {
+// Social proof mock data
+const getBookingCount = (id: string): number => {
+  const hash = id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return 8 + (hash % 45);
+};
+
+const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], filteredMissionIds }: WarRoomMapProps) => {
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapStyle, setMapStyle] = useState<'light' | 'terrain'>('light');
+  const [showFilterSync, setShowFilterSync] = useState(true);
 
-  const displayedMissions = useMemo(() =>
+  // All missions (for showing dimmed)
+  const allMissions = useMemo(() =>
     selectedRealm ? missions.filter(m => m.realmId === selectedRealm.id) : missions,
     [selectedRealm]
   );
 
+  // Filtered subset (highlighted)
+  const hasActiveFilter = filteredMissionIds !== undefined && filteredMissionIds.size < allMissions.length;
+
   const isInItinerary = (id: string) => itineraryMissions.some(m => m.id === id);
+  const isFiltered = (id: string) => !filteredMissionIds || filteredMissionIds.has(id);
   const tile = TILE_PROVIDERS[mapStyle];
 
+  const filteredCount = hasActiveFilter ? allMissions.filter(m => isFiltered(m.id)).length : allMissions.length;
+
   const difficultyLevels = [
-    { color: "hsl(150,50%,42%)", label: "Easy", count: displayedMissions.filter(m => m.dangerLevel === "LOW").length },
-    { color: "hsl(40,90%,50%)", label: "Moderate", count: displayedMissions.filter(m => m.dangerLevel === "MEDIUM").length },
-    { color: "hsl(24,95%,50%)", label: "Hard", count: displayedMissions.filter(m => m.dangerLevel === "HIGH").length },
-    { color: "hsl(0,70%,48%)", label: "Extreme", count: displayedMissions.filter(m => m.dangerLevel === "EXTREME").length },
+    { color: "hsl(150,50%,42%)", label: "Easy", count: allMissions.filter(m => m.dangerLevel === "LOW" && isFiltered(m.id)).length },
+    { color: "hsl(40,90%,50%)", label: "Moderate", count: allMissions.filter(m => m.dangerLevel === "MEDIUM" && isFiltered(m.id)).length },
+    { color: "hsl(24,95%,50%)", label: "Hard", count: allMissions.filter(m => m.dangerLevel === "HIGH" && isFiltered(m.id)).length },
+    { color: "hsl(0,70%,48%)", label: "Extreme", count: allMissions.filter(m => m.dangerLevel === "EXTREME" && isFiltered(m.id)).length },
   ];
 
   return (
-    <div className={`relative w-full ${isFullscreen ? "fixed inset-0 z-[55]" : ""}`} id="map-section">
+    <div className={`relative w-full ${isFullscreen ? "fixed inset-0 z-[55]" : ""}`} id="map-section" role="region" aria-label="Adventure map showing mission locations across Oklahoma and Texas">
       <div className={`relative w-full overflow-hidden rounded-2xl border border-border/20 shadow-[0_8px_40px_hsl(0_0%_0%/0.35),inset_0_1px_0_hsl(0_0%_100%/0.03)] ${isFullscreen ? "h-full rounded-none" : "h-[85vh] min-h-[500px]"}`}>
 
         {/* Vignette */}
@@ -212,15 +221,18 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }:
         <MapContainer center={OKC_CENTER} zoom={6} scrollWheelZoom={true} zoomControl={false} style={{ height: "100%", width: "100%" }} className="leaflet-terrain-map">
           <TileLayer attribution={tile.attr} url={tile.url} />
           <DistanceRings />
-          <FitBounds missions={displayedMissions} />
+          <FitBounds missions={allMissions} />
 
-          {/* Flight arcs */}
-          {displayedMissions.map(mission => (
-            <Polyline key={`arc-${mission.id}`}
-              positions={getArcPoints(OKC_CENTER, [mission.coordinates.lat, mission.coordinates.lng])}
-              pathOptions={{ color: getDangerColor(mission.dangerLevel).bg, weight: 1, opacity: 0.18, dashArray: "3,8" }}
-            />
-          ))}
+          {/* Flight arcs — only for filtered missions */}
+          {allMissions.map(mission => {
+            const active = isFiltered(mission.id);
+            return (
+              <Polyline key={`arc-${mission.id}`}
+                positions={getArcPoints(OKC_CENTER, [mission.coordinates.lat, mission.coordinates.lng])}
+                pathOptions={{ color: getDangerColor(mission.dangerLevel).bg, weight: active ? 1 : 0.5, opacity: active ? 0.18 : 0.04, dashArray: "3,8" }}
+              />
+            );
+          })}
 
           {/* HQ */}
           <Marker position={OKC_CENTER} icon={createHQIcon()}>
@@ -242,43 +254,53 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }:
             maxClusterRadius={45} spiderfyOnMaxZoom disableClusteringAtZoom={9}
             animate animateAddingMarkers
           >
-            {displayedMissions.map(mission => (
-              <Marker key={mission.id}
-                position={[mission.coordinates.lat, mission.coordinates.lng]}
-                icon={createMissionIcon(mission, isInItinerary(mission.id))}
-                eventHandlers={{ click: () => setSelectedMission(mission) }}
-              >
-                <Popup className="dark-popup" maxWidth={270}>
-                  <div style={{ width: 250, overflow: 'hidden', borderRadius: 12 }}>
-                    <div style={{ height: 110, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', backgroundImage: `url(${getMissionImage(mission.id)})` }}>
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, hsl(36,30%,99%) 0%, hsl(36,30%,99%,0.4) 40%, transparent 100%)' }} />
-                      <div style={{ position: 'absolute', top: 8, right: 8, padding: '2px 8px', borderRadius: 20, fontSize: 8, fontWeight: 700, fontFamily: "'Orbitron', sans-serif", letterSpacing: '1px', textTransform: 'uppercase' as const, background: getDangerColor(mission.dangerLevel).bg, color: getDangerColor(mission.dangerLevel).text, boxShadow: `0 0 12px ${getDangerColor(mission.dangerLevel).glow}50` }}>
-                        {mission.dangerLevel}
+            {allMissions.map(mission => {
+              const inItinerary = isInItinerary(mission.id);
+              const isDimmed = hasActiveFilter && !isFiltered(mission.id);
+              const bookings = getBookingCount(mission.id);
+              return (
+                <Marker key={mission.id}
+                  position={[mission.coordinates.lat, mission.coordinates.lng]}
+                  icon={createMissionIcon(mission, inItinerary, isDimmed)}
+                  eventHandlers={{ click: () => setSelectedMission(mission) }}
+                >
+                  <Popup className="dark-popup" maxWidth={270}>
+                    <div style={{ width: 250, overflow: 'hidden', borderRadius: 12 }}>
+                      <div style={{ height: 110, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', backgroundImage: `url(${getMissionImage(mission.id)})` }}>
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, hsl(36,30%,99%) 0%, hsl(36,30%,99%,0.4) 40%, transparent 100%)' }} />
+                        <div style={{ position: 'absolute', top: 8, right: 8, padding: '2px 8px', borderRadius: 20, fontSize: 8, fontWeight: 700, fontFamily: "'Orbitron', sans-serif", letterSpacing: '1px', textTransform: 'uppercase' as const, background: getDangerColor(mission.dangerLevel).bg, color: getDangerColor(mission.dangerLevel).text, boxShadow: `0 0 12px ${getDangerColor(mission.dangerLevel).glow}50` }}>
+                          {mission.dangerLevel}
+                        </div>
+                        <div style={{ position: 'absolute', bottom: 8, left: 10, right: 10 }}>
+                          <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: 'hsl(30,15%,12%)', lineHeight: 1.2, textShadow: '0 2px 8px hsl(0,0%,100%,0.5)' }}>{mission.name}</h4>
+                        </div>
                       </div>
-                      <div style={{ position: 'absolute', bottom: 8, left: 10, right: 10 }}>
-                        <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: 'hsl(30,15%,12%)', lineHeight: 1.2, textShadow: '0 2px 8px hsl(0,0%,100%,0.5)' }}>{mission.name}</h4>
+                      <div style={{ padding: 12, background: 'hsl(36,30%,99%)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(24,85%,48%)" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                          <span style={{ fontSize: 11, color: 'hsl(30,8%,46%)' }}>{mission.city}, {mission.state}</span>
+                          <span style={{ fontSize: 9, color: 'hsl(30,8%,55%)', marginLeft: 'auto', fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.5px' }}>{mission.distanceFromOKC}h</span>
+                        </div>
+                        {/* Social proof */}
+                        <div style={{ fontSize: 9, color: 'hsl(24,85%,48%)', marginBottom: 6, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                          Added {bookings}x this month
+                        </div>
+                        <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, hsl(30,15%,88%), transparent)', marginBottom: 8 }} />
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontWeight: 700, fontSize: 14, fontFamily: "'Orbitron', sans-serif", color: 'hsl(24,85%,48%)', textShadow: '0 0 8px hsl(24,85%,48%,0.3)' }}>{mission.priceEstimate}</span>
+                          <span style={{ display: 'flex', gap: 2, alignItems: 'center' }} dangerouslySetInnerHTML={{ __html: renderStars(mission.broRating) }} />
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedMission(mission); }}
+                          className="map-popup-cta">
+                          View Mission Brief
+                        </button>
                       </div>
                     </div>
-                    <div style={{ padding: 12, background: 'hsl(36,30%,99%)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8 }}>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(24,85%,48%)" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        <span style={{ fontSize: 11, color: 'hsl(30,8%,46%)' }}>{mission.city}, {mission.state}</span>
-                        <span style={{ fontSize: 9, color: 'hsl(30,8%,55%)', marginLeft: 'auto', fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.5px' }}>{mission.distanceFromOKC}h</span>
-                      </div>
-                      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, hsl(30,15%,88%), transparent)', marginBottom: 8 }} />
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontWeight: 700, fontSize: 14, fontFamily: "'Orbitron', sans-serif", color: 'hsl(24,85%,48%)', textShadow: '0 0 8px hsl(24,85%,48%,0.3)' }}>{mission.priceEstimate}</span>
-                        <span style={{ display: 'flex', gap: 2, alignItems: 'center' }} dangerouslySetInnerHTML={{ __html: renderStars(mission.broRating) }} />
-                      </div>
-                      <button onClick={(e) => { e.stopPropagation(); setSelectedMission(mission); }}
-                        className="map-popup-cta">
-                        View Mission Brief
-                      </button>
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
+                  </Popup>
+                </Marker>
+              );
+            })}
           </MarkerClusterGroup>
         </MapContainer>
 
@@ -292,21 +314,32 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [] }:
               <div>
                 <h2 className="font-orbitron text-[10px] font-bold text-foreground tracking-[3px] uppercase">Adventure Map</h2>
                 <p className="text-[9px] text-muted-foreground tracking-wide mt-0.5 font-sans">
-                  {selectedRealm?.name || "All Regions"} · <span className="text-primary font-semibold">{displayedMissions.length}</span> Experiences
+                  {selectedRealm?.name || "All Regions"} · <span className="text-primary font-semibold">{filteredCount}</span> Experiences
+                  {hasActiveFilter && <span className="text-muted-foreground/60"> / {allMissions.length}</span>}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
+        {/* ── HUD: Filter sync indicator ── */}
+        {hasActiveFilter && (
+          <div className="absolute top-16 left-3 z-[1000]">
+            <div className="glass-premium rounded-lg px-3 py-2 flex items-center gap-2 animate-fade-in-up">
+              <Filter className="w-3 h-3 text-primary" />
+              <span className="text-[9px] text-muted-foreground font-sans">Filters active · dimmed pins excluded</span>
+            </div>
+          </div>
+        )}
+
         {/* ── HUD: Controls ── */}
         <div className="absolute top-3 right-3 z-[1000] flex items-center gap-2">
           <button onClick={() => setMapStyle(s => s === 'light' ? 'terrain' : 'light')}
-            className="w-9 h-9 flex items-center justify-center glass-premium rounded-lg text-muted-foreground hover:text-primary transition-all group" title="Toggle style">
+            className="w-9 h-9 flex items-center justify-center glass-premium rounded-lg text-muted-foreground hover:text-primary transition-all group" title="Toggle style" aria-label="Toggle map style">
             <Layers className="w-4 h-4 group-hover:scale-110 transition-transform" />
           </button>
           <button onClick={() => setIsFullscreen(!isFullscreen)}
-            className="w-9 h-9 flex items-center justify-center glass-premium rounded-lg text-muted-foreground hover:text-primary transition-all group">
+            className="w-9 h-9 flex items-center justify-center glass-premium rounded-lg text-muted-foreground hover:text-primary transition-all group" aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}>
             {isFullscreen ? <Minimize2 className="w-4 h-4 group-hover:scale-110 transition-transform" /> : <Maximize2 className="w-4 h-4 group-hover:scale-110 transition-transform" />}
           </button>
         </div>

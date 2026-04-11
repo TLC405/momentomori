@@ -3,7 +3,7 @@ import { motion, useMotionValue, useTransform, animate, PanInfo } from "framer-m
 import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { getSeasonalInfo } from "@/data/seasonalData";
-import { MapPin, Clock, Star, Check, X, ChevronUp, Leaf, Sun, CloudLightning, Snowflake, Calendar } from "lucide-react";
+import { MapPin, Clock, Star, Check, X, ChevronUp, Leaf, Sun, CloudLightning, Snowflake, Calendar, Undo2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SwipeDeckProps {
@@ -36,6 +36,12 @@ const getDangerConfig = (level: Mission["dangerLevel"]) => {
   }
 };
 
+const triggerHaptic = (pattern: number | number[] = 10) => {
+  if ('vibrate' in navigator) {
+    navigator.vibrate(pattern);
+  }
+};
+
 const SwipeCard = ({
   mission,
   isTop,
@@ -60,9 +66,11 @@ const SwipeCard = ({
 
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.x > SWIPE_THRESHOLD) {
+      triggerHaptic([15, 50, 15]);
       animate(x, 500, { duration: 0.3 });
       setTimeout(() => onSwipe("right"), 300);
     } else if (info.offset.x < -SWIPE_THRESHOLD) {
+      triggerHaptic(8);
       animate(x, -500, { duration: 0.3 });
       setTimeout(() => onSwipe("left"), 300);
     } else {
@@ -79,7 +87,7 @@ const SwipeCard = ({
       dragElastic={0.9}
       onDragEnd={handleDragEnd}
     >
-      <div className="relative w-full h-full rounded-2xl overflow-hidden bg-card border border-border/30 shadow-2xl">
+      <div className="relative w-full h-full rounded-2xl overflow-hidden bg-card border border-border/30 shadow-2xl" role="article" aria-label={`${mission.name} — ${mission.city}, ${mission.state}`}>
         {/* Image */}
         <img
           src={imageUrl}
@@ -95,12 +103,14 @@ const SwipeCard = ({
             <motion.div
               className="absolute top-8 right-8 z-20 px-6 py-3 rounded-xl border-4 border-green-500 bg-green-500/20 backdrop-blur-sm"
               style={{ opacity: addOpacity }}
+              aria-hidden="true"
             >
               <span className="text-green-400 font-display text-2xl font-black tracking-wider">ADD</span>
             </motion.div>
             <motion.div
               className="absolute top-8 left-8 z-20 px-6 py-3 rounded-xl border-4 border-red-400 bg-red-500/20 backdrop-blur-sm"
               style={{ opacity: skipOpacity }}
+              aria-hidden="true"
             >
               <span className="text-red-400 font-display text-2xl font-black tracking-wider">SKIP</span>
             </motion.div>
@@ -165,6 +175,7 @@ const SwipeCard = ({
           <button
             onClick={(e) => { e.stopPropagation(); onViewDetail(); }}
             className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 text-white/90 text-sm font-semibold hover:bg-white/20 transition-all"
+            aria-label={`View details for ${mission.name}`}
           >
             <ChevronUp className="w-4 h-4" />
             View Details
@@ -177,21 +188,36 @@ const SwipeCard = ({
 
 const SwipeDeck = ({ missions: missionList, onAddToItinerary, onViewDetail, itineraryMissions }: SwipeDeckProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [swipeHistory, setSwipeHistory] = useState<Array<{ index: number; dir: "left" | "right" }>>([]);
 
   const handleSwipe = useCallback((dir: "left" | "right") => {
     if (dir === "right") {
       onAddToItinerary(missionList[currentIndex]);
     }
+    setSwipeHistory(prev => [...prev, { index: currentIndex, dir }]);
     setCurrentIndex((prev) => prev + 1);
   }, [currentIndex, missionList, onAddToItinerary]);
 
+  const handleUndo = useCallback(() => {
+    if (swipeHistory.length === 0) return;
+    const last = swipeHistory[swipeHistory.length - 1];
+    triggerHaptic(5);
+    // If the last swipe was "right", we need to remove from itinerary
+    if (last.dir === "right") {
+      onAddToItinerary(missionList[last.index]); // toggle off
+    }
+    setSwipeHistory(prev => prev.slice(0, -1));
+    setCurrentIndex(last.index);
+  }, [swipeHistory, missionList, onAddToItinerary]);
+
   const handleButtonSwipe = (dir: "left" | "right") => {
+    triggerHaptic(dir === "right" ? [15, 50, 15] : 8);
     handleSwipe(dir);
   };
 
   if (currentIndex >= missionList.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh] px-6">
+      <div className="flex flex-col items-center justify-center h-[70vh] px-6" role="status">
         <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
           <Check className="w-10 h-10 text-primary" />
         </div>
@@ -199,12 +225,23 @@ const SwipeDeck = ({ missions: missionList, onAddToItinerary, onViewDetail, itin
         <p className="text-sm text-muted-foreground text-center mb-4">
           You've swiped through all {missionList.length} adventures.
         </p>
-        <button
-          onClick={() => setCurrentIndex(0)}
-          className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold text-sm"
-        >
-          Start Over
-        </button>
+        <div className="flex gap-3">
+          {swipeHistory.length > 0 && (
+            <button
+              onClick={handleUndo}
+              className="px-5 py-2.5 border border-border/50 text-foreground rounded-xl font-semibold text-sm flex items-center gap-2"
+              aria-label="Undo last swipe"
+            >
+              <Undo2 className="w-4 h-4" /> Undo
+            </button>
+          )}
+          <button
+            onClick={() => { setCurrentIndex(0); setSwipeHistory([]); }}
+            className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold text-sm"
+          >
+            Start Over
+          </button>
+        </div>
       </div>
     );
   }
@@ -212,7 +249,7 @@ const SwipeDeck = ({ missions: missionList, onAddToItinerary, onViewDetail, itin
   const visibleCards = missionList.slice(currentIndex, currentIndex + 3);
 
   return (
-    <div className="space-y-4" id="adventures-section">
+    <div className="space-y-4" id="adventures-section" role="region" aria-label="Swipe through adventures">
       <div className="flex items-center justify-between px-1">
         <h2 className="font-display text-lg font-bold text-foreground">Swipe to Explore</h2>
         <span className="text-xs text-muted-foreground">
@@ -221,7 +258,7 @@ const SwipeDeck = ({ missions: missionList, onAddToItinerary, onViewDetail, itin
       </div>
 
       {/* Progress bar */}
-      <div className="h-1 rounded-full bg-muted overflow-hidden">
+      <div className="h-1 rounded-full bg-muted overflow-hidden" role="progressbar" aria-valuenow={currentIndex + 1} aria-valuemax={missionList.length}>
         <div
           className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-300"
           style={{ width: `${((currentIndex + 1) / missionList.length) * 100}%` }}
@@ -259,25 +296,40 @@ const SwipeDeck = ({ missions: missionList, onAddToItinerary, onViewDetail, itin
         <button
           onClick={() => handleButtonSwipe("left")}
           className="w-16 h-16 rounded-full bg-card border-2 border-destructive/30 flex items-center justify-center shadow-lg hover:border-destructive/60 hover:scale-110 transition-all active:scale-95"
+          aria-label="Skip this adventure"
         >
           <X className="w-7 h-7 text-destructive" />
         </button>
+
+        {swipeHistory.length > 0 && (
+          <button
+            onClick={handleUndo}
+            className="w-10 h-10 rounded-full bg-card border-2 border-muted-foreground/20 flex items-center justify-center shadow-lg hover:border-muted-foreground/50 hover:scale-110 transition-all active:scale-95"
+            aria-label="Undo last swipe"
+          >
+            <Undo2 className="w-4 h-4 text-muted-foreground" />
+          </button>
+        )}
+
         <button
           onClick={() => onViewDetail(missionList[currentIndex])}
           className="w-12 h-12 rounded-full bg-card border-2 border-accent/30 flex items-center justify-center shadow-lg hover:border-accent/60 hover:scale-110 transition-all active:scale-95"
+          aria-label="View adventure details"
         >
           <ChevronUp className="w-6 h-6 text-accent" />
         </button>
         <button
           onClick={() => handleButtonSwipe("right")}
           className="w-16 h-16 rounded-full bg-card border-2 border-green-500/30 flex items-center justify-center shadow-lg hover:border-green-500/60 hover:scale-110 transition-all active:scale-95"
+          aria-label="Add to itinerary"
         >
           <Check className="w-7 h-7 text-green-500" />
         </button>
       </div>
 
-      <div className="flex items-center justify-center gap-8 text-[10px] text-muted-foreground uppercase tracking-widest">
+      <div className="flex items-center justify-center gap-8 text-[10px] text-muted-foreground uppercase tracking-widest" aria-hidden="true">
         <span>← Skip</span>
+        <span>Undo</span>
         <span>Details ↑</span>
         <span>Add →</span>
       </div>

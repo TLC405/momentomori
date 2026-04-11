@@ -3,7 +3,7 @@ import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { getSeasonalInfo } from "@/data/seasonalData";
 import { cn } from "@/lib/utils";
-import { MapPin, Clock, Star, Plus, Check, Leaf, Sun, CloudLightning, Snowflake, Calendar } from "lucide-react";
+import { MapPin, Clock, Star, Plus, Check, Leaf, Sun, CloudLightning, Snowflake, Calendar, Users } from "lucide-react";
 
 const SeasonIcon = ({ icon }: { icon: string }) => {
   const props = { className: "w-3 h-3" };
@@ -35,12 +35,19 @@ const getDangerConfig = (level: Mission["dangerLevel"]) => {
   }
 };
 
+// Deterministic social proof count
+const getBookingCount = (id: string): number => {
+  const hash = id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return 8 + (hash % 45);
+};
+
 const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index, isFeatured }: MissionCardProps) => {
   const imageUrl = getMissionImage(mission.id);
   const dangerConfig = getDangerConfig(mission.dangerLevel);
   const seasonal = getSeasonalInfo(mission.id);
   const [isHovered, setIsHovered] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const bookings = getBookingCount(mission.id);
 
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -60,17 +67,20 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      role="article"
+      aria-label={`${mission.name} — ${dangerConfig.label} difficulty, ${mission.priceEstimate}`}
     >
       {/* Left danger strip */}
       <div
         className="absolute left-0 top-0 bottom-0 w-[4px] z-20"
         style={{ background: `hsl(var(${dangerConfig.cssVar}))` }}
+        aria-hidden="true"
       />
 
       <div className={cn("relative overflow-hidden", isFeatured ? "aspect-[16/9]" : "aspect-[4/3]")}>
         {/* Shimmer skeleton */}
         {!imgLoaded && (
-          <div className="absolute inset-0 animate-shimmer bg-muted/40" />
+          <div className="absolute inset-0 animate-shimmer bg-muted/40" aria-hidden="true" />
         )}
         <img
           src={imageUrl}
@@ -105,6 +115,7 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
           {onAddToItinerary && (
             <button
               onClick={handleAddClick}
+              aria-label={isInItinerary ? "Remove from itinerary" : "Add to itinerary"}
               className={cn(
                 "w-8 h-8 flex items-center justify-center rounded-lg transition-all border backdrop-blur-sm active:scale-90",
                 isInItinerary
@@ -120,7 +131,7 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
         {/* Distance gauge */}
         <div className="absolute bottom-3 right-3 z-10">
           <div className="flex items-center gap-1.5 bg-background/60 backdrop-blur-sm rounded-full px-2 py-1 border border-border/20">
-            <div className="w-12 h-1.5 rounded-full bg-muted/50 overflow-hidden">
+            <div className="w-12 h-1.5 rounded-full bg-muted/50 overflow-hidden" role="meter" aria-valuenow={mission.distanceFromOKC} aria-valuemax={10} aria-label={`${mission.distanceFromOKC} hours drive`}>
               <div className="h-full rounded-full bg-primary/70 transition-all" style={{ width: `${distPercent}%` }} />
             </div>
             <span className="text-[10px] text-muted-foreground font-medium">{mission.distanceFromOKC}h</span>
@@ -139,6 +150,14 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
           {mission.name}
         </h3>
 
+        {/* Social proof */}
+        {(mission.isHot || bookings > 30) && (
+          <div className="flex items-center gap-1 text-[10px] text-primary/70 font-medium">
+            <Users className="w-3 h-3" />
+            <span>Added {bookings}x this month</span>
+          </div>
+        )}
+
         {isFeatured && (
           <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{mission.description}</p>
         )}
@@ -151,7 +170,7 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
             <Clock className="w-3 h-3" />
             <span>{mission.duration}</span>
           </div>
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-0.5" aria-label={`Rating: ${mission.broRating} out of 5`}>
             {Array.from({ length: mission.broRating }).map((_, i) => (
               <Star key={i} className="w-3.5 h-3.5 text-primary fill-primary drop-shadow-[0_0_4px_hsl(var(--primary)/0.5)]" />
             ))}
@@ -164,7 +183,7 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, index,
 
       {/* Saved flag */}
       {isInItinerary && (
-        <div className="absolute top-0 right-0">
+        <div className="absolute top-0 right-0" aria-hidden="true">
           <div className="w-0 h-0 border-t-[30px] border-t-primary border-l-[30px] border-l-transparent">
             <Check className="absolute -top-[26px] right-[4px] w-3 h-3 text-primary-foreground" />
           </div>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy, Suspense, useEffect, useRef, useCallback } from "react";
 import { Realm } from "@/data/realms";
 import { Mission, missions } from "@/data/missions";
 import { FilterState } from "@/components/SearchFilter/SearchFilter";
@@ -16,6 +16,38 @@ import MissionDetailModal from "@/components/MissionDeck/MissionDetailModal";
 import ItineraryBuilder from "@/components/ItineraryBuilder/ItineraryBuilder";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Helmet } from "react-helmet";
+
+// Intersection observer reveal hook
+const useReveal = (threshold = 0.15) => {
+  const ref = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // Respect reduced-motion preference
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return { ref, isVisible };
+};
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -52,6 +84,9 @@ const Index = () => {
     return result;
   }, [selectedRealm, filters]);
 
+  // Create a set of filtered IDs for map sync
+  const filteredMissionIds = useMemo(() => new Set(filteredMissions.map(m => m.id)), [filteredMissions]);
+
   const handleAddToItinerary = (mission: Mission) => {
     setItineraryMissions(prev => {
       const exists = prev.some(m => m.id === mission.id);
@@ -60,6 +95,13 @@ const Index = () => {
     });
   };
 
+  // Staggered reveals
+  const statsReveal = useReveal(0.2);
+  const legendaryReveal = useReveal(0.15);
+  const searchReveal = useReveal(0.15);
+  const realmReveal = useReveal(0.15);
+  const missionsReveal = useReveal(0.1);
+
   return (
     <>
       <Helmet>
@@ -67,49 +109,73 @@ const Index = () => {
         <meta name="description" content="The Bucket List Engine for the Brotherhood. Discover extraordinary adventures — tank driving, helicopter hunts, storm chasing, and more across the American heartland." />
       </Helmet>
 
+      {/* Skip to content — accessibility */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-semibold">
+        Skip to content
+      </a>
+
       <div className="min-h-screen bg-background">
-        {/* Floating nav appears on scroll */}
         <FloatingNav
           itineraryCount={itineraryMissions.length}
           onItineraryToggle={() => setIsItineraryOpen(!isItineraryOpen)}
         />
 
-        {/* Cinematic hero — no traditional header */}
         <HeroBanner />
 
-        {/* Full immersive map */}
-        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto -mt-16 relative z-10">
+        {/* Full immersive map — synced with filters */}
+        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto -mt-16 relative z-10" aria-label="Adventure map">
           <WarRoomMap
             selectedRealm={selectedRealm}
             onMissionSelect={setSelectedMission}
             onAddToItinerary={handleAddToItinerary}
             itineraryMissions={itineraryMissions}
+            filteredMissionIds={filteredMissionIds}
           />
         </section>
 
-        <main className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-12">
+        <main id="main-content" className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-12">
           {/* Stats ticker */}
-          <section className="animate-fade-in-up">
+          <section
+            ref={statsReveal.ref as React.RefObject<HTMLElement>}
+            className={`transition-all duration-700 ${statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            aria-label="Adventure statistics"
+          >
             <StatsBar />
           </section>
 
           {/* Legendary picks marquee */}
-          <section className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+          <section
+            ref={legendaryReveal.ref as React.RefObject<HTMLElement>}
+            className={`transition-all duration-700 delay-100 ${legendaryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            aria-label="Legendary picks"
+          >
             <LegendaryPicks onMissionSelect={setSelectedMission} />
           </section>
 
-          {/* Search (command palette trigger) */}
-          <section>
+          {/* Search */}
+          <section
+            ref={searchReveal.ref as React.RefObject<HTMLElement>}
+            className={`transition-all duration-700 delay-200 ${searchReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            aria-label="Search and filter adventures"
+          >
             <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
           </section>
 
-          {/* Realm selector — visual grid */}
-          <section>
+          {/* Realm selector */}
+          <section
+            ref={realmReveal.ref as React.RefObject<HTMLElement>}
+            className={`transition-all duration-700 delay-300 ${realmReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            aria-label="Adventure categories"
+          >
             <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
 
-          {/* Mission cards — editorial grid or swipe deck on mobile */}
-          <section>
+          {/* Mission cards */}
+          <section
+            ref={missionsReveal.ref as React.RefObject<HTMLElement>}
+            className={`transition-all duration-700 delay-[400ms] ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            aria-label="Adventure listings"
+          >
             {isMobile ? (
               <SwipeDeck
                 missions={filteredMissions}
@@ -128,10 +194,8 @@ const Index = () => {
           </section>
         </main>
 
-        {/* "The Last Word" footer */}
         <AppFooter />
 
-        {/* Itinerary side drawer */}
         <ItineraryBuilder
           selectedMissions={itineraryMissions}
           onRemoveMission={(id) => setItineraryMissions(prev => prev.filter(m => m.id !== id))}
@@ -140,7 +204,6 @@ const Index = () => {
           onToggle={() => setIsItineraryOpen(!isItineraryOpen)}
         />
 
-        {/* Mission detail from map/marquee clicks */}
         {selectedMission && (
           <MissionDetailModal
             mission={selectedMission}
