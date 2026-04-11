@@ -261,6 +261,44 @@
   color: hsl(var(--foreground));
 }
 
+/* ========== Reduced Motion ========== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-ken-burns,
+  .animate-pulse-glow,
+  .animate-shimmer,
+  .animate-float,
+  .animate-compass-wobble,
+  .animate-bounce,
+  .ember-particle,
+  .hq-sonar {
+    animation: none !important;
+  }
+}
+
+/* Motion-reduce utility */
+.motion-reduce\:hidden {
+  /* handled via class */
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-reduce\:hidden { display: none !important; }
+  .motion-reduce\:animate-none { animation: none !important; }
+}
+
+/* ========== Accessibility ========== */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+}
+.focus\:not-sr-only:focus {
+  position: fixed; width: auto; height: auto; padding: 0; margin: 0;
+  overflow: visible; clip: auto; white-space: normal;
+}
+
 /* ========== Leaflet Map Overrides ========== */
 .leaflet-terrain-map { font-family: 'Source Sans 3', sans-serif; }
 .leaflet-terrain-map .leaflet-control-attribution {
