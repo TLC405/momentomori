@@ -19,9 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Playfair Display', 'Georgia', 'serif'],
-        orbitron: ['Orbitron', 'sans-serif'],
-        sans: ['Source Sans 3', 'system-ui', 'sans-serif'],
+        display: ['Cormorant Garamond', 'Georgia', 'serif'],
+        orbitron: ['Barlow Condensed', 'sans-serif'],
+        sans: ['Barlow Condensed', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
