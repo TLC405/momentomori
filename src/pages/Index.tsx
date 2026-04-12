@@ -1,4 +1,4 @@
-import { useState, useMemo, lazy, Suspense, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Realm } from "@/data/realms";
 import { Mission, missions } from "@/data/missions";
 import { FilterState } from "@/components/SearchFilter/SearchFilter";
@@ -15,37 +15,24 @@ import SwipeDeck from "@/components/MissionDeck/SwipeDeck";
 import MissionDetailModal from "@/components/MissionDeck/MissionDetailModal";
 import ItineraryBuilder from "@/components/ItineraryBuilder/ItineraryBuilder";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useConquered } from "@/hooks/useConquered";
 import { Helmet } from "react-helmet";
+import { Progress } from "@/components/ui/progress";
+import { Trophy } from "lucide-react";
 
-// Intersection observer reveal hook
 const useReveal = (threshold = 0.15) => {
   const ref = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
-    // Respect reduced-motion preference
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
-      setIsVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold }
-    );
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setIsVisible(true); return; }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); }
+    }, { threshold });
     observer.observe(el);
     return () => observer.disconnect();
   }, [threshold]);
-
   return { ref, isVisible };
 };
 
@@ -55,26 +42,18 @@ const Index = () => {
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [itineraryMissions, setItineraryMissions] = useState<Mission[]>([]);
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
+  const { conquered, toggleConquered, isConquered, conqueredCount } = useConquered();
   const [filters, setFilters] = useState<FilterState>({
-    search: "",
-    maxDistance: 10,
-    priceRange: [1, 5],
-    dangerLevels: [],
-    maxDuration: "",
+    search: "", maxDistance: 10, priceRange: [1, 5], dangerLevels: [], maxDuration: "",
   });
 
   const filteredMissions = useMemo(() => {
-    let result = selectedRealm
-      ? missions.filter(m => m.realmId === selectedRealm.id)
-      : missions;
-
+    let result = selectedRealm ? missions.filter(m => m.realmId === selectedRealm.id) : missions;
     if (filters.search) {
       const q = filters.search.toLowerCase();
       result = result.filter(m =>
-        m.name.toLowerCase().includes(q) ||
-        m.city.toLowerCase().includes(q) ||
-        m.state.toLowerCase().includes(q) ||
-        m.tags.some(t => t.toLowerCase().includes(q)) ||
+        m.name.toLowerCase().includes(q) || m.city.toLowerCase().includes(q) ||
+        m.state.toLowerCase().includes(q) || m.tags.some(t => t.toLowerCase().includes(q)) ||
         m.codename.toLowerCase().includes(q)
       );
     }
@@ -84,7 +63,6 @@ const Index = () => {
     return result;
   }, [selectedRealm, filters]);
 
-  // Create a set of filtered IDs for map sync
   const filteredMissionIds = useMemo(() => new Set(filteredMissions.map(m => m.id)), [filteredMissions]);
 
   const handleAddToItinerary = (mission: Mission) => {
@@ -95,7 +73,8 @@ const Index = () => {
     });
   };
 
-  // Staggered reveals
+  const progressPercent = Math.round((conqueredCount / missions.length) * 100);
+
   const statsReveal = useReveal(0.2);
   const legendaryReveal = useReveal(0.15);
   const searchReveal = useReveal(0.15);
@@ -105,91 +84,73 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>BEFORE YOU GO | Life is Short. Make it Legendary.</title>
-        <meta name="description" content="The Bucket List Engine for the Brotherhood. Discover extraordinary adventures — tank driving, helicopter hunts, storm chasing, and more across the American heartland." />
+        <title>LEGENDS | The Epic Bro Trip Planner by TLC</title>
+        <meta name="description" content="Life is short. Make it legendary. Discover extraordinary adventures — tank driving, helicopter hunts, storm chasing, and more across the American heartland." />
       </Helmet>
 
-      {/* Skip to content — accessibility */}
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-semibold">
         Skip to content
       </a>
 
       <div className="min-h-screen bg-background">
-        <FloatingNav
-          itineraryCount={itineraryMissions.length}
-          onItineraryToggle={() => setIsItineraryOpen(!isItineraryOpen)}
-        />
-
+        <FloatingNav itineraryCount={itineraryMissions.length} onItineraryToggle={() => setIsItineraryOpen(!isItineraryOpen)} />
         <HeroBanner />
 
-        {/* Full immersive map — synced with filters */}
-        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto -mt-16 relative z-10" aria-label="Adventure map">
+        {/* Legacy Progress */}
+        <div className="max-w-7xl mx-auto px-4 md:px-8 pt-8">
+          <div className="flex items-center gap-3 mb-2">
+            <Trophy className="w-4 h-4 text-primary" />
+            <span className="text-xs text-muted-foreground font-sans tracking-wider uppercase">Legacy Progress</span>
+            <span className="stat-value text-xs ml-auto">{conqueredCount}/{missions.length}</span>
+            <span className="text-xs text-muted-foreground">({progressPercent}%)</span>
+          </div>
+          <Progress value={progressPercent} className="h-2 bg-secondary" />
+        </div>
+
+        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto mt-8 relative z-10" aria-label="Adventure map">
           <WarRoomMap
             selectedRealm={selectedRealm}
             onMissionSelect={setSelectedMission}
             onAddToItinerary={handleAddToItinerary}
             itineraryMissions={itineraryMissions}
             filteredMissionIds={filteredMissionIds}
+            conquered={conquered}
           />
         </section>
 
         <main id="main-content" className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-12">
-          {/* Stats ticker */}
-          <section
-            ref={statsReveal.ref as React.RefObject<HTMLElement>}
+          <section ref={statsReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 ${statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            aria-label="Adventure statistics"
-          >
-            <StatsBar />
+            aria-label="Adventure statistics">
+            <StatsBar conqueredCount={conqueredCount} />
           </section>
 
-          {/* Legendary picks marquee */}
-          <section
-            ref={legendaryReveal.ref as React.RefObject<HTMLElement>}
+          <section ref={legendaryReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 delay-100 ${legendaryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            aria-label="Legendary picks"
-          >
+            aria-label="Legendary picks">
             <LegendaryPicks onMissionSelect={setSelectedMission} />
           </section>
 
-          {/* Search */}
-          <section
-            ref={searchReveal.ref as React.RefObject<HTMLElement>}
+          <section ref={searchReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 delay-200 ${searchReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            aria-label="Search and filter adventures"
-          >
+            aria-label="Search and filter adventures">
             <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
           </section>
 
-          {/* Realm selector */}
-          <section
-            ref={realmReveal.ref as React.RefObject<HTMLElement>}
+          <section ref={realmReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 delay-300 ${realmReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            aria-label="Adventure categories"
-          >
+            aria-label="Adventure categories">
             <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
 
-          {/* Mission cards */}
-          <section
-            ref={missionsReveal.ref as React.RefObject<HTMLElement>}
+          <section ref={missionsReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 delay-[400ms] ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            aria-label="Adventure listings"
-          >
+            aria-label="Adventure listings">
             {isMobile ? (
-              <SwipeDeck
-                missions={filteredMissions}
-                onAddToItinerary={handleAddToItinerary}
-                onViewDetail={setSelectedMission}
-                itineraryMissions={itineraryMissions}
-              />
+              <SwipeDeck missions={filteredMissions} onAddToItinerary={handleAddToItinerary} onViewDetail={setSelectedMission} itineraryMissions={itineraryMissions} />
             ) : (
-              <MissionDeck
-                selectedRealm={selectedRealm}
-                itineraryMissions={itineraryMissions}
-                onAddToItinerary={handleAddToItinerary}
-                filteredMissions={filteredMissions}
-              />
+              <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
+                conquered={conquered} onToggleConquered={toggleConquered} />
             )}
           </section>
         </main>
@@ -210,6 +171,8 @@ const Index = () => {
             onClose={() => setSelectedMission(null)}
             onAddToItinerary={() => handleAddToItinerary(selectedMission)}
             isInItinerary={itineraryMissions.some(m => m.id === selectedMission.id)}
+            isConquered={isConquered(selectedMission.id)}
+            onToggleConquered={() => toggleConquered(selectedMission.id)}
           />
         )}
       </div>
