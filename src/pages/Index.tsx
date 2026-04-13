@@ -118,33 +118,36 @@ const Index = () => {
           />
         </section>
 
-        <main id="main-content" className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-12">
+        <main id="main-content" className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-0">
           <section ref={statsReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 ${statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 py-10 ${statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            style={{ background: 'linear-gradient(180deg, hsl(40 10% 11%) 0%, transparent 100%)' }}
             aria-label="Adventure statistics">
-            <StatsBar conqueredCount={conqueredCount} />
+            <div className="max-w-7xl mx-auto"><StatsBar conqueredCount={conqueredCount} /></div>
           </section>
 
           <section ref={legendaryReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-100 ${legendaryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 delay-100 py-10 ${legendaryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             aria-label="Legendary picks">
             <LegendaryPicks onMissionSelect={setSelectedMission} />
           </section>
 
           <section ref={searchReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-200 ${searchReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 delay-200 py-10 ${searchReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            style={{ background: 'linear-gradient(180deg, transparent 0%, hsl(225 8% 11%) 50%, transparent 100%)' }}
             aria-label="Search and filter adventures">
             <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
           </section>
 
           <section ref={realmReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-300 ${realmReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 delay-300 py-10 ${realmReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             aria-label="Adventure categories">
             <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
 
           <section ref={missionsReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-[400ms] ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 delay-[400ms] py-10 ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            style={{ background: 'linear-gradient(180deg, hsl(40 8% 11%) 0%, transparent 100%)' }}
             aria-label="Adventure listings">
             {isMobile ? (
               <SwipeDeck missions={filteredMissions} onAddToItinerary={handleAddToItinerary} onViewDetail={setSelectedMission} itineraryMissions={itineraryMissions} />

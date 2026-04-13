@@ -232,7 +232,17 @@
   .conquered-ring {
     box-shadow: 0 0 0 3px hsl(var(--gold)), 0 0 12px hsl(var(--gold) / 0.4);
   }
-}
+
+  /* Pin pulse ring animation */
+  @keyframes pin-pulse {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  .pin-pulse-ring {
+    animation: pin-pulse 2.5s ease-out infinite;
+    transform-origin: center;
+  }
 
 @layer components {
   .animate-pulse-glow { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
