@@ -1,83 +1,66 @@
 
 
-## Atomic UI/UX Overhaul — Eliminate All Cheap Elements
+# UI Overhaul: Readability, Professional Pins & Visual Refinement
 
-After reviewing every component, here are the specific problems and their premium solutions.
+## Problem
+The current theme is too dark — near-black backgrounds (`220 15% 6%`) with dim text (`220 8% 50%`) creates poor contrast and eye strain. Map pins are basic SVG teardrops. The overall feel is oppressive rather than cinematic.
 
-### Problems Found
-
-1. **Emojis everywhere** — RealmSelector uses 🌍, ⚙️, ✈️, 💣, 🦖, etc. as realm icons. MissionDeck empty state uses 🏔️. Map popup uses 📍. Footer uses emoji-based separators. These scream "prototype."
-2. **Plain HTML range input** — SearchFilter uses raw `<input type="range">` and a raw `<select>` dropdown — both look like default browser elements.
-3. **Text-only "✓" and "+" buttons** — MissionCard and MissionDetailModal use plain text characters for add/save buttons instead of proper icons.
-4. **Cheap star rendering** — Star ratings use basic Lucide icons with no visual weight. Map popup uses text "★☆" characters.
-5. **Basic tagline text** — "Remember you must die" still appears in HeroBanner taglines array (line 8).
-6. **No micro-interactions on scroll** — Sections just fade in with basic CSS. No intersection-observer-driven stagger or reveal.
-7. **Map popup is white/light** — Leaflet popups use light backgrounds that clash with the dark theme.
-8. **No loading/skeleton states** — Images pop in raw with no placeholder shimmer.
-9. **Flat stat cards** — StatsBar cards have no visual depth beyond a border hover.
-10. **No visual empty state** — MissionDeck empty state is just an emoji + text.
+## Design Direction
+Shift from "bunker dark" to **"warm editorial dark"** — think luxury travel magazine at night. Raise background lightness, warm up text colors, add subtle surface variation between sections.
 
 ---
 
-### Implementation Plan
+### 1. Color Palette Rebalance (index.css)
+Lift the entire palette to improve readability while keeping the cinematic feel:
 
-**1. Replace ALL Emojis with SVG Icons (RealmSelector, MissionDeck, Map, Footer)**
-- Create a `RealmIcon` component that maps realm IDs to custom Lucide SVG icons (Cog for Metal Gods, Plane for Air Force, Bomb for Armory, etc.)
-- Replace the "All" realm 🌍 with a Globe Lucide icon
-- Replace MissionDeck empty state 🏔️ with a proper SVG illustration
-- Remove 📍 from map popup, use MapPin icon
-- Remove text "★☆" from map popup, use proper SVG stars
+| Token | Current | New | Why |
+|-------|---------|-----|-----|
+| `--background` | `220 15% 6%` | `225 12% 10%` | Warmer, less cave-like |
+| `--card` | `220 12% 9%` | `225 10% 13%` | Cards pop off background |
+| `--foreground` | `40 20% 90%` | `40 15% 92%` | Brighter, crisper headings |
+| `--muted-foreground` | `220 8% 50%` | `220 10% 62%` | Body text actually readable |
+| `--border` | `220 10% 16%` | `225 8% 20%` | Subtle but visible dividers |
+| `--secondary` | `220 10% 14%` | `225 8% 17%` | Better surface separation |
 
-**2. Custom Range Slider (SearchFilter)**
-- Replace raw `<input type="range">` with a styled custom slider using CSS pseudo-elements — track has gradient, thumb has glow ring
-- Replace raw `<select>` dropdown with custom styled buttons (pill group) for duration options — same pattern as the price buttons
+### 2. World-Class Map Pins (WarRoomMap.tsx)
+Replace the basic teardrop SVG with a **3D-effect marker** featuring:
+- **Outer glow ring** — animated pulse with difficulty color
+- **Glossy shield shape** instead of teardrop — beveled edges, highlight gradient, inner shadow
+- **Icon center** — small thematic SVG icon (crosshair for extreme, mountain for moderate) instead of plain dots
+- **Conquered state** — golden crown overlay with radial burst
+- **Hover animation** — pin lifts with elastic bounce + shadow grows beneath
+- Shadow ellipse beneath pin that scales on hover
 
-**3. Proper Icon Buttons (MissionCard, MissionDetailModal)**  
-- Replace "+" text with `Plus` Lucide icon, "✓" with `Check` Lucide icon
-- Replace "✓ Saved" / "+ Save" text buttons with icon + text using proper Lucide components
-- Add scale animation on click (animate-star-pop reuse)
+### 3. Map Popup Upgrade (WarRoomMap.tsx)
+Current popups use inline styles and are hard-coded dark. Upgrade:
+- Warmer card background matching new `--card` value
+- Star rating row with gradient gold stars (SVG, not text)
+- Cleaner typography hierarchy (Cormorant for name, Barlow for stats)
+- Micro-dividers between sections
+- Larger touch target for CTA button
 
-**4. Premium Star Rating Component**
-- Create a reusable `StarRating` component with filled gradient SVG stars
-- Stars have a warm amber glow shadow when filled
-- Map popup uses the same component (dark variant)
+### 4. Section Surface Variation (Index.tsx + index.css)
+Add alternating subtle background tints to break monotony:
+- Map section: keep darkest
+- Stats/Legendary: slight warm tint (`hsl(40 10% 11%)`)
+- Search/Realms: neutral
+- Mission grid: subtle card-level surface
 
-**5. Fix HeroBanner Taglines**
-- Remove "Remember you must die — so LIVE first." — replace with "Where legends are made, not born."
+### 5. Card Readability (MissionCard.tsx)
+- Increase body text from `text-xs` → `text-sm` for location/duration
+- Add warm `text-foreground/80` instead of `text-muted-foreground` for key info
+- Price text larger and bolder
+- Star ratings get a subtle amber glow trail
 
-**6. Intersection Observer Stagger Reveals**
-- Add a `useReveal` hook using IntersectionObserver
-- Each section in Index.tsx gets sequential stagger (stats → legendary → search → realms → missions)
-- Cards within MissionDeck get staggered reveal with 40ms delay per card (already partially done, enhance with opacity threshold)
+### 6. HeroBanner Polish
+- "LEGENDS" title: add subtle `text-shadow` for depth instead of flat color
+- Tagline text: bump from `text-lg` to `text-xl` with better line-height
+- CTA buttons: slightly larger padding, more pronounced shadow
 
-**7. Dark-Themed Map Popups**
-- Override Leaflet popup CSS to use dark background matching the app theme
-- Popup content gets the same card styling — dark bg, warm border, proper typography
-- Remove all hardcoded light-theme HSL colors from popup HTML
-
-**8. Image Skeleton Shimmer**
-- Add a shimmer placeholder state to MissionCard and LegendaryPicks image areas
-- Images use `onLoad` to fade in from the shimmer
-- Uses the existing `.animate-shimmer` CSS class
-
-**9. StatsBar Visual Depth**
-- Add subtle inner gradient (radial from icon side)
-- Icon container gets a pulsing glow ring on viewport entry
-- Add micro-sparkline SVG paths (static decorative) behind each stat value
-
-**10. Premium Empty State (MissionDeck)**
-- Replace emoji with an SVG compass illustration (inline SVG)
-- Add subtle floating animation
-- "No adventures found" text uses display font with muted styling
-
-**11. Footer Polish**
-- Replace `·` dot separators with thin gradient line dividers
-- Add a subtle scanline/noise texture overlay for depth
-
-**12. RealmSelector — SVG Icons with Glow**
-- Each realm icon rendered as a Lucide icon inside a gradient-tinted circle
-- Selected realm icon gets a warm pulse-glow ring
-- Remove all emoji rendering from the entire app
+### 7. StatsBar & Footer Readability
+- Stat values: ensure gold text has enough contrast against new card bg
+- Footer quote: bump size, add `text-foreground/90` instead of pure foreground
+- Muted text throughout footer: use new warmer `--muted-foreground`
 
 ---
 
@@ -85,18 +68,13 @@ After reviewing every component, here are the specific problems and their premiu
 
 | File | Changes |
 |------|---------|
-| `src/components/RealmSelector/RealmSelector.tsx` | Replace emojis with Lucide SVG icons, add glow effects |
-| `src/components/MissionDeck/MissionCard.tsx` | Replace "+"/"✓" text with icons, add image shimmer |
-| `src/components/MissionDeck/MissionDeck.tsx` | Replace emoji empty state with SVG compass |
-| `src/components/MissionDeck/MissionDetailModal.tsx` | Replace text buttons with icon buttons, dark popup |
-| `src/components/SearchFilter/SearchFilter.tsx` | Custom styled range slider, replace select with pill buttons |
-| `src/components/StatsBar/StatsBar.tsx` | Add inner gradients, decorative sparklines |
-| `src/components/LegendaryPicks/LegendaryPicks.tsx` | Add image shimmer loading state |
-| `src/components/WarRoomMap/WarRoomMap.tsx` | Dark-themed popups, replace emoji/text stars with SVG |
-| `src/components/Layout/HeroBanner.tsx` | Fix tagline, remove "must die" reference |
-| `src/components/Layout/AppFooter.tsx` | Remove dot separators, add texture overlay |
-| `src/data/realms.ts` | Add `lucideIcon` field mapping for each realm |
-| `src/index.css` | Custom range slider styles, dark popup overrides, shimmer-image utility |
+| `src/index.css` | Rebalanced color palette, new `.pin-shield` marker styles |
+| `src/components/WarRoomMap/WarRoomMap.tsx` | New 3D shield pin SVG, upgraded popup HTML, hover effects |
+| `src/components/MissionDeck/MissionCard.tsx` | Text size/contrast bumps |
+| `src/components/MissionDeck/MissionDetailModal.tsx` | Warmer backgrounds, better text contrast |
+| `src/components/Layout/HeroBanner.tsx` | Title text-shadow, larger tagline |
+| `src/components/StatsBar/StatsBar.tsx` | Contrast fixes |
+| `src/pages/Index.tsx` | Section background tints |
 
-No database or backend changes needed.
+No database changes. No new dependencies.
 
