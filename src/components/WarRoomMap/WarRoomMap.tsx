@@ -47,29 +47,92 @@ const getBookingCount = (id: string): number => {
 const createMarkerSVG = (mission: Mission, isInItinerary: boolean, isDimmed: boolean, isConquered: boolean) => {
   const colors = getDangerColor(mission.dangerLevel);
   const size = getDangerSize(mission.dangerLevel);
-  const h = size * 1.35;
-  const r = size * 0.4;
-  const opacity = isDimmed ? 0.3 : 1;
+  const h = size * 1.4;
+  const cx = size / 2;
+  const cy = size * 0.42;
+  const r = size * 0.32;
+  const opacity = isDimmed ? 0.25 : 1;
+
+  // Shield/badge shape path
+  const shieldPath = `M${cx} 2 
+    C${size * 0.18} 2, 2, ${size * 0.28}, 2, ${size * 0.5} 
+    c0, ${h * 0.42}, ${cx - 2}, ${h * 0.55}, ${cx - 2}, ${h * 0.55} 
+    s${cx - 2},-${h * 0.13}, ${cx - 2},-${h * 0.55} 
+    C${size - 2}, ${size * 0.28}, ${size * 0.82}, 2, ${cx}, 2z`;
+
+  // Icon paths by difficulty
+  const iconSvg = mission.dangerLevel === "EXTREME"
+    ? `<path d="M${cx - 4} ${cy + 3} L${cx} ${cy - 5} L${cx + 4} ${cy + 3} Z" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linejoin="round"/>
+       <line x1="${cx}" y1="${cy - 1}" x2="${cx}" y2="${cy + 1}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round"/>
+       <circle cx="${cx}" cy="${cy + 2.5}" r="0.5" fill="${isConquered ? '#1a1a1a' : 'white'}"/>`
+    : mission.dangerLevel === "HIGH"
+    ? `<path d="M${cx - 4} ${cy + 3} L${cx - 2} ${cy - 2} L${cx} ${cy + 1} L${cx + 2} ${cy - 4} L${cx + 4} ${cy + 3}" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`
+    : mission.dangerLevel === "MEDIUM"
+    ? `<circle cx="${cx}" cy="${cy}" r="3" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5"/>
+       <line x1="${cx}" y1="${cy - 1.5}" x2="${cx}" y2="${cy + 1.5}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round"/>
+       <line x1="${cx - 1.5}" y1="${cy}" x2="${cx + 1.5}" y2="${cy}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round"/>`
+    : `<path d="M${cx - 3} ${cy + 2} L${cx} ${cy - 3} L${cx + 3} ${cy + 2}" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+       <line x1="${cx}" y1="${cy + 2}" x2="${cx}" y2="${cy - 1}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1" stroke-linecap="round"/>`;
 
   return `
-    <svg width="${size}" height="${h}" viewBox="0 0 ${size} ${h}" xmlns="http://www.w3.org/2000/svg" style="opacity:${opacity};${isDimmed ? "filter:grayscale(0.6);" : ""}">
+    <svg width="${size + 8}" height="${h + 8}" viewBox="-4 -4 ${size + 8} ${h + 8}" xmlns="http://www.w3.org/2000/svg" style="opacity:${opacity};overflow:visible;${isDimmed ? 'filter:grayscale(0.7) brightness(0.6);' : ''}">
       <defs>
-        <radialGradient id="g" cx="40%" cy="35%" r="65%">
-          <stop offset="0%" stop-color="${isConquered ? '#D4A24C' : colors.bg}" stop-opacity="0.95"/>
-          <stop offset="100%" stop-color="${isConquered ? '#B8860B' : colors.bg}" stop-opacity="0.7"/>
-        </radialGradient>
-        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <linearGradient id="shield-${mission.id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${isConquered ? '#e8c252' : colors.bg}" stop-opacity="1"/>
+          <stop offset="60%" stop-color="${isConquered ? '#B8860B' : colors.bg}" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="${isConquered ? '#8B6914' : colors.bg}" stop-opacity="0.7"/>
+        </linearGradient>
+        <linearGradient id="highlight-${mission.id}" x1="0.3" y1="0" x2="0.7" y2="1">
+          <stop offset="0%" stop-color="white" stop-opacity="0.35"/>
+          <stop offset="40%" stop-color="white" stop-opacity="0.05"/>
+          <stop offset="100%" stop-color="white" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="glow-${mission.id}">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="inner-shadow-${mission.id}">
+          <feComponentTransfer in="SourceAlpha"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer>
+          <feGaussianBlur stdDeviation="2"/>
+          <feOffset dx="0" dy="1" result="offsetblur"/>
+          <feFlood flood-color="${isConquered ? '#B8860B' : colors.bg}" flood-opacity="0.4" result="color"/>
+          <feComposite in2="offsetblur" operator="in"/>
+          <feComposite in2="SourceAlpha" operator="in"/>
+          <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode/></feMerge>
+        </filter>
       </defs>
-      <ellipse cx="${size / 2}" cy="${h - 3}" rx="${size * 0.25}" ry="3" fill="${isConquered ? '#D4A24C' : colors.bg}" opacity="0.25"/>
-      <path d="M${size / 2} 2 C${size * 0.22} 2 2 ${size * 0.32} 2 ${size * 0.55} c0 ${h * 0.45} ${size / 2 - 2} ${h * 0.6} ${size / 2 - 2} ${h * 0.6} s${size / 2 - 2}-${h * 0.15} ${size / 2 - 2}-${h * 0.6} C${size - 2} ${size * 0.32} ${size * 0.78} 2 ${size / 2} 2z"
-            fill="url(#g)" stroke="${isConquered ? '#D4A24C' : 'white'}" stroke-width="${isConquered ? 2.5 : 1.5}" filter="url(#glow)"/>
-      <circle cx="${size / 2}" cy="${size * 0.48}" r="${r}" fill="${isConquered ? '#D4A24C' : 'white'}" opacity="0.95"/>
-      <circle cx="${size / 2}" cy="${size * 0.48}" r="${r * 0.55}" fill="${isConquered ? 'white' : colors.bg}"/>
-      ${isConquered ? `<circle cx="${size / 2}" cy="${size * 0.48}" r="${r + 4}" fill="none" stroke="#D4A24C" stroke-width="2" opacity="0.6"/>` : ''}
+      
+      <!-- Outer glow ring (animated via CSS) -->
+      <ellipse cx="${cx}" cy="${cy}" rx="${r + 8}" ry="${r + 8}" fill="none" stroke="${isConquered ? '#D4A24C' : colors.bg}" stroke-width="1.5" opacity="0.3" class="pin-pulse-ring"/>
+      
+      <!-- Ground shadow -->
+      <ellipse cx="${cx}" cy="${h + 1}" rx="${size * 0.28}" ry="3.5" fill="black" opacity="0.3" filter="url(#glow-${mission.id})"/>
+      
+      <!-- Shield body -->
+      <path d="${shieldPath}" fill="url(#shield-${mission.id})" stroke="${isConquered ? '#D4A24C' : 'rgba(255,255,255,0.3)'}" stroke-width="1" filter="url(#glow-${mission.id})"/>
+      
+      <!-- Highlight bevel -->
+      <path d="${shieldPath}" fill="url(#highlight-${mission.id})" stroke="none"/>
+      
+      <!-- Inner circle bg -->
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="${isConquered ? '#D4A24C' : 'rgba(0,0,0,0.35)'}" stroke="${isConquered ? 'white' : 'rgba(255,255,255,0.2)'}" stroke-width="1"/>
+      
+      <!-- Icon -->
+      ${iconSvg}
+      
+      ${isConquered ? `
+        <!-- Crown for conquered -->
+        <g transform="translate(${cx - 6}, ${cy - r - 10})">
+          <path d="M0 8 L3 3 L6 6 L9 1 L12 8 Z" fill="#D4A24C" stroke="white" stroke-width="0.8"/>
+        </g>
+        <!-- Radial burst -->
+        <circle cx="${cx}" cy="${cy}" r="${r + 12}" fill="none" stroke="#D4A24C" stroke-width="0.8" opacity="0.2" stroke-dasharray="2 4"/>
+      ` : ''}
+      
       ${isInItinerary && !isConquered ? `
-        <circle cx="${size - 5}" cy="5" r="7" fill="#D4A24C" stroke="white" stroke-width="1.5"/>
-        <polyline points="${size - 8} 5 ${size - 6} 7 ${size - 3} 3" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      ` : ""}
+        <circle cx="${size - 2}" cy="4" r="7" fill="#D4A24C" stroke="white" stroke-width="1.5"/>
+        <polyline points="${size - 5} 4 ${size - 3} 6 ${size} 2" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ` : ''}
     </svg>
   `;
 };
@@ -160,34 +223,46 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
 
         const el = document.createElement("div");
         el.className = "mapbox-mission-marker";
-        el.style.width = `${size}px`;
-        el.style.height = `${size * 1.35}px`;
+        el.style.width = `${size + 8}px`;
+        el.style.height = `${size * 1.4 + 8}px`;
         el.style.cursor = "pointer";
+        el.style.position = "relative";
         el.innerHTML = createMarkerSVG(mission, inItin, isDimmed, isConq);
 
+        const starsSvg = Array.from({ length: 5 }).map((_, i) => {
+          const filled = i < mission.broRating;
+          return `<svg width="12" height="12" viewBox="0 0 24 24" fill="${filled ? 'hsl(40,72%,52%)' : 'none'}" stroke="${filled ? 'hsl(40,72%,52%)' : 'hsl(220,10%,30%)'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+        }).join('');
+
         const popupHTML = `
-          <div style="width:260px;overflow:hidden;border-radius:12px;">
-            <div style="height:110px;background-size:cover;background-position:center;position:relative;background-image:url(${getMissionImage(mission.id)})">
-              <div style="position:absolute;inset:0;background:linear-gradient(to top,hsl(220,12%,9%) 0%,hsl(220,12%,9%,0.4) 40%,transparent 100%)"></div>
-              <div style="position:absolute;top:8px;right:8px;padding:2px 8px;border-radius:20px;font-size:8px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;background:${colors.bg};color:white;box-shadow:0 0 12px ${colors.glow}">${mission.dangerLevel}</div>
-              ${isConq ? '<div style="position:absolute;top:8px;left:8px;padding:2px 8px;border-radius:20px;font-size:8px;font-weight:700;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;text-transform:uppercase;background:#D4A24C;color:#1a1a1a;">✓ CONQUERED</div>' : ''}
-              <div style="position:absolute;bottom:8px;left:10px;right:10px;">
-                <h4 style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:hsl(40,20%,90%);line-height:1.2;text-shadow:0 2px 8px hsl(0,0%,0%,0.5)">${mission.name}</h4>
+          <div style="width:280px;overflow:hidden;border-radius:14px;">
+            <div style="height:120px;background-size:cover;background-position:center;position:relative;background-image:url(${getMissionImage(mission.id)})">
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,hsl(225,10%,13%) 0%,hsl(225,10%,13%,0.5) 40%,transparent 100%)"></div>
+              <div style="position:absolute;top:8px;right:8px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;text-transform:uppercase;background:${colors.bg};color:white;box-shadow:0 0 14px ${colors.glow}">${colors.label}</div>
+              ${isConq ? '<div style="position:absolute;top:8px;left:8px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1.5px;text-transform:uppercase;background:#D4A24C;color:#1a1a1a;">✓ CONQUERED</div>' : ''}
+              <div style="position:absolute;bottom:10px;left:12px;right:12px;">
+                <h4 style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:hsl(40,15%,92%);line-height:1.2;text-shadow:0 2px 10px hsl(0,0%,0%,0.6)">${mission.name}</h4>
               </div>
             </div>
-            <div style="padding:12px;background:hsl(220,12%,9%);">
-              <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="hsl(40,72%,52%)" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                <span style="font-size:11px;color:hsl(220,8%,50%)">${mission.city}, ${mission.state}</span>
-                <span style="font-size:9px;color:hsl(220,8%,40%);margin-left:auto;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px">${mission.distanceFromOKC}h</span>
+            <div style="padding:14px;background:hsl(225,10%,13%);">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="hsl(40,72%,52%)" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style="font-size:12px;color:hsl(220,10%,62%);font-family:'Barlow Condensed',sans-serif">${mission.city}, ${mission.state}</span>
+                <span style="font-size:10px;color:hsl(220,10%,50%);margin-left:auto;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px">${mission.distanceFromOKC}h drive</span>
               </div>
-              <div style="font-size:9px;color:hsl(40,72%,52%);margin-bottom:6px;font-weight:600;display:flex;align-items:center;gap:4px;">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              
+              <div style="display:flex;align-items:center;gap:2px;margin-bottom:8px;">${starsSvg}</div>
+              
+              <div style="font-size:10px;color:hsl(40,72%,52%);margin-bottom:8px;font-weight:600;display:flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 Added ${bookings}x this month
               </div>
-              <div style="height:1px;background:linear-gradient(90deg,transparent,hsl(220,10%,16%),transparent);margin-bottom:8px;"></div>
-              <div style="display:flex;align-items:center;justify-content:space-between;">
-                <span style="font-weight:700;font-size:14px;font-family:'Barlow Condensed',sans-serif;color:hsl(40,72%,52%);text-shadow:0 0 8px hsl(40,72%,52%,0.2)">${mission.priceEstimate}</span>
+              
+              <div style="height:1px;background:linear-gradient(90deg,transparent,hsl(225,8%,20%),transparent);margin-bottom:10px;"></div>
+              
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <span style="font-weight:700;font-size:16px;font-family:'Barlow Condensed',sans-serif;color:hsl(40,72%,52%);text-shadow:0 0 10px hsl(40,72%,52%,0.25)">${mission.priceEstimate}</span>
+                <span style="font-size:11px;color:hsl(220,10%,62%);font-family:'Barlow Condensed',sans-serif;">${mission.duration}</span>
               </div>
               <button class="map-popup-cta" data-mission-id="${mission.id}">View Mission Brief</button>
             </div>

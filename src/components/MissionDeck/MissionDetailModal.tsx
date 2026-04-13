@@ -153,7 +153,7 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary,
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2 font-display">
               <AlertTriangle className="w-4 h-4 text-primary" /> About This Adventure
             </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed font-sans">{mission.description}</p>
+            <p className="text-sm text-foreground/70 leading-relaxed font-sans">{mission.description}</p>
           </div>
 
           {/* Rating */}
@@ -169,7 +169,7 @@ const MissionDetailModal = ({ mission, onClose, onAddToItinerary, isInItinerary,
               </div>
               <span className="stat-value text-sm font-bold">{mission.broRating}/5</span>
             </div>
-            <p className="text-sm text-muted-foreground italic font-display">"{mission.broCodeAnalysis}"</p>
+            <p className="text-sm text-foreground/70 italic font-display">"{mission.broCodeAnalysis}"</p>
           </div>
 
           {/* Tags */}

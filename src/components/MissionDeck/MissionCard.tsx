@@ -136,8 +136,8 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, isConq
 
       {/* Content */}
       <div className="p-4 pl-5 space-y-2">
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <MapPin className="w-3 h-3 text-primary/50" />
+        <div className="flex items-center gap-1.5 text-sm text-foreground/70">
+          <MapPin className="w-3.5 h-3.5 text-primary/60" />
           <span>{mission.city}, {mission.state}</span>
         </div>
 
@@ -156,10 +156,10 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, isConq
           <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{mission.description}</p>
         )}
 
-        <div className="flex items-center justify-between pt-2 border-t border-border/20">
-          <span className="text-sm font-semibold text-primary">{mission.priceEstimate}</span>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="w-3 h-3" />
+        <div className="flex items-center justify-between pt-2.5 border-t border-border/20">
+          <span className="text-base font-bold text-primary">{mission.priceEstimate}</span>
+          <div className="flex items-center gap-1 text-sm text-foreground/60">
+            <Clock className="w-3.5 h-3.5" />
             <span>{mission.duration}</span>
           </div>
           <div className="flex items-center gap-0.5" aria-label={`Rating: ${mission.broRating} out of 5`}>

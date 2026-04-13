@@ -83,14 +83,14 @@ const HeroBanner = () => {
           </p>
         )}
 
-        <h1 className="font-display text-7xl md:text-[10rem] lg:text-[14rem] font-bold text-foreground tracking-tight leading-[0.85] mb-6">
+        <h1 className="font-display text-7xl md:text-[10rem] lg:text-[14rem] font-bold text-foreground tracking-tight leading-[0.85] mb-6" style={{ textShadow: '0 4px 30px hsl(40 72% 52% / 0.15), 0 2px 10px hsl(0 0% 0% / 0.5)' }}>
           LEGENDS
         </h1>
 
         <div className="h-[2px] w-32 mx-auto bg-gradient-to-r from-transparent via-primary/50 to-transparent mb-6" />
 
         <div className="h-8 flex items-center justify-center">
-          <p className="text-lg md:text-xl text-muted-foreground font-light tracking-wide font-display italic" aria-live="polite">
+          <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide font-display italic leading-relaxed" aria-live="polite">
             {typedText}
             <span className="inline-block w-[2px] h-5 bg-primary/50 ml-1 animate-pulse motion-reduce:hidden" aria-hidden="true" />
           </p>
@@ -99,13 +99,13 @@ const HeroBanner = () => {
         <div className="mt-14 flex items-center justify-center gap-4">
           <button
             onClick={scrollToContent}
-            className="ripple-btn px-8 py-3.5 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-semibold rounded-lg hover:brightness-110 transition-all btn-3d shadow-[0_4px_30px_hsl(var(--gold)/0.25)] text-sm tracking-widest uppercase font-sans"
+            className="ripple-btn px-10 py-4 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-semibold rounded-lg hover:brightness-110 transition-all btn-3d shadow-[0_4px_30px_hsl(var(--gold)/0.3)] text-sm tracking-widest uppercase font-sans"
           >
             Explore Adventures
           </button>
           <button
             onClick={scrollToContent}
-            className="px-8 py-3.5 border border-border text-foreground/70 font-medium rounded-lg hover:border-primary/40 hover:text-foreground transition-all text-sm tracking-widest uppercase font-sans"
+            className="px-10 py-4 border border-border text-foreground/70 font-medium rounded-lg hover:border-primary/40 hover:text-foreground transition-all text-sm tracking-widest uppercase font-sans"
           >
             View Map
           </button>
