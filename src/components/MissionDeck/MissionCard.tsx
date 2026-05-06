@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Mission } from "@/data/missions";
 import { getMissionImage } from "@/data/missionImages";
 import { getSeasonalInfo } from "@/data/seasonalData";
@@ -48,23 +48,47 @@ const MissionCard = ({ mission, onClick, onAddToItinerary, isInItinerary, isConq
   const seasonal = getSeasonalInfo(mission.id);
   const [isHovered, setIsHovered] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   const bookings = getBookingCount(mission.id);
 
   const handleAddClick = (e: React.MouseEvent) => { e.stopPropagation(); onAddToItinerary?.(); };
   const handleConquerClick = (e: React.MouseEvent) => { e.stopPropagation(); onToggleConquered?.(); };
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    el.style.setProperty("--tilt-y", `${(px - 0.5) * 8}deg`);
+    el.style.setProperty("--tilt-x", `${(0.5 - py) * 6}deg`);
+    el.style.setProperty("--mx", `${px * 100}%`);
+    el.style.setProperty("--my", `${py * 100}%`);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    const el = cardRef.current;
+    if (!el) return;
+    el.style.setProperty("--tilt-y", `0deg`);
+    el.style.setProperty("--tilt-x", `0deg`);
+  };
+
   return (
     <div
+      ref={cardRef}
       className={cn(
-        "animate-fade-in-up group relative overflow-hidden rounded-xl bg-card border border-border/30 cursor-pointer transition-all duration-500",
-        "hover:border-primary/30 hover:shadow-[0_20px_50px_-15px_hsl(var(--gold)/0.15)] hover:translate-y-[-4px]",
+        "tilt-3d holo-sweep animate-fade-in-up group relative overflow-hidden rounded-xl bg-card border border-border/30 cursor-pointer transition-all duration-500 will-change-transform",
+        "hover:border-primary/40 hover:shadow-[0_30px_70px_-20px_hsl(var(--gold)/0.25)]",
         isConquered && "ring-2 ring-primary/40",
         isFeatured && "md:col-span-2 md:row-span-1"
       )}
       style={{ animationDelay: `${index * 40}ms`, animationFillMode: 'both' }}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       role="article"
       aria-label={`${mission.name} — ${dangerConfig.label} difficulty, ${mission.priceEstimate}`}
     >
