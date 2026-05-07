@@ -121,10 +121,12 @@ const Index = () => {
         <main id="main-content" className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-0">
           <section ref={statsReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 py-10 ${statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ background: 'linear-gradient(180deg, hsl(40 10% 11%) 0%, transparent 100%)' }}
+            style={{ background: 'linear-gradient(180deg, hsl(0 50% 10% / 0.6) 0%, transparent 100%)' }}
             aria-label="Adventure statistics">
             <div className="max-w-7xl mx-auto"><StatsBar conqueredCount={conqueredCount} /></div>
           </section>
+
+          <div className="rune-divider w-80 mx-auto my-2" aria-hidden="true" />
 
           <section ref={legendaryReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 delay-100 py-10 ${legendaryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
@@ -134,7 +136,7 @@ const Index = () => {
 
           <section ref={searchReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 delay-200 py-10 ${searchReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ background: 'linear-gradient(180deg, transparent 0%, hsl(225 8% 11%) 50%, transparent 100%)' }}
+            style={{ background: 'linear-gradient(180deg, transparent 0%, hsl(0 55% 8% / 0.7) 50%, transparent 100%)' }}
             aria-label="Search and filter adventures">
             <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
           </section>
@@ -145,9 +147,11 @@ const Index = () => {
             <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
 
-          <section ref={missionsReveal.ref as React.RefObject<HTMLElement>}
+          <div className="rune-divider w-80 mx-auto my-2" aria-hidden="true" />
+
+          <section id="adventures-section" ref={missionsReveal.ref as React.RefObject<HTMLElement>}
             className={`transition-all duration-700 delay-[400ms] py-10 ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ background: 'linear-gradient(180deg, hsl(40 8% 11%) 0%, transparent 100%)' }}
+            style={{ background: 'linear-gradient(180deg, hsl(0 50% 10% / 0.55) 0%, transparent 100%)' }}
             aria-label="Adventure listings">
             <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
               conquered={conquered} onToggleConquered={toggleConquered} />
