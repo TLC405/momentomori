@@ -107,7 +107,7 @@ const Index = () => {
           <Progress value={progressPercent} className="h-2 bg-secondary" />
         </div>
 
-        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto mt-8 relative z-10" style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(40 30% 14% / 0.4) 0%, transparent 60%)' }} aria-label="Adventure map">
+        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto mt-8 relative z-10" style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(0 70% 18% / 0.55) 0%, transparent 60%)' }} aria-label="Adventure map">
           <WarRoomMap
             selectedRealm={selectedRealm}
             onMissionSelect={setSelectedMission}
