@@ -251,6 +251,88 @@
     box-shadow: 0 14px 50px -10px hsl(40 72% 52% / 0.6), inset 0 1px 0 hsl(42 85% 62% / 0.4);
   }
   .premium-btn:active { transform: translateY(0); }
+
+  /* ── Viking Saga utilities ── */
+  .blood-bg {
+    background:
+      radial-gradient(ellipse at 50% -20%, hsl(0 78% 32% / 0.55) 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, hsl(0 65% 18% / 0.4) 0%, transparent 55%),
+      linear-gradient(180deg, hsl(0 50% 9%) 0%, hsl(0 55% 6%) 100%);
+  }
+  .blood-glow {
+    box-shadow:
+      0 0 30px hsl(0 78% 38% / 0.35),
+      0 10px 50px -10px hsl(0 80% 20% / 0.6),
+      inset 0 1px 0 hsl(0 65% 50% / 0.3);
+  }
+  .blood-glow-text {
+    text-shadow: 0 0 24px hsl(0 78% 42% / 0.55), 0 2px 12px hsl(0 0% 0% / 0.7);
+  }
+  .runic-text {
+    background: linear-gradient(180deg, hsl(42 88% 70%) 0%, hsl(40 72% 52%) 50%, hsl(28 70% 38%) 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    text-shadow: 0 4px 18px hsl(40 72% 52% / 0.25);
+  }
+  .rune-divider {
+    height: 14px;
+    background-image: linear-gradient(90deg, transparent 0%, hsl(40 72% 52% / 0.6) 50%, transparent 100%);
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+  }
+  .rune-divider::before, .rune-divider::after {
+    content: ""; position: absolute; top: 50%; width: 8px; height: 8px;
+    border: 1px solid hsl(40 72% 52% / 0.7);
+    transform: translateY(-50%) rotate(45deg);
+    background: hsl(0 35% 7%);
+  }
+  .rune-divider::before { left: calc(50% - 60px); }
+  .rune-divider::after { right: calc(50% - 60px); }
+
+  .saga-border {
+    border: 1px solid hsl(40 60% 38% / 0.35);
+    box-shadow:
+      inset 0 0 0 1px hsl(0 60% 16% / 0.6),
+      inset 0 0 24px hsl(0 70% 20% / 0.3),
+      0 8px 30px -10px hsl(0 0% 0% / 0.7);
+  }
+
+  .blood-btn {
+    background: var(--gradient-blood);
+    color: hsl(36 35% 92%);
+    border: 1px solid hsl(40 60% 45% / 0.5);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-blood-glow);
+    transition: transform 0.2s ease, box-shadow 0.3s ease, filter 0.2s ease;
+  }
+  .blood-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+    box-shadow: 0 16px 50px -8px hsl(0 78% 32% / 0.7), inset 0 1px 0 hsl(0 70% 50% / 0.4);
+  }
+
+  @keyframes rune-flicker {
+    0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 6px hsl(40 72% 52% / 0.6)); }
+    50% { opacity: 1; filter: drop-shadow(0 0 14px hsl(40 80% 60% / 0.9)); }
+  }
+  .rune-flicker { animation: rune-flicker 3s ease-in-out infinite; }
+
+  .saga-frame {
+    position: relative;
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, hsl(0 30% 11% / 0.85), hsl(0 35% 8% / 0.9));
+    border: 1px solid hsl(40 60% 38% / 0.25);
+  }
+  .saga-frame::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(135deg, hsl(40 72% 52% / 0.18) 0%, transparent 30%, transparent 70%, hsl(40 72% 52% / 0.12) 100%);
+    mix-blend-mode: screen;
+  }
 }
 
 @layer components {
