@@ -331,7 +331,8 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
   return (
     <div className={`relative w-full ${isFullscreen ? "fixed inset-0 z-[55]" : ""}`} id="map-section" role="region" aria-label="Adventure map">
       <div className={`relative w-full overflow-hidden rounded-2xl border border-border/20 shadow-[0_8px_40px_hsl(0_0%_0%/0.5)] ${isFullscreen ? "h-full rounded-none" : "h-[85vh] min-h-[500px] max-md:h-[500px]"}`}>
-        <div className="absolute inset-0 z-[2] pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(220,15%,6%,0.4) 100%)" }} />
+        <div className="absolute inset-0 z-[2] pointer-events-none" style={{ background: "radial-gradient(ellipse at center, hsl(40,40%,12%,0.05) 0%, transparent 45%, hsl(225,15%,8%,0.55) 100%)" }} />
+        <div className="absolute inset-0 z-[2] pointer-events-none" style={{ background: "linear-gradient(180deg, hsl(225,15%,8%,0.35) 0%, transparent 18%, transparent 82%, hsl(225,15%,8%,0.45) 100%)" }} />
         <div ref={mapContainer} className="w-full h-full" />
 
         {/* HUD: Title */}
