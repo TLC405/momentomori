@@ -11,7 +11,7 @@ import StatsBar from "@/components/StatsBar/StatsBar";
 import SearchFilter from "@/components/SearchFilter/SearchFilter";
 import RealmSelector from "@/components/RealmSelector/RealmSelector";
 import MissionDeck from "@/components/MissionDeck/MissionDeck";
-import SwipeDeck from "@/components/MissionDeck/SwipeDeck";
+
 import MissionDetailModal from "@/components/MissionDeck/MissionDetailModal";
 import ItineraryBuilder from "@/components/ItineraryBuilder/ItineraryBuilder";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -107,7 +107,7 @@ const Index = () => {
           <Progress value={progressPercent} className="h-2 bg-secondary" />
         </div>
 
-        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto mt-8 relative z-10" aria-label="Adventure map">
+        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto mt-8 relative z-10" style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(40 30% 14% / 0.4) 0%, transparent 60%)' }} aria-label="Adventure map">
           <WarRoomMap
             selectedRealm={selectedRealm}
             onMissionSelect={setSelectedMission}
@@ -149,12 +149,8 @@ const Index = () => {
             className={`transition-all duration-700 delay-[400ms] py-10 ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             style={{ background: 'linear-gradient(180deg, hsl(40 8% 11%) 0%, transparent 100%)' }}
             aria-label="Adventure listings">
-            {isMobile ? (
-              <SwipeDeck missions={filteredMissions} onAddToItinerary={handleAddToItinerary} onViewDetail={setSelectedMission} itineraryMissions={itineraryMissions} />
-            ) : (
-              <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
-                conquered={conquered} onToggleConquered={toggleConquered} />
-            )}
+            <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
+              conquered={conquered} onToggleConquered={toggleConquered} />
           </section>
         </main>
 

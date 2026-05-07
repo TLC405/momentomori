@@ -28,15 +28,15 @@ const MAP_STYLES = {
 
 const getDangerColor = (level: Mission["dangerLevel"]) => {
   switch (level) {
-    case "LOW": return { bg: "#4CAF50", glow: "rgba(76,175,80,0.6)", label: "Moderate" };
-    case "MEDIUM": return { bg: "#D4A24C", glow: "rgba(212,162,76,0.6)", label: "Hard" };
-    case "HIGH": return { bg: "#E67E22", glow: "rgba(230,126,34,0.6)", label: "Extreme" };
-    case "EXTREME": return { bg: "#C0392B", glow: "rgba(192,57,43,0.6)", label: "Legendary" };
+    case "LOW": return { bg: "#5BB46B", deep: "#2E6B3A", glow: "rgba(91,180,107,0.55)", label: "Moderate" };
+    case "MEDIUM": return { bg: "#E0B255", deep: "#7A5A1E", glow: "rgba(224,178,85,0.55)", label: "Hard" };
+    case "HIGH": return { bg: "#EE8A3A", deep: "#7C3F0E", glow: "rgba(238,138,58,0.55)", label: "Extreme" };
+    case "EXTREME": return { bg: "#D44A3F", deep: "#651912", glow: "rgba(212,74,63,0.6)", label: "Legendary" };
   }
 };
 
 const getDangerSize = (level: Mission["dangerLevel"]) => {
-  switch (level) { case "LOW": return 28; case "MEDIUM": return 32; case "HIGH": return 36; case "EXTREME": return 42; }
+  switch (level) { case "LOW": return 36; case "MEDIUM": return 40; case "HIGH": return 44; case "EXTREME": return 50; }
 };
 
 const getBookingCount = (id: string): number => {
@@ -47,91 +47,115 @@ const getBookingCount = (id: string): number => {
 const createMarkerSVG = (mission: Mission, isInItinerary: boolean, isDimmed: boolean, isConquered: boolean) => {
   const colors = getDangerColor(mission.dangerLevel);
   const size = getDangerSize(mission.dangerLevel);
-  const h = size * 1.4;
-  const cx = size / 2;
-  const cy = size * 0.42;
-  const r = size * 0.32;
-  const opacity = isDimmed ? 0.25 : 1;
+  const W = size + 16;
+  const H = size + 28;
+  const cx = W / 2;
+  const cy = size / 2 + 6;
+  const r = size / 2;
+  const opacity = isDimmed ? 0.28 : 1;
+  const uid = mission.id.replace(/[^a-z0-9]/gi, '');
 
-  // Shield/badge shape path
-  const shieldPath = `M${cx} 2 
-    C${size * 0.18} 2, 2, ${size * 0.28}, 2, ${size * 0.5} 
-    c0, ${h * 0.42}, ${cx - 2}, ${h * 0.55}, ${cx - 2}, ${h * 0.55} 
-    s${cx - 2},-${h * 0.13}, ${cx - 2},-${h * 0.55} 
-    C${size - 2}, ${size * 0.28}, ${size * 0.82}, 2, ${cx}, 2z`;
-
-  // Icon paths by difficulty
+  // Crest icon by difficulty (clean line iconography)
+  const ic = isConquered ? '#1a1208' : '#FFF8E7';
   const iconSvg = mission.dangerLevel === "EXTREME"
-    ? `<path d="M${cx - 4} ${cy + 3} L${cx} ${cy - 5} L${cx + 4} ${cy + 3} Z" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linejoin="round"/>
-       <line x1="${cx}" y1="${cy - 1}" x2="${cx}" y2="${cy + 1}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round"/>
-       <circle cx="${cx}" cy="${cy + 2.5}" r="0.5" fill="${isConquered ? '#1a1a1a' : 'white'}"/>`
+    ? `<path d="M${cx} ${cy - r * 0.45} L${cx + r * 0.42} ${cy + r * 0.35} L${cx - r * 0.42} ${cy + r * 0.35} Z" fill="none" stroke="${ic}" stroke-width="1.6" stroke-linejoin="round"/>
+       <line x1="${cx}" y1="${cy - r * 0.05}" x2="${cx}" y2="${cy + r * 0.15}" stroke="${ic}" stroke-width="1.6" stroke-linecap="round"/>
+       <circle cx="${cx}" cy="${cy + r * 0.28}" r="0.9" fill="${ic}"/>`
     : mission.dangerLevel === "HIGH"
-    ? `<path d="M${cx - 4} ${cy + 3} L${cx - 2} ${cy - 2} L${cx} ${cy + 1} L${cx + 2} ${cy - 4} L${cx + 4} ${cy + 3}" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`
+    ? `<path d="M${cx - r * 0.5} ${cy + r * 0.3} L${cx - r * 0.18} ${cy - r * 0.3} L${cx + r * 0.05} ${cy + r * 0.05} L${cx + r * 0.3} ${cy - r * 0.45} L${cx + r * 0.5} ${cy + r * 0.3}" fill="none" stroke="${ic}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`
     : mission.dangerLevel === "MEDIUM"
-    ? `<circle cx="${cx}" cy="${cy}" r="3" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5"/>
-       <line x1="${cx}" y1="${cy - 1.5}" x2="${cx}" y2="${cy + 1.5}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round"/>
-       <line x1="${cx - 1.5}" y1="${cy}" x2="${cx + 1.5}" y2="${cy}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round"/>`
-    : `<path d="M${cx - 3} ${cy + 2} L${cx} ${cy - 3} L${cx + 3} ${cy + 2}" fill="none" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-       <line x1="${cx}" y1="${cy + 2}" x2="${cx}" y2="${cy - 1}" stroke="${isConquered ? '#1a1a1a' : 'white'}" stroke-width="1" stroke-linecap="round"/>`;
+    ? `<path d="M${cx - r * 0.5} ${cy + r * 0.3} L${cx - r * 0.15} ${cy - r * 0.25} L${cx + r * 0.1} ${cy + r * 0.05} L${cx + r * 0.5} ${cy - r * 0.4}" fill="none" stroke="${ic}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+       <circle cx="${cx + r * 0.5}" cy="${cy - r * 0.4}" r="1.4" fill="${ic}"/>`
+    : `<circle cx="${cx}" cy="${cy}" r="${r * 0.32}" fill="none" stroke="${ic}" stroke-width="1.5"/>
+       <circle cx="${cx}" cy="${cy}" r="1.4" fill="${ic}"/>`;
+
+  // Ornamental tick marks around the medallion ring
+  const ticks = Array.from({ length: 12 }).map((_, i) => {
+    const a = (i / 12) * Math.PI * 2;
+    const x1 = cx + Math.cos(a) * (r + 1.5);
+    const y1 = cy + Math.sin(a) * (r + 1.5);
+    const x2 = cx + Math.cos(a) * (r + 4);
+    const y2 = cy + Math.sin(a) * (r + 4);
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${isConquered ? '#E8C26A' : '#D4A24C'}" stroke-width="0.9" opacity="0.55" stroke-linecap="round"/>`;
+  }).join('');
 
   return `
-    <svg width="${size + 8}" height="${h + 8}" viewBox="-4 -4 ${size + 8} ${h + 8}" xmlns="http://www.w3.org/2000/svg" style="opacity:${opacity};overflow:visible;${isDimmed ? 'filter:grayscale(0.7) brightness(0.6);' : ''}">
+    <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="opacity:${opacity};overflow:visible;${isDimmed ? 'filter:grayscale(0.7) brightness(0.6);' : ''}">
       <defs>
-        <linearGradient id="shield-${mission.id}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${isConquered ? '#e8c252' : colors.bg}" stop-opacity="1"/>
-          <stop offset="60%" stop-color="${isConquered ? '#B8860B' : colors.bg}" stop-opacity="0.85"/>
-          <stop offset="100%" stop-color="${isConquered ? '#8B6914' : colors.bg}" stop-opacity="0.7"/>
+        <radialGradient id="bezel-${uid}" cx="0.5" cy="0.35" r="0.7">
+          <stop offset="0%" stop-color="#F5D788"/>
+          <stop offset="45%" stop-color="#D4A24C"/>
+          <stop offset="100%" stop-color="#7A5418"/>
+        </radialGradient>
+        <radialGradient id="face-${uid}" cx="0.5" cy="0.35" r="0.85">
+          <stop offset="0%" stop-color="${colors.bg}" stop-opacity="1"/>
+          <stop offset="70%" stop-color="${colors.bg}" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="${colors.deep}" stop-opacity="1"/>
+        </radialGradient>
+        <linearGradient id="gloss-${uid}" x1="0.2" y1="0" x2="0.5" y2="0.6">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+          <stop offset="60%" stop-color="#ffffff" stop-opacity="0.05"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
         </linearGradient>
-        <linearGradient id="highlight-${mission.id}" x1="0.3" y1="0" x2="0.7" y2="1">
-          <stop offset="0%" stop-color="white" stop-opacity="0.35"/>
-          <stop offset="40%" stop-color="white" stop-opacity="0.05"/>
-          <stop offset="100%" stop-color="white" stop-opacity="0"/>
-        </linearGradient>
-        <filter id="glow-${mission.id}">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <filter id="inner-shadow-${mission.id}">
-          <feComponentTransfer in="SourceAlpha"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer>
-          <feGaussianBlur stdDeviation="2"/>
-          <feOffset dx="0" dy="1" result="offsetblur"/>
-          <feFlood flood-color="${isConquered ? '#B8860B' : colors.bg}" flood-opacity="0.4" result="color"/>
-          <feComposite in2="offsetblur" operator="in"/>
-          <feComposite in2="SourceAlpha" operator="in"/>
-          <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode/></feMerge>
+        <radialGradient id="halo-${uid}" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stop-color="${colors.bg}" stop-opacity="0.55"/>
+          <stop offset="60%" stop-color="${colors.bg}" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="${colors.bg}" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="soft-${uid}" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="0.6"/>
         </filter>
       </defs>
-      
-      <!-- Outer glow ring (animated via CSS) -->
-      <ellipse cx="${cx}" cy="${cy}" rx="${r + 8}" ry="${r + 8}" fill="none" stroke="${isConquered ? '#D4A24C' : colors.bg}" stroke-width="1.5" opacity="0.3" class="pin-pulse-ring"/>
-      
+
+      <!-- Outer halo glow -->
+      <circle cx="${cx}" cy="${cy}" r="${r + 10}" fill="url(#halo-${uid})"/>
+
+      <!-- Animated pulse ring -->
+      <circle cx="${cx}" cy="${cy}" r="${r + 3}" fill="none" stroke="${isConquered ? '#E8C26A' : colors.bg}" stroke-width="1" opacity="0.45" class="pin-pulse-ring" style="transform-origin:${cx}px ${cy}px"/>
+
+      <!-- Drop stem (anchor to map) -->
+      <path d="M${cx - 4} ${cy + r - 1} Q${cx} ${cy + r + 8} ${cx} ${H - 4} Q${cx} ${cy + r + 8} ${cx + 4} ${cy + r - 1} Z"
+        fill="url(#bezel-${uid})" stroke="#3a2a10" stroke-width="0.5"/>
+      <circle cx="${cx}" cy="${H - 4}" r="1.6" fill="#1a1208"/>
+
       <!-- Ground shadow -->
-      <ellipse cx="${cx}" cy="${h + 1}" rx="${size * 0.28}" ry="3.5" fill="black" opacity="0.3" filter="url(#glow-${mission.id})"/>
-      
-      <!-- Shield body -->
-      <path d="${shieldPath}" fill="url(#shield-${mission.id})" stroke="${isConquered ? '#D4A24C' : 'rgba(255,255,255,0.3)'}" stroke-width="1" filter="url(#glow-${mission.id})"/>
-      
-      <!-- Highlight bevel -->
-      <path d="${shieldPath}" fill="url(#highlight-${mission.id})" stroke="none"/>
-      
-      <!-- Inner circle bg -->
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="${isConquered ? '#D4A24C' : 'rgba(0,0,0,0.35)'}" stroke="${isConquered ? 'white' : 'rgba(255,255,255,0.2)'}" stroke-width="1"/>
-      
-      <!-- Icon -->
+      <ellipse cx="${cx}" cy="${H - 2}" rx="${r * 0.5}" ry="2" fill="#000" opacity="0.45" filter="url(#soft-${uid})"/>
+
+      <!-- Outer bezel (gold ring) -->
+      <circle cx="${cx}" cy="${cy}" r="${r + 1}" fill="url(#bezel-${uid})" stroke="#3a2a10" stroke-width="0.6"/>
+
+      <!-- Decorative tick marks -->
+      ${ticks}
+
+      <!-- Inner dark groove -->
+      <circle cx="${cx}" cy="${cy}" r="${r - 1.5}" fill="none" stroke="#2a1d08" stroke-width="0.8" opacity="0.7"/>
+
+      <!-- Medallion face -->
+      <circle cx="${cx}" cy="${cy}" r="${r - 3}" fill="url(#face-${uid})"/>
+
+      <!-- Glossy highlight -->
+      <ellipse cx="${cx - r * 0.25}" cy="${cy - r * 0.4}" rx="${r * 0.55}" ry="${r * 0.3}" fill="url(#gloss-${uid})"/>
+
+      <!-- Inner rim -->
+      <circle cx="${cx}" cy="${cy}" r="${r - 3}" fill="none" stroke="#FFF8E7" stroke-width="0.5" opacity="0.35"/>
+
+      <!-- Crest icon -->
       ${iconSvg}
-      
+
       ${isConquered ? `
-        <!-- Crown for conquered -->
-        <g transform="translate(${cx - 6}, ${cy - r - 10})">
-          <path d="M0 8 L3 3 L6 6 L9 1 L12 8 Z" fill="#D4A24C" stroke="white" stroke-width="0.8"/>
+        <!-- Laurel crown for conquered -->
+        <g transform="translate(${cx}, ${cy - r - 4})">
+          <path d="M-7 4 Q-9 -2 -4 -4 Q-2 -1 -3 3 Z" fill="#E8C26A" stroke="#7A5418" stroke-width="0.5"/>
+          <path d="M7 4 Q9 -2 4 -4 Q2 -1 3 3 Z" fill="#E8C26A" stroke="#7A5418" stroke-width="0.5"/>
+          <path d="M-3 -2 L0 -7 L3 -2 L1.5 -1 L0 -4 L-1.5 -1 Z" fill="#F5D788" stroke="#7A5418" stroke-width="0.5"/>
         </g>
-        <!-- Radial burst -->
-        <circle cx="${cx}" cy="${cy}" r="${r + 12}" fill="none" stroke="#D4A24C" stroke-width="0.8" opacity="0.2" stroke-dasharray="2 4"/>
       ` : ''}
-      
+
       ${isInItinerary && !isConquered ? `
-        <circle cx="${size - 2}" cy="4" r="7" fill="#D4A24C" stroke="white" stroke-width="1.5"/>
-        <polyline points="${size - 5} 4 ${size - 3} 6 ${size} 2" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(${cx + r - 2}, ${cy - r + 2})">
+          <circle r="6.5" fill="#D4A24C" stroke="#FFF8E7" stroke-width="1.2"/>
+          <polyline points="-3,0 -1,2.5 3,-2.5" fill="none" stroke="#1a1208" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
       ` : ''}
     </svg>
   `;
@@ -307,7 +331,8 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
   return (
     <div className={`relative w-full ${isFullscreen ? "fixed inset-0 z-[55]" : ""}`} id="map-section" role="region" aria-label="Adventure map">
       <div className={`relative w-full overflow-hidden rounded-2xl border border-border/20 shadow-[0_8px_40px_hsl(0_0%_0%/0.5)] ${isFullscreen ? "h-full rounded-none" : "h-[85vh] min-h-[500px] max-md:h-[500px]"}`}>
-        <div className="absolute inset-0 z-[2] pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(220,15%,6%,0.4) 100%)" }} />
+        <div className="absolute inset-0 z-[2] pointer-events-none" style={{ background: "radial-gradient(ellipse at center, hsl(40,40%,12%,0.05) 0%, transparent 45%, hsl(225,15%,8%,0.55) 100%)" }} />
+        <div className="absolute inset-0 z-[2] pointer-events-none" style={{ background: "linear-gradient(180deg, hsl(225,15%,8%,0.35) 0%, transparent 18%, transparent 82%, hsl(225,15%,8%,0.45) 100%)" }} />
         <div ref={mapContainer} className="w-full h-full" />
 
         {/* HUD: Title */}
