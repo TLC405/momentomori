@@ -11,7 +11,7 @@ import StatsBar from "@/components/StatsBar/StatsBar";
 import SearchFilter from "@/components/SearchFilter/SearchFilter";
 import RealmSelector from "@/components/RealmSelector/RealmSelector";
 import MissionDeck from "@/components/MissionDeck/MissionDeck";
-import SwipeDeck from "@/components/MissionDeck/SwipeDeck";
+
 import MissionDetailModal from "@/components/MissionDeck/MissionDetailModal";
 import ItineraryBuilder from "@/components/ItineraryBuilder/ItineraryBuilder";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -149,12 +149,8 @@ const Index = () => {
             className={`transition-all duration-700 delay-[400ms] py-10 ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             style={{ background: 'linear-gradient(180deg, hsl(40 8% 11%) 0%, transparent 100%)' }}
             aria-label="Adventure listings">
-            {isMobile ? (
-              <SwipeDeck missions={filteredMissions} onAddToItinerary={handleAddToItinerary} onViewDetail={setSelectedMission} itineraryMissions={itineraryMissions} />
-            ) : (
-              <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
-                conquered={conquered} onToggleConquered={toggleConquered} />
-            )}
+            <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
+              conquered={conquered} onToggleConquered={toggleConquered} />
           </section>
         </main>
 
