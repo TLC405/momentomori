@@ -268,7 +268,7 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
         `))
         .addTo(map.current!);
 
-      allMissions.forEach(mission => {
+      placedMissions.forEach(mission => {
         const inItin = isInItinerary(mission.id);
         const isDimmed = hasActiveFilter && !isFiltered(mission.id);
         const isConq = conquered.has(mission.id);
