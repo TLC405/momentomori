@@ -175,10 +175,41 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
     [selectedRealm]
   );
 
+  // Fan out missions that share identical coordinates (HQ, Dallas, etc.)
+  // so every pin is actually visible on the map.
+  const placedMissions = useMemo(() => {
+    const groups = new Map<string, Mission[]>();
+    allMissions.forEach(m => {
+      const k = `${m.coordinates.lat.toFixed(4)}|${m.coordinates.lng.toFixed(4)}`;
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k)!.push(m);
+    });
+    const out: Array<Mission & { _displayLng: number; _displayLat: number }> = [];
+    groups.forEach(group => {
+      if (group.length === 1) {
+        const m = group[0];
+        out.push({ ...m, _displayLng: m.coordinates.lng, _displayLat: m.coordinates.lat });
+      } else {
+        // Arrange siblings on a small circle (~0.12° radius ≈ 13km)
+        const R = 0.13;
+        group.forEach((m, i) => {
+          const angle = (i / group.length) * Math.PI * 2 - Math.PI / 2;
+          out.push({
+            ...m,
+            _displayLng: m.coordinates.lng + Math.cos(angle) * R,
+            _displayLat: m.coordinates.lat + Math.sin(angle) * R * 0.75,
+          });
+        });
+      }
+    });
+    return out;
+  }, [allMissions]);
+
   const hasActiveFilter = filteredMissionIds !== undefined && filteredMissionIds.size < allMissions.length;
   const isInItinerary = (id: string) => itineraryMissions.some(m => m.id === id);
   const isFiltered = (id: string) => !filteredMissionIds || filteredMissionIds.has(id);
   const filteredCount = hasActiveFilter ? allMissions.filter(m => isFiltered(m.id)).length : allMissions.length;
+
 
   const difficultyLevels = [
     { color: "#4CAF50", label: "Moderate", count: allMissions.filter(m => m.dangerLevel === "LOW" && isFiltered(m.id)).length },
