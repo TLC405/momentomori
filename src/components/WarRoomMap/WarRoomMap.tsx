@@ -348,7 +348,7 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
     if (!map.current || allMissions.length === 0) return;
     const bounds = new mapboxgl.LngLatBounds();
     bounds.extend(OKC_CENTER);
-    allMissions.forEach(m => bounds.extend([m.coordinates.lng, m.coordinates.lat]));
+    placedMissions.forEach(m => bounds.extend([m._displayLng, m._displayLat]));
     const fitMap = () => map.current!.fitBounds(bounds, { padding: 80, maxZoom: 7, pitch: 45, bearing: -5, duration: 1200 });
     if (map.current.isStyleLoaded()) fitMap();
     else map.current.once("style.load", fitMap);
