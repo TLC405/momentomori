@@ -18,7 +18,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useConquered } from "@/hooks/useConquered";
 import { Helmet } from "react-helmet";
 import { Progress } from "@/components/ui/progress";
-import { Trophy } from "lucide-react";
+import { Trophy, Map as MapIcon, LayoutGrid } from "lucide-react";
 
 const useReveal = (threshold = 0.15) => {
   const ref = useRef<HTMLElement>(null);
