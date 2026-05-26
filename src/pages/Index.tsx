@@ -43,6 +43,7 @@ const Index = () => {
   const [itineraryMissions, setItineraryMissions] = useState<Mission[]>([]);
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
   const { conquered, toggleConquered, isConquered, conqueredCount } = useConquered();
+  const [exploreView, setExploreView] = useState<"map" | "list">(isMobile ? "list" : "map");
   const [filters, setFilters] = useState<FilterState>({
     search: "", maxDistance: 10, priceRange: [1, 5], dangerLevels: [], maxDuration: "",
   });
