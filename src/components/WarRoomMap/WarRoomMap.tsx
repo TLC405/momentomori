@@ -339,10 +339,11 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
           }, 50);
         });
 
-        const marker = new mapboxgl.Marker({ element: el, anchor: "bottom" })
+        const marker = new mapboxgl.Marker({ element: el, anchor: "bottom", offset: [0, 4] })
           .setLngLat([mission._displayLng, mission._displayLat])
           .setPopup(popup).addTo(map.current!);
         markersRef.current.push(marker);
+
       });
     };
 
