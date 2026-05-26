@@ -276,13 +276,19 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
         const size = getDangerSize(mission.dangerLevel);
         const bookings = getBookingCount(mission.id);
 
+        // Element must exactly match the SVG dimensions (W=size+16, H=size+28)
+        // so Mapbox's anchor lands at the true pin tip — otherwise pins
+        // visually drift on zoom/pitch.
+        const svgW = size + 16;
+        const svgH = size + 28;
         const el = document.createElement("div");
         el.className = "mapbox-mission-marker";
-        el.style.width = `${size + 8}px`;
-        el.style.height = `${size * 1.4 + 8}px`;
+        el.style.width = `${svgW}px`;
+        el.style.height = `${svgH}px`;
         el.style.cursor = "pointer";
         el.style.position = "relative";
         el.innerHTML = createMarkerSVG(mission, inItin, isDimmed, isConq);
+
 
         const starsSvg = Array.from({ length: 5 }).map((_, i) => {
           const filled = i < mission.broRating;
@@ -333,10 +339,11 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
           }, 50);
         });
 
-        const marker = new mapboxgl.Marker({ element: el, anchor: "bottom" })
+        const marker = new mapboxgl.Marker({ element: el, anchor: "bottom", offset: [0, 4] })
           .setLngLat([mission._displayLng, mission._displayLat])
           .setPopup(popup).addTo(map.current!);
         markersRef.current.push(marker);
+
       });
     };
 
