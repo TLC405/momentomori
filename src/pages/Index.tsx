@@ -18,7 +18,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useConquered } from "@/hooks/useConquered";
 import { Helmet } from "react-helmet";
 import { Progress } from "@/components/ui/progress";
-import { Trophy } from "lucide-react";
+import { Trophy, Map as MapIcon, LayoutGrid } from "lucide-react";
 
 const useReveal = (threshold = 0.15) => {
   const ref = useRef<HTMLElement>(null);
@@ -43,6 +43,7 @@ const Index = () => {
   const [itineraryMissions, setItineraryMissions] = useState<Mission[]>([]);
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
   const { conquered, toggleConquered, isConquered, conqueredCount } = useConquered();
+  const [exploreView, setExploreView] = useState<"map" | "list">(isMobile ? "list" : "map");
   const [filters, setFilters] = useState<FilterState>({
     search: "", maxDistance: 10, priceRange: [1, 5], dangerLevels: [], maxDuration: "",
   });
@@ -107,20 +108,9 @@ const Index = () => {
           <Progress value={progressPercent} className="h-2 bg-secondary" />
         </div>
 
-        <section className="w-full px-4 md:px-8 max-w-[1600px] mx-auto mt-8 relative z-10" style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(0 70% 18% / 0.55) 0%, transparent 60%)' }} aria-label="Adventure map">
-          <WarRoomMap
-            selectedRealm={selectedRealm}
-            onMissionSelect={setSelectedMission}
-            onAddToItinerary={handleAddToItinerary}
-            itineraryMissions={itineraryMissions}
-            filteredMissionIds={filteredMissionIds}
-            conquered={conquered}
-          />
-        </section>
-
-        <main id="main-content" className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-0">
+        <main id="main-content" className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-10 space-y-0">
           <section ref={statsReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 py-10 ${statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 py-8 ${statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             style={{ background: 'linear-gradient(180deg, hsl(0 50% 10% / 0.6) 0%, transparent 100%)' }}
             aria-label="Adventure statistics">
             <div className="max-w-7xl mx-auto"><StatsBar conqueredCount={conqueredCount} /></div>
@@ -129,34 +119,68 @@ const Index = () => {
           <div className="rune-divider w-80 mx-auto my-2" aria-hidden="true" />
 
           <section ref={legendaryReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-100 py-10 ${legendaryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 delay-100 py-8 ${legendaryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             aria-label="Legendary picks">
             <LegendaryPicks onMissionSelect={setSelectedMission} />
           </section>
 
-          <section ref={searchReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-200 py-10 ${searchReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ background: 'linear-gradient(180deg, transparent 0%, hsl(0 55% 8% / 0.7) 50%, transparent 100%)' }}
-            aria-label="Search and filter adventures">
-            <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
-          </section>
-
           <section ref={realmReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-300 py-10 ${realmReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`transition-all duration-700 delay-200 py-6 ${realmReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             aria-label="Adventure categories">
             <RealmSelector selectedRealm={selectedRealm} onSelectRealm={setSelectedRealm} />
           </section>
 
+          <section ref={searchReveal.ref as React.RefObject<HTMLElement>}
+            className={`transition-all duration-700 delay-300 py-6 ${searchReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            aria-label="Search and filter adventures">
+            <SearchFilter filters={filters} onFiltersChange={setFilters} totalResults={filteredMissions.length} />
+          </section>
+
           <div className="rune-divider w-80 mx-auto my-2" aria-hidden="true" />
 
+          {/* Unified Explore: Map ⇄ List */}
           <section id="adventures-section" ref={missionsReveal.ref as React.RefObject<HTMLElement>}
-            className={`transition-all duration-700 delay-[400ms] py-10 ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ background: 'linear-gradient(180deg, hsl(0 50% 10% / 0.55) 0%, transparent 100%)' }}
-            aria-label="Adventure listings">
-            <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
-              conquered={conquered} onToggleConquered={toggleConquered} />
+            className={`transition-all duration-700 delay-[400ms] py-6 ${missionsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            aria-label="Explore adventures">
+            <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+              <div className="flex items-center gap-3">
+                <h2 className="font-display text-xl md:text-2xl font-bold text-foreground tracking-wide">
+                  {selectedRealm ? selectedRealm.name : "All Adventures"}
+                </h2>
+                <span className="text-xs text-muted-foreground font-sans">
+                  <span className="stat-value text-xs">{filteredMissions.length}</span> experiences
+                </span>
+              </div>
+              <div role="tablist" aria-label="Explore view" className="inline-flex rounded-full border border-primary/30 bg-card/60 backdrop-blur p-1 shadow-[0_0_24px_hsl(0_80%_30%/0.25)]">
+                <button role="tab" aria-selected={exploreView === "map"} onClick={() => setExploreView("map")}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-sans tracking-[2px] uppercase transition-all ${exploreView === "map" ? "bg-primary text-primary-foreground shadow-[0_0_18px_hsl(var(--primary)/0.5)]" : "text-muted-foreground hover:text-foreground"}`}>
+                  <MapIcon className="w-3.5 h-3.5" /> Map
+                </button>
+                <button role="tab" aria-selected={exploreView === "list"} onClick={() => setExploreView("list")}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-sans tracking-[2px] uppercase transition-all ${exploreView === "list" ? "bg-primary text-primary-foreground shadow-[0_0_18px_hsl(var(--primary)/0.5)]" : "text-muted-foreground hover:text-foreground"}`}>
+                  <LayoutGrid className="w-3.5 h-3.5" /> List
+                </button>
+              </div>
+            </div>
+
+            {exploreView === "map" ? (
+              <div style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(0 70% 18% / 0.45) 0%, transparent 60%)' }}>
+                <WarRoomMap
+                  selectedRealm={selectedRealm}
+                  onMissionSelect={setSelectedMission}
+                  onAddToItinerary={handleAddToItinerary}
+                  itineraryMissions={itineraryMissions}
+                  filteredMissionIds={filteredMissionIds}
+                  conquered={conquered}
+                />
+              </div>
+            ) : (
+              <MissionDeck selectedRealm={selectedRealm} itineraryMissions={itineraryMissions} onAddToItinerary={handleAddToItinerary} filteredMissions={filteredMissions}
+                conquered={conquered} onToggleConquered={toggleConquered} />
+            )}
           </section>
         </main>
+
 
         <AppFooter />
 
