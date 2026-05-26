@@ -334,7 +334,7 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
         });
 
         const marker = new mapboxgl.Marker({ element: el, anchor: "bottom" })
-          .setLngLat([mission.coordinates.lng, mission.coordinates.lat])
+          .setLngLat([mission._displayLng, mission._displayLat])
           .setPopup(popup).addTo(map.current!);
         markersRef.current.push(marker);
       });
@@ -342,7 +342,7 @@ const WarRoomMap = ({ selectedRealm, onAddToItinerary, itineraryMissions = [], f
 
     if (map.current.isStyleLoaded()) renderMarkers();
     else map.current.once("style.load", renderMarkers);
-  }, [allMissions, itineraryMissions, filteredMissionIds, hasActiveFilter, mapStyle, conquered]);
+  }, [placedMissions, itineraryMissions, filteredMissionIds, hasActiveFilter, mapStyle, conquered]);
 
   useEffect(() => {
     if (!map.current || allMissions.length === 0) return;
