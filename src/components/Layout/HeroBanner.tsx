@@ -137,7 +137,7 @@ const HeroBanner = () => {
           className="font-display text-7xl md:text-[10rem] lg:text-[14rem] font-bold tracking-tight leading-[0.85] mb-6 runic-text blood-glow-text"
           style={{ filter: 'drop-shadow(0 8px 36px hsl(0 78% 32% / 0.55)) drop-shadow(0 2px 10px hsl(0 0% 0% / 0.7))' }}
         >
-          LEGENDS
+          LEGENDS by TLC
         </h1>
 
         <div className="rune-divider w-64 mx-auto mb-6" aria-hidden="true" />
@@ -154,7 +154,7 @@ const HeroBanner = () => {
             onClick={scrollToContent}
             className="ripple-btn premium-btn btn-3d px-10 py-4 rounded-lg text-sm"
           >
-            Begin the Saga
+            MAKE YOURSELF LEGENDARY
           </button>
           <button
             onClick={() => document.getElementById("map-section")?.scrollIntoView({ behavior: "smooth" })}
